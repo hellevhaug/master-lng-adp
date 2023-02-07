@@ -212,7 +212,6 @@ maintenance_vessel_ports = {}
 maintenance_durations = {}
 maintenance_start_times = {}
 maintenance_end_times = {}
-maintenance_vessel_arcs = {}
 
 for vessel in data['vessels']:
     vessel_ids.append(vessel['id'])
@@ -436,8 +435,6 @@ charter_boil_off = 0.0012 # Hardkodet
 tank_leftover_value={'NGBON':40} # Hardkodet
 allowed_waiting = 7
 total_feasible_arcs = []
-
-print(vessel_start_ports)
 
 def find_feasible_arcs(vessel, allowed_waiting):
     feasible_arcs = []
