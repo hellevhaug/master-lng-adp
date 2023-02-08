@@ -8,9 +8,9 @@ print('Hello, this String is written by Helle')
 #      ..            .            ..
 #     ..                            ..
 #     .                             .
-#      ..                         ..
-#        ..                     ..
-#          ..                 ..
+#      ..    Sanna                ..
+#        ..       Helle         ..
+#          ..          Sigrid ..
 #            ..             ..
 #              ..         ..
 #                ..     ..

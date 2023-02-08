@@ -8,6 +8,11 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from operator import itemgetter
 
+# Spørsmål til koden fra Sigrid: 
+# Hva er forskjellen på location_ports og port_locations?
+# .days, hva skjer egentlig her? Datetime-funksjon som regner ut tidsforskjell i antall dager?
+
+
 """
 This file is for reading data and run the model for 1 loading port and speed optimization,
 for a test instance
@@ -305,7 +310,7 @@ for charter in data['charterVessels']:
             for t in range(price_start_time+1, len(loading_days)+1):
                 charter_vessel_prices[t] = price['rate']
     for id in loading_port_ids: # Alle båtene er feasible med alle loading_nodes men kan sjekke
-        charter_vessel_node_acceptances[charter['id']].append(id )
+        charter_vessel_node_acceptances[charter['id']].append(id)
     for port in charter['portAcceptance']:
         charter_vessel_port_acceptances[charter['id']].append(port['portId'])
     for contract in charter['contractAcceptance']:
