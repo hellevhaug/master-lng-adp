@@ -3,12 +3,14 @@
 print('Hello, this String is written by Helle')
 
 
-#            ...           ...
+#
+#  Hei
+#             ...           ...
 #        ..      ..     ..      ..
 #      ..            .            ..
 #     ..                            ..
 #     .                             .
-#      ..                         ..
+#      ..             Hei         ..
 #        ..                     ..
 #          ..                 ..
 #            ..             ..
