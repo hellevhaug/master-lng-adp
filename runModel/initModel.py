@@ -146,7 +146,7 @@ def initialize_model(group, filename):
     return model
 
 
-def initialize_model(group, filename):
+def initialize_model1(group, filename):
 
     # Finding out if it is data from Nigeria or Abu Dabi
     loading_port_ids = set_loading_port_ids(filename)
