@@ -39,7 +39,14 @@ def initialize_maintenance_sets():
     maintenance_end_times = {}
     return maintenance_ids, maintenance_vessels, maintenance_vessel_ports, maintenance_durations, maintenance_start_times, maintenance_end_times
 
-def read_producer_vessels():
+def initialize_charter_sets():
+    #Do we need these? Will need if we want to have the option of chartering in vessels of different sizes
+    return 0
+
+def read_producer_vessels(data, vessel_ids, vessel_capacities, location_ports, port_locations, port_types, vessel_start_ports, vessel_location_acceptances,
+                        vessel_port_acceptances, loading_port_ids, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, 
+                        vessel_boil_off_rate, vessel_available_days, loading_from_time, loading_to_time, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, 
+                        maintenance_start_times, maintenance_durations, last_unloading_day, des_contract_ids):
     for vessel in data['vessels']:
         vessel_ids.append(vessel['id'])
         vessel_capacities[vessel['id']] = vessel['capacity']
@@ -102,8 +109,12 @@ def read_producer_vessels():
                             if maintenance_durations[maintenance_id]>(last_unloading_day-maintenance_start_date).days:
                                 maintenance_durations[maintenance_id] =(last_unloading_day-maintenance_start_date).days
                             maintenance_start_times[vessel['id']] = (maintenance_start_date-loading_from_time).days + maintenance_durations[maintenance_id]
+        
+    return vessel_ids, vessel_capacities, location_ports, port_locations, port_types, vessel_start_ports, vessel_location_acceptances, vessel_port_acceptances, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, vessel_boil_off_rate, vessel_available_days, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, maintenance_start_times, maintenance_durations
 
-def read_charter_vessels():
+
+def read_charter_vessels(data, loading_days, loading_from_time, loading_to_time, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, 
+                        charter_vessel_port_acceptances, des_contract_ids):
     for charter in data['charterVessels']:
         charter_vessel_id = charter['id']
         charter_vessel_loading_quantity = charter['quantity']
@@ -130,6 +141,8 @@ def read_charter_vessels():
                 for batch in data['contracts']:
                     if batch['id']==contract['contractId']:
                         charter_vessel_node_acceptances[charter['id']].append(contract['contractId'])
+    
+    return charter_vessel_id, charter_vessel_loading_quantity, charter_vessel_speed, charter_vessel_prices, charter_vessel_node_acceptances, charter_vessel_port_acceptances
 
 
 def calculate_charter_sailing_time(i, j, distances, port_locations, charter_vessel_speed):
