@@ -40,8 +40,12 @@ def initialize_maintenance_sets():
     return maintenance_ids, maintenance_vessels, maintenance_vessel_ports, maintenance_durations, maintenance_start_times, maintenance_end_times
 
 def initialize_charter_sets():
-    #Do we need these? Will need if we want to have the option of chartering in vessels of different sizes
-    return 0
+    charter_vessel_port_acceptances = {vessel['id']: [] for vessel in data['charterVessels']}
+    charter_vessel_node_acceptances = {vessel['id']: [] for vessel in data['charterVessels']}
+    charter_vessel_upper_capacity = CHARTER_VESSEL_UPPER_CAPACITY #max(upper_partition_demand.values())
+    charter_vessel_lower_capacity = CHARTER_VESSEL_LOWER_CAPACITY #min(lower_partition_demand.values()) #Sette inn i constants?
+    charter_vessel_prices = {}
+    return charter_vessel_port_acceptances, charter_vessel_node_acceptances, charter_vessel_upper_capacity, charter_vessel_lower_capacity, charter_vessel_prices
 
 def read_producer_vessels(data, vessel_ids, vessel_capacities, location_ports, port_locations, port_types, vessel_start_ports, vessel_location_acceptances,
                         vessel_port_acceptances, loading_port_ids, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, 

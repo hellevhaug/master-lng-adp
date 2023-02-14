@@ -41,6 +41,9 @@ def initialize_model(group, filename):
 
     # Charter vessels
 
+    # Initialize lists for charter vessels
+    charter_vessel_port_acceptances, charter_vessel_node_acceptances, charter_vessel_upper_capacity, charter_vessel_lower_capacity, charter_vessel_prices = initialize_charter_sets()
+
     charter_vessel_id, charter_vessel_loading_quantity, charter_vessel_speed, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, charter_vessel_port_acceptances = read_charter_vessels(data, loading_days, loading_from_time, loading_to_time, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, charter_vessel_port_acceptances, des_contract_ids)
 
     sailing_time_charter = {(i, j): calculate_charter_sailing_time(i,j) for i in loading_port_ids for j in (spot_port_ids+des_contract_ids)}
