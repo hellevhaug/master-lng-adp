@@ -26,7 +26,7 @@ last_day = loading_to_time
 def read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time):
     for contract in data['contracts']:
         last_unloading_day = loading_to_time
-        earliest_unloading_day = loading_to_time
+        earliest_unloading_day = loading_from_time
         des_contract_ids = []
         des_contract_revenues = {}
         des_contract_partitions = {}
@@ -47,10 +47,8 @@ def read_all_contracts(data, port_types, port_locations, location_ports, loading
         raise ValueError('There is duplicates in long-term FOB contracts, fix data')
 
     return unloading_port_ids, des_contract_ids, des_contract_revenues, des_contract_partitions, \
-    partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, \ 
-    des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port = 'NGBON', 
-unloading_days = {}
-last_day = loading_to_time
+    partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, \  
+    des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days = {}, last_day = loading_to_time
 
 
 def read_des_contract(contract, loading_from_time, des_contract_partitions, des_contract_revenues):
@@ -94,7 +92,7 @@ def read_des_contract(contract, loading_from_time, des_contract_partitions, des_
             price_start_time = (price_from_time-earliest_unloading_day).days
             for t in unloading_days[contract['id']]:
                 des_contract_revenues[contract['id'], t] = price['price']
-    return 0
+    return contract, des_contract_partitions, des_contract_revenues
 
 
 def read_fob_contract(data, contract, loading_from_time):
