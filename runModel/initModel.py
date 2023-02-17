@@ -123,7 +123,7 @@ def initialize_model(group, filename):
     name='artificial_node')
 
 
-    # Constraint 5.7
+    # Constraint 5.8
     model.addConstrs(init_upper_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, node_ids, loading_days,
     partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, upper_partition_demand, des_contract_ids, 
     des_contract_partitions), name='upper_demand')
@@ -132,21 +132,24 @@ def initialize_model(group, filename):
     partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, lower_partition_demand, des_contract_ids, 
     des_contract_partitions), name='lower_demand')
 
+    #Constraint 5.9 (Spread-constraints)
+    model.addConstrs()
 
-    # Constraint 5.8
+
+    # Constraint 5.10
     model.addConstrs(init_fob_max_contracts_constr(z, fob_days, fob_contract_ids), name='fob_max_contracts')
 
 
-    # Constraint 5.9
+    # Constraint 5.11
     model.addConstrs(init_fob_max_order_constr(z, fob_days, fob_spot_ids, fob_spot_art_port), name='fob_order')
 
 
-    # Constraint 5.11
+    # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, node_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
     fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
 
 
-    # Constraint 5.12 
+    # Constraint 5.13 
     model.addConstrs(init_charter_upper_capacity_constr(g, w, charter_vessel_upper_capacity, loading_port_ids, loading_days, 
     spot_port_ids, des_contract_ids), name='charter_upper_capacity')
 
