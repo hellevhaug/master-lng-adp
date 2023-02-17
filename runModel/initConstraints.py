@@ -1,5 +1,7 @@
 import gurobipy as gp
 
+## Basic model 
+
 # Initialize objective
 def init_objective(x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days, des_contract_revenues, vessel_capacities, vessel_boil_off_rate,
 vessel_ids, loading_port_ids, loading_days, spot_port_ids, all_days, sailing_time_charter, unloading_days, charter_boil_off, 
@@ -133,7 +135,7 @@ def init_spread_delivery_constraints(x, days_between_delivery, vessel_ids, des_c
         for j in des_contract_ids for t_ in unloading_days)
     return spread_delivery_constraints
 
-    #Must define P_j^MIN som nå heter days_between_delivery[j]
+    #Må definere P_j^MIN i datainnlesningen som nå heter 'days_between_delivery' og er indeksert med j
 
 
 # Initialize fob max contracts constraints
@@ -182,3 +184,28 @@ def init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, load
     for j in (spot_port_ids+des_contract_ids))
 
     return charter_lower_capacity_contraints
+
+
+## Extension 1 - Variable production 
+
+# Initialize lower production rate constraints
+
+def init_lower_prod_rate_constr(q, lower_prod_rate, loading_days, loading_port_ids):
+    lower_prod_rate_constr = 1
+
+    return lower_prod_rate_constr
+
+
+# Initialize upper production rate constraints
+def init_upper_prod_rate_constr(q, upper_prod_rate, loading_days, loading_port_ids):
+
+    upper_prod_rate_constr = 1
+
+    return upper_prod_rate_constr
+
+
+
+## Extension 2 - Chartering out own vessels 
+
+
+## Extension 3 - Split Deliveries 

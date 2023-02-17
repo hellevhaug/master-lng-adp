@@ -132,8 +132,10 @@ def initialize_model(group, filename):
     partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, lower_partition_demand, des_contract_ids, 
     des_contract_partitions), name='lower_demand')
 
-    #Constraint 5.9 (Spread-constraints)
-    model.addConstrs()
+
+    #Constraint 5.9 
+    model.addConstrs(init_spread_delivery_constraints(x, days_between_delivery, vessel_ids, des_contract_ids, loading_port_ids, 
+    unloading_days, loading_days, vessel_available_days), name='spread_delivery')
 
 
     # Constraint 5.10
