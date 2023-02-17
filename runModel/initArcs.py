@@ -7,7 +7,6 @@ from supportFiles.constants import *
 File containting function for creating arcs
 """
 
-
 # Initializing empty sets for arcs
 def init_arc_sets():
     arc_speeds = {}
