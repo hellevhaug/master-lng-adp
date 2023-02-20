@@ -7,7 +7,6 @@ from supportFiles.constants import *
 File containting function for creating arcs
 """
 
-
 # Initializing empty sets for arcs
 def init_arc_sets():
     arc_speeds = {}
@@ -60,7 +59,8 @@ def get_daily_fuel(speed, vessel, i, loading_port_ids, vessel_min_speed, vessel_
 # Finding maintenance arcs for vessels needing maintenance
 def get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vessel_available_days, maintenance_start_times, 
     maintenance_vessel_ports, distances, port_locations, maintenance_durations, vessel_max_speed, all_days, vessel_min_speed, arc_speeds, 
-    arc_waiting_times, arc_sailing_times, sailing_costs, loading_port_ids, unloading_days, allowed_waiting, operational_times, fuel_price):
+    arc_waiting_times, arc_sailing_times, sailing_costs, loading_port_ids, unloading_days, allowed_waiting, operational_times, fuel_price,
+    vessel_laden_speed_profile, vessel_ballast_speed_profile):
     maintenance_arcs = []
     for unloading in vessel_port_acceptances[vessel]:
         if des_contract_ids.__contains__(unloading):
@@ -76,7 +76,7 @@ def get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vess
                         arc_speeds[m_to_arc] = math.floor(estimated_speed)
                         arc_waiting_times[m_to_arc] = 0
                         arc_sailing_times[m_to_arc] = sailing_waiting_time
-                        sailing_costs[m_to_arc] = sailing_waiting_time*(get_daily_fuel(estimated_speed,vessel,unloading))*fuel_price
+                        sailing_costs[m_to_arc] = sailing_waiting_time*(get_daily_fuel(estimated_speed,vessel,unloading, loading_port_ids, vessel_min_speed, vessel_laden_speed_profile, vessel_ballast_speed_profile))*fuel_price
                         maintenance_arcs.append(m_to_arc)
                         if exit_arc not in maintenance_arcs:
                             maintenance_arcs.append(exit_arc)
@@ -88,7 +88,7 @@ def get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vess
                             arc_sailing_times[m_to_arc] = sailing_waiting_time-estimated_waiting
                             maintenance_arcs.append(m_to_arc)
                             arc_speeds[m_to_arc] = vessel_min_speed
-                            sailing_costs[m_to_arc] = (math.floor(distance/(vessel_min_speed[vessel]*24)))*(get_daily_fuel(vessel_min_speed[vessel], vessel, unloading))*fuel_price
+                            sailing_costs[m_to_arc] = (math.floor(distance/(vessel_min_speed[vessel]*24)))*(get_daily_fuel(vessel_min_speed[vessel], vessel, unloading, loading_port_ids, vessel_min_speed, vessel_laden_speed_profile, vessel_ballast_speed_profile))*fuel_price
                             maintenance_arcs.append(m_to_arc)
                             if exit_arc not in maintenance_arcs:
                                 maintenance_arcs.append(exit_arc)
@@ -111,7 +111,7 @@ def get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vess
                         arc_speeds[m_from_arc] = math.floor(estimated_speed)
                         arc_waiting_times[m_from_arc] = 0
                         arc_sailing_times[m_from_arc] = sailing_waiting_time
-                        sailing_costs[m_from_arc] = sailing_waiting_time*(get_daily_fuel(estimated_speed,vessel,maintenance_vessel_ports[vessel]))*fuel_price
+                        sailing_costs[m_from_arc] = sailing_waiting_time*(get_daily_fuel(estimated_speed,vessel,maintenance_vessel_ports[vessel], loading_port_ids, vessel_min_speed, vessel_laden_speed_profile, vessel_ballast_speed_profile))*fuel_price
                         maintenance_arcs.append(m_from_arc)
                     else: 
                         estimated_waiting = sailing_waiting_time-math.floor(distance/(vessel_min_speed[vessel]*24))
@@ -120,7 +120,7 @@ def get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vess
                             arc_sailing_times[m_from_arc] = sailing_waiting_time-estimated_waiting
                             maintenance_arcs.append(m_from_arc)
                             arc_speeds[m_from_arc] = vessel_min_speed[vessel]
-                            sailing_costs[m_from_arc] = (math.floor(distance/(vessel_min_speed[vessel]*24)))*(get_daily_fuel(vessel_min_speed[vessel], vessel, maintenance_vessel_ports[vessel]))*fuel_price
+                            sailing_costs[m_from_arc] = (math.floor(distance/(vessel_min_speed[vessel]*24)))*(get_daily_fuel(vessel_min_speed[vessel], vessel, maintenance_vessel_ports[vessel], loading_port_ids, vessel_min_speed, vessel_laden_speed_profile, vessel_ballast_speed_profile))*fuel_price
                         maintenance_arcs.append(m_from_arc)
                 
     maintenance_arcs = list(set(maintenance_arcs))
@@ -138,7 +138,8 @@ def set_external_data(data):
 def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
     maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
     spot_port_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
-    fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days):
+    fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days,
+    vessel_laden_speed_profile, vessel_ballast_speed_profile):
     feasible_arcs = []
     # Arc from artificial node
     feasible_arcs.append((vessel,'ART_START',0,vessel_start_ports[vessel], vessel_available_days[vessel][0]))
@@ -152,7 +153,8 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
     if maintenance_vessels.__contains__(vessel):
         maintenance_arcs = get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vessel_available_days, maintenance_start_times, 
     maintenance_vessel_ports, distances, port_locations, maintenance_durations, vessel_max_speed, all_days, vessel_min_speed, arc_speeds, 
-    arc_waiting_times, arc_sailing_times, sailing_costs, loading_port_ids, unloading_days, allowed_waiting, operational_times, fuel_price)
+    arc_waiting_times, arc_sailing_times, sailing_costs, loading_port_ids, unloading_days, allowed_waiting, operational_times, fuel_price,
+    vessel_laden_speed_profile, vessel_ballast_speed_profile)
         feasible_arcs.extend(maintenance_arcs)
     port_alternatives = {}
     for t in (vessel_available_days[vessel]+[vessel_available_days[vessel][-1]+1]):
@@ -189,7 +191,7 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
                                 arc_speeds[a] = math.floor(estimated_speed)
                                 arc_waiting_times[a] = 0
                                 arc_sailing_times[a] = sailing_waiting_time
-                                sailing_costs[a] = sailing_waiting_time*(get_daily_fuel(estimated_speed,vessel,i))*fuel_price
+                                sailing_costs[a] = sailing_waiting_time*(get_daily_fuel(estimated_speed,vessel,i, loading_port_ids, vessel_min_speed, vessel_laden_speed_profile, vessel_ballast_speed_profile))*fuel_price
                                 feasible_arcs.append(a)
                                 if (exit_arc not in feasible_arcs) and (not loading_port_ids.__contains__(j)):
                                     feasible_arcs.append(exit_arc)
@@ -202,7 +204,7 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
                                     arc_sailing_times[a] = sailing_waiting_time-estimated_waiting
                                     feasible_arcs.append(a)
                                     arc_speeds[a] = vessel_min_speed[vessel]
-                                    sailing_costs[a] = (math.floor(distance/(vessel_min_speed[vessel]*24)))*(get_daily_fuel(vessel_min_speed[vessel], vessel, i))*fuel_price
+                                    sailing_costs[a] = (math.floor(distance/(vessel_min_speed[vessel]*24)))*(get_daily_fuel(vessel_min_speed[vessel], vessel, i, loading_port_ids, vessel_min_speed, vessel_laden_speed_profile, vessel_ballast_speed_profile))*fuel_price
                                     if (exit_arc not in feasible_arcs) and (not loading_port_ids.__contains__(j)):
                                         feasible_arcs.append(exit_arc)
                                         sailing_costs[exit_arc]=0

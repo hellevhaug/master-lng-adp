@@ -1,10 +1,12 @@
 import gurobipy as gp
+from gurobipy import GRB
 import itertools
 
 from readData.readOtherData import *
 from readData.readContractData import *
 from readData.readLocationData import *
 from readData.readVesselData import *
+from readData.readSpotData import *
 from supportFiles.constants import *
 from runModel.initConstraints import *
 from runModel.initArcs import *
@@ -23,48 +25,66 @@ def initialize_model(group, filename):
 
     ## Initialize lists for locations and ports
     location_ids, location_names, location_types, location_ports, port_types, port_locations = initialize_location_sets() 
+    read_all_locations(data, location_ids, location_names)
+    unloading_locations_ids = [location for location in location_ids if location not in loading_port_ids]
+    set_unloading_ports(unloading_locations_ids, location_types, location_ports)
+
+    ## Initialize loading ports 
+    min_inventory, max_inventory, initial_inventory, number_of_berths, production_quantities, fake_fob_quantity, loading_port_fobs = initialize_loading_port_sets()
+    read_loading_ports(data, loading_port_ids, location_types, port_types, port_locations, location_ports, min_inventory, 
+                       max_inventory, initial_inventory, number_of_berths, loading_days, loading_port_fobs, production_quantities,
+                       fake_fob_quantity)
 
     ## Initialize lists for contracts
+    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+
+    ## Initalize distances 
+    distances = set_distances(data)
+
+    ## Initialize spot stuffz
+    spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
+
+    ## Initialize fake fob stuffz + set fob_operational_times
+    fob_spot_art_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity)
+    fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
 
     ## Initialize lists for vessels
     vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(data)
     vessel_start_ports,vessel_location_acceptances, vessel_port_acceptances = initialize_vessel_location_sets(data)
-    vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, vessel_boil_off_rate = initialize_vessel_speed_sets
-    maintenance_ids, maintenance_vessels, maintenance_vessel_ports, maintenance_durations, maintenance_start_times, maintenance_end_times  = initialize_maintenance_sets
+    vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, vessel_boil_off_rate = initialize_vessel_speed_sets()
+    maintenance_ids, maintenance_vessels, maintenance_vessel_ports, maintenance_durations, maintenance_start_times, maintenance_end_times  = initialize_maintenance_sets()
 
     # Producer vessels
-
     vessel_ids, vessel_capacities, location_ports, port_locations, port_types, vessel_start_ports, vessel_location_acceptances, vessel_port_acceptances, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, vessel_boil_off_rate, vessel_available_days, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, maintenance_start_times, maintenance_durations = read_producer_vessels(data, vessel_ids, vessel_capacities, location_ports, port_locations, port_types, vessel_start_ports, vessel_location_acceptances,
                         vessel_port_acceptances, loading_port_ids, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, 
                         vessel_boil_off_rate, vessel_available_days, loading_from_time, loading_to_time, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, 
                         maintenance_start_times, maintenance_durations, last_unloading_day, des_contract_ids)
 
+    # Now all ports is defined, should include DES-contracts, DES-spot, loading- and maintenance ports :')
+    port_ids = [port_id for port_id in port_locations]
+
     # Charter vessels
-
     # Initialize lists for charter vessels
-    charter_vessel_port_acceptances, charter_vessel_node_acceptances, charter_vessel_upper_capacity, charter_vessel_lower_capacity, charter_vessel_prices = initialize_charter_sets()
+    charter_vessel_port_acceptances, charter_vessel_node_acceptances, charter_vessel_upper_capacity, charter_vessel_lower_capacity, charter_vessel_prices = initialize_charter_sets(data)
 
-    charter_vessel_id, charter_vessel_loading_quantity, charter_vessel_speed, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, charter_vessel_port_acceptances = read_charter_vessels(data, loading_days, loading_from_time, loading_to_time, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, charter_vessel_port_acceptances, des_contract_ids)
+    charter_vessel_id, charter_vessel_loading_quantity, charter_vessel_speed, charter_vessel_prices, charter_vessel_node_acceptances, charter_vessel_port_acceptances = read_charter_vessels(data, loading_days, loading_from_time, loading_to_time, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, charter_vessel_port_acceptances, des_contract_ids)
 
-    sailing_time_charter = {(i, j): calculate_charter_sailing_time(i,j) for i in loading_port_ids for j in (spot_port_ids+des_contract_ids)}
-    charter_total_cost = {(i,t,j):sailing_time_charter[i,j]*charter_vessel_prices[t]*2 for i in loading_port_ids for j in des_contract_ids for t in loading_days}
+    sailing_time_charter = set_sailing_time_charter(loading_port_ids, spot_port_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
+    charter_total_cost = set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_port_ids, des_contract_ids, loading_days)
 
     ## Initializing arcs
     arc_speeds, arc_waiting_times, arc_sailing_times, sailing_costs, total_feasible_arcs = init_arc_sets()
-
     fuel_price, charter_boil_off, tank_leftover_value, allowed_waiting = set_external_data(data)
-
-
 
     # Setting operational times for vessel-port-combinations
     operational_times = {(v,i,j): set_operational_time(v,i,j, maintenance_ids, maintenance_durations) 
-    for v,i,j in list(itertools.product(vessel_ids, node_ids, node_ids))}
-
+    for v,i,j in list(itertools.product(vessel_ids, port_ids, port_ids))}
 
     vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
     maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
     spot_port_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
-    fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days) 
+    fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
+    vessel_ballast_speed_profile) 
     for vessel in vessel_ids}
 
 
@@ -115,7 +135,7 @@ def initialize_model(group, filename):
 
 
     # Constraint 5.6
-    model.addConstrs(init_flow_constr(x, all_days, vessel_ids, node_ids), name='flow')
+    model.addConstrs(init_flow_constr(x, all_days, vessel_ids, port_ids), name='flow')
 
 
     # Constraint 5.61
@@ -124,11 +144,11 @@ def initialize_model(group, filename):
 
 
     # Constraint 5.7
-    model.addConstrs(init_upper_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, node_ids, loading_days,
+    model.addConstrs(init_upper_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
     partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, upper_partition_demand, des_contract_ids, 
     des_contract_partitions), name='upper_demand')
 
-    model.addConstrs(init_lower_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, node_ids, loading_days,
+    model.addConstrs(init_lower_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
     partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, lower_partition_demand, des_contract_ids, 
     des_contract_partitions), name='lower_demand')
 
@@ -138,11 +158,11 @@ def initialize_model(group, filename):
 
 
     # Constraint 5.9
-    model.addConstrs(init_fob_max_order_constr(z, fob_days, fob_spot_ids, fob_spot_art_port), name='fob_order')
+    model.addConstrs(init_fob_max_order_constr(z, fob_days, fob_spot_ids, fob_spot_art_ports), name='fob_order')
 
 
     # Constraint 5.11
-    model.addConstrs(init_berth_constr(x, z, w, vessel_ids, node_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
+    model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
     fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
 
 
@@ -151,12 +171,12 @@ def initialize_model(group, filename):
     spot_port_ids, des_contract_ids), name='charter_upper_capacity')
 
     model.addConstrs(init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
-    spot_port_ids, des_contract_ids), name='charter_lower_capacity')
+    spot_port_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
 
     return model
 
 
-def initialize_model1(group, filename):
+def initialize_model_dummy(group, filename):
 
     # Finding out if it is data from Nigeria or Abu Dabi
     loading_port_ids = set_loading_port_ids(filename)
