@@ -191,7 +191,8 @@ def init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, load
 # Initialize lower production rate constraints
 
 def init_lower_prod_rate_constr(q, lower_prod_rate, loading_days, loading_port_ids):
-    lower_prod_rate_constr = 1
+    
+    lower_prod_rate_constr = (lower_prod_rate <= q[i, t] for i in loading_port_ids for t in loading_days)
 
     return lower_prod_rate_constr
 
@@ -199,13 +200,44 @@ def init_lower_prod_rate_constr(q, lower_prod_rate, loading_days, loading_port_i
 # Initialize upper production rate constraints
 def init_upper_prod_rate_constr(q, upper_prod_rate, loading_days, loading_port_ids):
 
-    upper_prod_rate_constr = 1
+    upper_prod_rate_constr = (q[i,t]<=upper_prod_rate for i in loading_port_ids for t in loading_port_ids)
 
     return upper_prod_rate_constr
 
 
-
 ## Extension 2 - Chartering out own vessels 
+
+# Initialize the objective function with the possibility of chartering out 
+
+def init_objective_extension2():
+    
+    objective_extension2 = ()
+
+    return objective_extension2
+
+# Initialize chartering out max one period constraints
+
+def init_charter_one_period_constr(x, all_days, node_ids, vessel_ids):
+    
+    charter_one_period_constr = (x.sum(v,'*','*', 0, '*') <= 1 for v in vessel_ids)
+
+    return charter_one_period_constr
+
+# Initialize charter flow constraints
+
+def init_charter_flow_constraints(x, vessel_ids, node_ids, loading_port_ids, all_days, loading_days):
+
+    charter_flow_constraints = (x.sum('*','*',t,0,t) == x.sum('*',0,t_,j,t_) for t in loading_days for j in loading_port_ids, for t_ in all_days)
+    
+    return charter_flow_constraints
+
+# Initialize minimum number of time periods charter in a row 
+
+def init_min_charter_time_constr(): 
+
+    min_charter_time_constr = 
+
+    return min_charter_time_constr
 
 
 ## Extension 3 - Split Deliveries 
