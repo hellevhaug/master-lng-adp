@@ -7,3 +7,4 @@ ALLOWED_WAITING = 7
 
 CHARTER_VESSEL_UPPER_CAPACITY = 180000
 CHARTER_VESSEL_LOWER_CAPACITY = 100000
+MINIMUM_CHARTER_PERIOD = 0 #Number of days a vessel at least must be chartered out (if chartered out)

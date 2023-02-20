@@ -189,7 +189,6 @@ def init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, load
 ## Extension 1 - Variable production 
 
 # Initialize lower production rate constraints
-
 def init_lower_prod_rate_constr(q, lower_prod_rate, loading_days, loading_port_ids):
     
     lower_prod_rate_constr = (lower_prod_rate <= q[i, t] for i in loading_port_ids for t in loading_days)
@@ -207,16 +206,33 @@ def init_upper_prod_rate_constr(q, upper_prod_rate, loading_days, loading_port_i
 
 ## Extension 2 - Chartering out own vessels 
 
-# Initialize the objective function with the possibility of chartering out 
+# Initialize the objective function with the possibility of chartering out
+#NB: charter revenue per vessel must be defined, the parameter is named: daily_charter_revenue and indexed with v
 
-def init_objective_extension2():
-    
-    objective_extension2 = ()
+def init_objective_extension_2(x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days, des_contract_revenues, vessel_capacities, vessel_boil_off_rate,
+vessel_ids, loading_port_ids, loading_days, spot_port_ids, all_days, sailing_time_charter, unloading_days, charter_boil_off, 
+tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, charter_total_cost, des_spot_ids, daily_charter_revenue):
 
-    return objective_extension2
+    objective_extension_2 = (gp.quicksum(fob_revenues[f,t]*fob_demands[f]*z[f,t] 
+    for f in fob_ids for t in fob_days[f]) + 
+    gp.quicksum(des_contract_revenues[j,t_]*vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_] 
+    for v in vessel_ids for i in loading_port_ids for t in loading_days for j in spot_port_ids for t_ in all_days 
+    if (v,i,t,j,t_) in x.keys()) + 
+    gp.quicksum(des_contract_revenues[j,min(t+sailing_time_charter[i,j], len(unloading_days[j]))]*g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off)
+    for i in loading_port_ids for j in spot_port_ids for t in unloading_days[j]) + 
+    gp.quicksum(tank_leftover_value[i]*s[i, len(loading_days)] for i in loading_port_ids) +
+    gp.quicksum(vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*des_contract_revenues[j,t_]*x[v,i,t,j,t_]
+    for j in des_contract_ids for v in vessel_ids for i in loading_port_ids for t in vessel_available_days[v] for t_ in unloading_days[j] # Left-hand sums
+    if (v,i,t,j,t_) in x.keys()) + 
+    gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off)*des_contract_revenues[j,t+sailing_time_charter[i,j]] 
+    for j in des_contract_ids for i in loading_port_ids for t in loading_days if (t+sailing_time_charter[i,j]) in unloading_days[j])-
+    gp.quicksum(sailing_costs[v,i,t,j,t_]*x[v,i,t,j,t_] for v,i,t,j,t_ in x.keys())-
+    gp.quicksum(charter_total_cost[i,t,j]*w[i,t,j] for i in loading_port_ids for t in loading_days for j in (des_contract_ids+des_spot_ids)))+
+    gp.quicksum(daily_charter_revenue[v]*x[v,0,t,0,t_] for v in vessel_ids for t in loading_days for t_ in unloading_days)
+
+    return objective_extension_2
 
 # Initialize chartering out max one period constraints
-
 def init_charter_one_period_constr(x, all_days, node_ids, vessel_ids):
     
     charter_one_period_constr = (x.sum(v,'*','*', 0, '*') <= 1 for v in vessel_ids)
@@ -224,7 +240,6 @@ def init_charter_one_period_constr(x, all_days, node_ids, vessel_ids):
     return charter_one_period_constr
 
 # Initialize charter flow constraints
-
 def init_charter_flow_constraints(x, vessel_ids, node_ids, loading_port_ids, all_days, loading_days):
 
     charter_flow_constraints = (x.sum('*','*',t,0,t) == x.sum('*',0,t_,j,t_) for t in loading_days for j in loading_port_ids, for t_ in all_days)
@@ -232,10 +247,9 @@ def init_charter_flow_constraints(x, vessel_ids, node_ids, loading_port_ids, all
     return charter_flow_constraints
 
 # Initialize minimum number of time periods charter in a row 
+def init_min_charter_time_constr(x, vessel_ids, all_days): 
 
-def init_min_charter_time_constr(): 
-
-    min_charter_time_constr = 
+    min_charter_time_constr = (x.sum(v,0,t,0,all_days[t+1:]+[all_days[-1]+1]) => MINIMUM_CHARTER_PERIOD for v in vessel_ids for t in all_days)
 
     return min_charter_time_constr
 
