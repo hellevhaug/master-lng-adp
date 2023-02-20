@@ -48,5 +48,4 @@ group1 = 'A-1L-60D'
 filename1 = 'A-1L-6U-11F-7V-60D-a'
 runtime = 60
 
-run_one_instance(group1, filename1, runtime)
-
+#run_one_instance(group1, filename1, runtime)
