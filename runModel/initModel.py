@@ -37,6 +37,7 @@ def initialize_model(group, filename):
 
     ## Initialize lists for contracts
     port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initalize distances 
     distances = set_distances(data)
@@ -66,8 +67,8 @@ def initialize_model(group, filename):
     # Charter vessels
     # Initialize lists for charter vessels
     charter_vessel_port_acceptances, charter_vessel_node_acceptances, charter_vessel_upper_capacity, charter_vessel_lower_capacity, charter_vessel_prices = initialize_charter_sets(data)
-
     charter_vessel_id, charter_vessel_loading_quantity, charter_vessel_speed, charter_vessel_prices, charter_vessel_node_acceptances, charter_vessel_port_acceptances = read_charter_vessels(data, loading_days, loading_from_time, loading_to_time, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, charter_vessel_port_acceptances, des_contract_ids)
+    minimum_charter_period = set_minimum_charter_time()
 
     sailing_time_charter = set_sailing_time_charter(loading_port_ids, spot_port_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
     charter_total_cost = set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_port_ids, des_contract_ids, loading_days)
@@ -146,13 +147,13 @@ def initialize_model(group, filename):
 
     # Constraint 5.8
     model.addConstrs(init_upper_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
-    partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, upper_partition_demand, des_contract_ids, 
+    partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, upper_partition_demand, des_contract_ids, des_spot_ids,
     des_contract_partitions), name='upper_demand')
 
     model.addConstrs(init_lower_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
-    partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, lower_partition_demand, des_contract_ids, 
+    partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, lower_partition_demand, des_contract_ids, des_spot_ids,
     des_contract_partitions), name='lower_demand')
-
+    
 
     #Constraint 5.9 
     model.addConstrs(init_spread_delivery_constraints(x, days_between_delivery, vessel_ids, des_contract_ids, loading_port_ids, 

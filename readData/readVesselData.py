@@ -153,3 +153,7 @@ def calculate_charter_sailing_time(i, j, distances, port_locations, charter_vess
     distance = distances[port_locations[i],port_locations[j]]
     time = np.ceil(distance/(charter_vessel_speed*24))
     return time
+
+
+def set_minimum_charter_time():
+    return MINIMUM_CHARTER_PERIOD

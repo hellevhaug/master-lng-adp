@@ -3,6 +3,7 @@ from datetime import datetime
 from readData.readOtherData import *
 from readData.readLocationData import *
 from readData.readVesselData import *
+from supportFiles.constants import *
 
 
 # Might want to generalize fob_loading_port = 'NGBON', can check method in last years' work
@@ -149,3 +150,6 @@ def read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, f
                     fob_revenues[partition['id'], t] = price['price']
 
     return fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days
+
+def set_minimum_days_between():
+    return MINIMUM_DAYS_BETWEEN_DELIVERY
