@@ -27,8 +27,8 @@ tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, cha
 
 
 # Initialize initial inventory constraints for loading ports 
-def init_initial_loading_inventory_constr(s, g, z, production_quantities, vessel_capacities, x, vessel_ids, des_contract_ids, all_days,
-fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory):
+def init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory):
 
     initial_loading_inventory_constraints = (s[i,t]==initial_inventory[i]+production_quantities[i,t]
     -gp.quicksum(vessel_capacities[v]*x[v,i,t,j,t_] 
@@ -42,8 +42,8 @@ fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory):
 
 
 # Initialize loading inventory constraints
-def init_loading_inventory_constr(s, g, z, production_quantities, vessel_capacities, x, vessel_ids, des_contract_ids, all_days,
-fob_demands, fob_ids, loading_port_ids, loading_days):
+def init_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days):
 
     loading_inventory_constraints = (s[i,t]==s[i,(t-1)]+production_quantities[i,t]-gp.quicksum(vessel_capacities[v]*x[v,i,t,j,t_] 
     for v in vessel_ids for j in des_contract_ids for t_ in all_days if (v,i,t,j,t_) in x.keys())
@@ -147,9 +147,9 @@ def init_fob_max_contracts_constr(z, fob_days, fob_contract_ids):
 
 
 # Initialize fob max order constraints
-def init_fob_max_order_constr(z, fob_days, fob_spot_ids, fob_spot_art_port):
+def init_fob_max_order_constr(z, fob_days, fob_spot_ids, fob_spot_art_ports):
 
-    fob_max_order_constraints = (z.sum(f,fob_days[f])<=1 for f in list(set(fob_spot_ids) - set([fob_spot_art_port])))
+    fob_max_order_constraints = (z.sum(f,fob_days[f])<=1 for f in list(set(fob_spot_ids) - set([fob_spot_art_ports.values()])))
 
     return fob_max_order_constraints
 

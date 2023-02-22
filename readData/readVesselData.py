@@ -39,11 +39,11 @@ def initialize_maintenance_sets():
     maintenance_end_times = {}
     return maintenance_ids, maintenance_vessels, maintenance_vessel_ports, maintenance_durations, maintenance_start_times, maintenance_end_times
 
-def initialize_charter_sets():
+def initialize_charter_sets(data):
     charter_vessel_port_acceptances = {vessel['id']: [] for vessel in data['charterVessels']}
     charter_vessel_node_acceptances = {vessel['id']: [] for vessel in data['charterVessels']}
-    charter_vessel_upper_capacity = CHARTER_VESSEL_UPPER_CAPACITY #max(upper_partition_demand.values())
-    charter_vessel_lower_capacity = CHARTER_VESSEL_LOWER_CAPACITY #min(lower_partition_demand.values()) #Sette inn i constants?
+    charter_vessel_upper_capacity = CHARTER_VESSEL_UPPER_CAPACITY 
+    charter_vessel_lower_capacity = CHARTER_VESSEL_LOWER_CAPACITY
     charter_vessel_prices = {}
     return charter_vessel_port_acceptances, charter_vessel_node_acceptances, charter_vessel_upper_capacity, charter_vessel_lower_capacity, charter_vessel_prices
 
