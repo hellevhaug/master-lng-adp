@@ -5,18 +5,19 @@ import datetime
 from supportFiles.convertVars import *
 
 
-def set_info_dict(group, filename, runtime, now):
+def set_info_dict(group, filename, runtime, now, modelType):
     info_dict = {}
     info_dict['Group'] = group
     info_dict['Filename'] = filename
     info_dict['Runtime'] = runtime
+    info_dict['Model type'] = modelType
     now = datetime.datetime.now()
     info_dict['Current time'] = now.strftime("%Y-%m-%d %H:%M:%S")
     
     return info_dict
 
 
-def write_to_json(group, filename, runtime, x, s, g, z):
+def write_to_json(group, filename, runtime, x, s, g, z, modelType):
 
     folder = f'jsonFiles/{group}/{filename}'
     
@@ -33,6 +34,6 @@ def write_to_json(group, filename, runtime, x, s, g, z):
     
     with open(path, 'a') as f:
         main_dict = {}
-        main_dict['info'] = set_info_dict(group, filename, runtime, now)
+        main_dict['info'] = set_info_dict(group, filename, runtime, now, modelType)
         main_dict['vars'] = aggregate_vars_to_dict(x,s,g,z)
         json.dump(main_dict, f, indent=3)

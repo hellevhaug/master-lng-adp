@@ -130,19 +130,24 @@ def init_lower_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vess
 
 
 # Initialize spread constraints
-def init_spread_delivery_constraints(x, days_between_delivery, vessel_ids, des_contract_ids, loading_port_ids, unloading_days, loading_days, vessel_available_days):
-
-    print(unloading_days)
-    print(days_between_delivery)
+def init_spread_delivery_constraints_old(x, days_between_delivery, vessel_ids, des_contract_ids, loading_port_ids, unloading_days, loading_days, vessel_available_days):
 
     spread_delivery_constraints = (
         x.sum(vessel_ids,loading_days,vessel_available_days, j, unloading_days[j][t_+1:]+[t_+days_between_delivery[j]]) <= 1
-        for j in des_contract_ids for t_ in unloading_days)
+        for j in des_contract_ids for t_ in unloading_days[j])
     return spread_delivery_constraints
 
-    #Må definere P_j^MIN i datainnlesningen som nå heter 'days_between_delivery' og er indeksert med j
 
+def init_spread_delivery_constraints(x, vessel_ids, loading_port_ids, vessel_available_days, des_contract_ids, unloading_days,
+    days_between_delivery, des_spot_ids):
+    spread_delivery_constraints = (gp.quicksum(x[v,i,t,j,tau] for v in vessel_ids for i in loading_port_ids 
+    for t in vessel_available_days[v] for tau in unloading_days[j][(t_-1):(t_-1)+days_between_delivery[j]] 
+    if (v,i,t,j,tau) in x.keys()) <= 1 
+    for j in (des_contract_ids+des_spot_ids) for t_ in unloading_days[j][:len(unloading_days[j])+1-days_between_delivery[j]])
 
+    return spread_delivery_constraints
+
+    
 # Initialize fob max contracts constraints
 def init_fob_max_contracts_constr(z, fob_days, fob_contract_ids):
 
@@ -196,7 +201,7 @@ def init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, load
 # Initialize lower production rate constraints
 def init_lower_prod_rate_constr(q, lower_prod_rate, loading_days, loading_port_ids):
     
-    lower_prod_rate_constr = (lower_prod_rate <= q[i, t] for i in loading_port_ids for t in loading_days)
+    lower_prod_rate_constr = (lower_prod_rate[i] <= q[i, t] for i in loading_port_ids for t in loading_days)
 
     return lower_prod_rate_constr
 
@@ -204,7 +209,7 @@ def init_lower_prod_rate_constr(q, lower_prod_rate, loading_days, loading_port_i
 # Initialize upper production rate constraints
 def init_upper_prod_rate_constr(q, upper_prod_rate, loading_days, loading_port_ids):
 
-    upper_prod_rate_constr = (q[i,t]<=upper_prod_rate for i in loading_port_ids for t in loading_port_ids)
+    upper_prod_rate_constr = (q[i,t]<= upper_prod_rate[i] for i in loading_port_ids for t in loading_days)
 
     return upper_prod_rate_constr
 
