@@ -2,7 +2,7 @@ import os
 import datetime
 
 """
-File for writing to csv
+File for writing to txt
 """
 
 def write_to_txt(group, filename, runtime, x, s, g, z):
