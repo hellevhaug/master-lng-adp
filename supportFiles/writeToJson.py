@@ -25,7 +25,8 @@ def write_to_json(group, filename, runtime, x, s, g, z):
         raise FileNotFoundError('This path does not exists, you should check the json-log-folders')
     
     now = datetime.datetime.now()
-    path = f'{folder}/{now.strftime("%m-%d-%Y %H:%M")}.json'
+    filename = now.strftime("%m-%d-%Y, %H-%M")
+    path = f'{folder}/{filename}.json'
     
     with open(path, "x") as init_json:
             pass
