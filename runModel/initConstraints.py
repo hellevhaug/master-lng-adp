@@ -132,8 +132,11 @@ def init_lower_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vess
 # Initialize spread constraints
 def init_spread_delivery_constraints(x, days_between_delivery, vessel_ids, des_contract_ids, loading_port_ids, unloading_days, loading_days, vessel_available_days):
 
+    print(unloading_days)
+    print(days_between_delivery)
+
     spread_delivery_constraints = (
-        x.sum(vessel_ids,loading_days,vessel_available_days, j, unloading_days[t_+1:]+[t_+days_between_delivery[j]]) <= 1
+        x.sum(vessel_ids,loading_days,vessel_available_days, j, unloading_days[j][t_+1:]+[t_+days_between_delivery[j]]) <= 1
         for j in des_contract_ids for t_ in unloading_days)
     return spread_delivery_constraints
 
