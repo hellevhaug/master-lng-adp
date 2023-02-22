@@ -145,7 +145,7 @@ def initialize_model(group, filename):
 
 
     # Constraint 5.8
-    model.addConstrs(init_upper_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, node_ids, loading_days,
+    model.addConstrs(init_upper_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
     partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, upper_partition_demand, des_contract_ids, 
     des_contract_partitions), name='upper_demand')
 
@@ -164,11 +164,11 @@ def initialize_model(group, filename):
 
 
     # Constraint 5.11
-    model.addConstrs(init_fob_max_order_constr(z, fob_days, fob_spot_ids, fob_spot_art_port), name='fob_order')
+    model.addConstrs(init_fob_max_order_constr(z, fob_days, fob_spot_ids, fob_spot_art_ports), name='fob_order')
 
 
     # Constraint 5.12
-    model.addConstrs(init_berth_constr(x, z, w, vessel_ids, node_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
+    model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
     fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
 
 
@@ -181,7 +181,7 @@ def initialize_model(group, filename):
 
     return model # This line must be moved to activate the extensions
 
-
+'''
 
     ## Extension 1 - Variable production 
     
@@ -237,8 +237,7 @@ def initialize_model(group, filename):
 
     ## Extension 3 - Split Deliveries 
 
-
-
+'''
 
 def initialize_model_dummy(group, filename):
 
