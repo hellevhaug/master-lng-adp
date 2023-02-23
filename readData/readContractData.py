@@ -3,6 +3,7 @@ from datetime import datetime
 from readData.readOtherData import *
 from readData.readLocationData import *
 from readData.readVesselData import *
+from supportFiles.constants import *
 
 
 # Might want to generalize fob_loading_port = 'NGBON', can check method in last years' work
@@ -34,7 +35,7 @@ def read_all_contracts(data, port_types, port_locations, location_ports, loading
     for contract in data['contracts']:
 
         last_unloading_day = loading_to_time
-        earliest_unloading_day = loading_from_time
+        earliest_unloading_day = loading_to_time
 
         if contract['id'][:3]=='DES':
 
@@ -61,7 +62,7 @@ def read_all_contracts(data, port_types, port_locations, location_ports, loading
         raise ValueError('There is duplicates in long-term FOB contracts, fix data')
     
     last_unloading_day = last_day
-    last_day = (last_day-loading_from_time).days
+    last_day = (last_day-loading_from_time).days + 1
     all_days = [i for i in range(1, last_day+1)]
 
     return port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days
@@ -72,15 +73,18 @@ lower_partition_demand, unloading_days, des_biggest_demand, des_biggest_partitio
 des_contract_partitions, earliest_unloading_day, last_unloading_day):
     
     for partition in contract['desRequests']:
+        #Demand and stuff
         des_contract_partitions[contract['id']].append(partition['id'])
         partition_names[partition['id']] = partition['name']
         upper_partition_demand[contract['id'], partition['id']] = partition['quantity']
         lower_partition_demand[contract['id'], partition['id']] = partition['minQuantity']
         
+        # Biggest demand
         if (partition['minQuantity']> des_biggest_demand[contract['id']]):
             des_biggest_demand[contract['id']] = partition['minQuantity']
             des_biggest_partition[contract['id']] = partition['id']
        
+        # 
         partition_from_time = datetime.strptime(partition['from'].split('T')[0], '%Y-%m-%d') # Start time of contract
         if partition_from_time < earliest_unloading_day:
             earliest_unloading_day = partition_from_time
@@ -102,8 +106,8 @@ des_contract_partitions, earliest_unloading_day, last_unloading_day):
     if(last_unloading_day>last_day):
         last_day=last_unloading_day
     
-    unloading_days[contract['id']] = [i for i in range((earliest_unloading_day-loading_from_time).days,
-    (earliest_unloading_day-loading_from_time).days + (last_unloading_day-earliest_unloading_day).days)]
+    unloading_days[contract['id']] = [i for i in range((earliest_unloading_day-loading_from_time).days + 1,
+    (earliest_unloading_day-loading_from_time).days + 2 + (last_unloading_day-earliest_unloading_day).days)]
     
     if len(contract['salesPrices'])==1:
         for t in unloading_days[contract['id']]:
@@ -149,3 +153,6 @@ def read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, f
                     fob_revenues[partition['id'], t] = price['price']
 
     return fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days
+
+def set_minimum_days_between():
+    return MINIMUM_DAYS_BETWEEN_DELIVERY

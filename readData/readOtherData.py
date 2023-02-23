@@ -32,7 +32,7 @@ def read_planning_horizion(data):
 
     loading_from_time = datetime.strptime(data['forecast']['fromDateTime'].split('T')[0], '%Y-%m-%d')
     loading_to_time = datetime.strptime(data['forecast']['toDateTime'].split('T')[0], '%Y-%m-%d')
-    loading_days = [i for i in range(1,(loading_to_time-loading_from_time).days+1)]
+    loading_days = [i for i in range(1,(loading_to_time-loading_from_time).days+2)]
     
     return loading_from_time, loading_to_time, loading_days
 

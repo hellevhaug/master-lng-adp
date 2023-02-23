@@ -83,7 +83,7 @@ def read_producer_vessels(data, vessel_ids, vessel_capacities, location_ports, p
         vessel_start_time =(vessel_from_time-loading_from_time).days
         if vessel_to_time > loading_to_time: # If defined after planning period
             vessel_to_time  = loading_to_time
-        vessel_delta_time = (vessel_to_time-vessel_from_time).days
+        vessel_delta_time = (vessel_to_time-vessel_from_time).days+1
         vessel_available_days[vessel['id']] = [
             i for i in range(vessel_start_time+1,vessel_start_time+vessel_delta_time+1)]
         if len(vessel_available_days[vessel['id']])==0:
@@ -110,9 +110,9 @@ def read_producer_vessels(data, vessel_ids, vessel_capacities, location_ports, p
                             if (last_unloading_day-maintenance_start_date).days<0:
                                 raise ValueError('Maintenance starts after the last unloading day, fix data')
                             maintenance_durations[maintenance_id] = maintenance['duration']
-                            if maintenance_durations[maintenance_id]>(last_unloading_day-maintenance_start_date).days:
-                                maintenance_durations[maintenance_id] =(last_unloading_day-maintenance_start_date).days
-                            maintenance_start_times[vessel['id']] = (maintenance_start_date-loading_from_time).days + maintenance_durations[maintenance_id]
+                            if maintenance_durations[maintenance_id]>(last_unloading_day-maintenance_start_date).days +1 :
+                                maintenance_durations[maintenance_id] =(last_unloading_day-maintenance_start_date).days +1
+                            maintenance_start_times[vessel['id']] = (maintenance_start_date-loading_from_time).days + 1 + maintenance_durations[maintenance_id]
         
     return vessel_ids, vessel_capacities, location_ports, port_locations, port_types, vessel_start_ports, vessel_location_acceptances, vessel_port_acceptances, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, vessel_boil_off_rate, vessel_available_days, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, maintenance_start_times, maintenance_durations
 
@@ -153,3 +153,7 @@ def calculate_charter_sailing_time(i, j, distances, port_locations, charter_vess
     distance = distances[port_locations[i],port_locations[j]]
     time = np.ceil(distance/(charter_vessel_speed*24))
     return time
+
+
+def set_minimum_charter_time():
+    return MINIMUM_CHARTER_PERIOD
