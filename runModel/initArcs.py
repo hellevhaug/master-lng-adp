@@ -150,6 +150,8 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
     sailing_costs[(vessel,'ART_START',0,'ART_START',all_days[-1]+1)] = 0
     arc_sailing_times[(vessel,0,0,0,all_days[-1]+1)]=0
     # exit_arcs[vessel].append((vessel,0,0,0,all_days[-1]+1))
+    charter_out_arcs = get_charter_out_arcs(vessel, loading_port_ids,des_contract_ids, maintenance_ids, sailing_costs, loading_days)
+    feasible_arcs.extend(charter_out_arcs)
     if maintenance_vessels.__contains__(vessel):
         maintenance_arcs = get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vessel_available_days, maintenance_start_times, 
     maintenance_vessel_ports, distances, port_locations, maintenance_durations, vessel_max_speed, all_days, vessel_min_speed, arc_speeds, 
@@ -214,3 +216,25 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
     print(vessel + ' number of arcs:' +str(len(feasible_arcs)))
     total_feasible_arcs.extend(feasible_arcs)
     return feasible_arcs
+
+
+
+def get_charter_out_arcs(vessel, loading_port_ids,des_contract_ids, maintenance_ids, sailing_costs, loading_days):
+
+    charter_out_arcs=[]
+
+    for t in loading_days:
+        depop_charter_out_arc = (vessel, 0, t, 0, t+1)
+        sailing_costs[depop_charter_out_arc] = 0
+        charter_out_arcs.append(depop_charter_out_arc)
+        for i in (des_contract_ids+maintenance_ids):
+            in_charter_out_arc = (vessel, i, t, 0, t)
+            sailing_costs[in_charter_out_arc] = 0
+            charter_out_arcs.append(in_charter_out_arc)
+        for j in loading_port_ids:
+            out_charter_out_arc =(vessel, 0, t, j, t)
+            sailing_costs[out_charter_out_arc] = 0
+            charter_out_arcs.append(out_charter_out_arc)
+    charter_out_arcs = list(set(charter_out_arcs))
+
+    return charter_out_arcs
