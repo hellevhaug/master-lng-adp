@@ -159,6 +159,8 @@ def init_fob_max_contracts_constr(z, fob_days, fob_contract_ids):
 # Initialize fob max order constraints
 def init_fob_max_order_constr(z, fob_days, fob_spot_ids, fob_spot_art_ports):
 
+    print(fob_spot_art_ports.values())
+
     fob_max_order_constraints = (z.sum(f,fob_days[f])<=1 for f in list(set(fob_spot_ids) - set([fob_spot_art_ports.values()])))
 
     return fob_max_order_constraints
