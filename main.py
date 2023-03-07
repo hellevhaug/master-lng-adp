@@ -20,7 +20,7 @@ def run_one_instance_basic(group, filename, runtime):
     # write_to_txt(group, filename, runtime, x, s, g, z)
 
     # Writing variables to json-file
-    write_to_json(group, filename, runtime, x, s, g, z, 'Basic model with minimum spread')
+    write_to_json_basic(group, filename, runtime, x, s, g, z, 'Basic model with minimum spread')
     
 
 # Running all instances in a group, not testet yet 
@@ -45,13 +45,13 @@ def run_one_instance_variable_production(group, filename, runtime):
     model = run_variable_production_model(group, filename, runtime, f'Running file: {filename}')
 
     # Converting gurobi variables to dictionaries, because they are easier to work with
-    x,s,g,z = convert_vars_to_dicts(model)
+    x,s,g,z,q = convert_vars_to_dicts(model)
 
     # Writing to txt-file, not necessary per now
     # write_to_txt(group, filename, runtime, x, s, g, z)
 
     # Writing variables to json-file
-    write_to_json(group, filename, runtime, x, s, g, z, 'Model with variable production')
+    write_to_json_variable_prod(group, filename, runtime, x, s, g, z, q, 'Model with variable production')
 
 
 """
@@ -64,6 +64,5 @@ filename1 = 'A-1L-6U-11F-12V-60D-b'
 runtime = 60*5
 
 #run_one_instance_basic(group1, filename1, runtime)
-run_one_instance_basic(group1, filename1, runtime)
-#run_one_instance_variable_production(group1, filename1, runtime)
+run_one_instance_variable_production(group1, filename1, runtime)
 
