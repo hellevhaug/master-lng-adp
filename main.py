@@ -10,6 +10,8 @@ from supportFiles.convertVars import *
 def run_one_instance_basic(group, filename, runtime):
     # Running the model with given group, filename and runtime (including logging the file, this is done in run_model)
     model = run_basic_model(group, filename, runtime, f'Running file: {filename}')
+    #model.computeIIS()
+    #model.write('solution.ilp')
 
     # Converting gurobi variables to dictionaries, because they are easier to work with
     x,s,g,z = convert_vars_to_dicts(model)
@@ -58,10 +60,10 @@ Call whatever functions you'll like below here
 
 # An example for how to run the code 
 group1 = 'A-1L-60D'
-filename1 = 'A-1L-6U-11F-7V-60D-a'
+filename1 = 'A-1L-6U-11F-12V-60D-b'
 runtime = 60*5
 
 #run_one_instance_basic(group1, filename1, runtime)
 run_one_instance_basic(group1, filename1, runtime)
-run_one_instance_variable_production(group1, filename1, runtime)
+#run_one_instance_variable_production(group1, filename1, runtime)
 

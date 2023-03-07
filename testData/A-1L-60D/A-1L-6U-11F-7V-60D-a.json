@@ -174,7 +174,7 @@
                                 "minSafeLimit": 50000,
                                 "name": "FU Storage",
                                 "production": [
-                                    {"datetime": "2020-10-01T00:00:00",	"rate": 40000}	
+                                    {"datetime": "2020-10-01T00:00:00",	"rate": 90000}	
                                 ],
                                 "tankLevel": [
                                     {
@@ -201,50 +201,6 @@
                     },
                     "id": "FU",
                     "name": "Fujairah",
-                    "pilotIn": 2.5,
-                    "pilotOut": 2.5
-                },
-                {"export": {
-                        "berths": [
-                            {
-                                "id": "DI-1",
-                                "name": "DI berth 1"
-                            }
-                        ],
-                        "priority": "FIFO",
-                        "storages": [
-                            {
-                                "allowProductionCurtailment": false,
-                                "id": "DI",
-                                "inventoryTarget": 0,
-                                "defaultLoadingQuantity":150000,
-                                "maxLimit": 250000,
-                                "maxSafeLimit": 250000,
-                                "minLimit": 0,
-                                "minSafeLimit": 30000,
-                                "name": "DI Storage",
-                                "production": [
-                                    {"datetime": "2020-10-01T00:00:00",	"rate": 20000}	
-                                ],
-                                "tankLevel": [
-                                    {
-                                        "datetime": "2020-10-01T00:00:00",
-                                        "level": 100000
-                                    }
-                                ],							
-                                "compatibleBerths":[
-                                {
-                                    "berthId": "DI-1",
-                                    "loadRate": 12000,
-                                    "connection": 5,
-                                    "disconnection": 3
-                                }
-                                ]
-                            }
-                        ]
-                    },
-                    "id": "DI",
-                    "name": "Das Island",
                     "pilotIn": 2.5,
                     "pilotOut": 2.5
                 }
