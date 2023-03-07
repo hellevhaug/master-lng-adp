@@ -157,3 +157,13 @@ def calculate_charter_sailing_time(i, j, distances, port_locations, charter_vess
 
 def set_minimum_charter_time():
     return MINIMUM_CHARTER_PERIOD
+
+def set_charter_out_friction():
+    return CHARTER_OUT_FRICTION
+
+def scale_charter_out_prices(charter_vessel_prices, charter_out_friction):
+    scaled_charter_out_prices = charter_vessel_prices.copy()
+    for t in charter_vessel_prices.keys():
+        scaled_charter_out_prices[t] = charter_vessel_prices[t]*charter_out_friction
+    
+    return scaled_charter_out_prices

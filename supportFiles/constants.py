@@ -12,3 +12,8 @@ CHARTER_VESSEL_LOWER_CAPACITY = 100000
 MINIMUM_CHARTER_PERIOD = 60 #Number of days a vessel at least must be chartered out (if chartered out)
 MINIMUM_DAYS_BETWEEN_DELIVERY = 4
 PRODUCTION_SCALE_RATE = 0.3
+CHARTER_OUT_FRICTION = 0.05
+
+BASIC_MODEL = 'basic'
+VARIABLE_PRODUCTION_MODEL = 'variableProduction'
+CHARTER_OUT_MODEL = 'charterOut'

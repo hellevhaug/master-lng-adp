@@ -5,6 +5,7 @@ from runModel.initModel import *
 from supportFiles.writeToTxt import *
 from supportFiles.writeToJson import *
 from supportFiles.convertVars import *
+from supportFiles.constants import *
 
 
 def run_one_instance_basic(group, filename, runtime):
@@ -14,13 +15,54 @@ def run_one_instance_basic(group, filename, runtime):
     #model.write('solution.ilp')
 
     # Converting gurobi variables to dictionaries, because they are easier to work with
-    x,s,g,z = convert_vars_to_dicts(model)
+    x,s,g,z,q,y = convert_vars_to_dicts(model)
 
     # Writing to txt-file, not necessary per now
     # write_to_txt(group, filename, runtime, x, s, g, z)
 
     # Writing variables to json-file
-    write_to_json_basic(group, filename, runtime, x, s, g, z, 'Basic model with minimum spread')
+    write_to_json(group, filename, runtime, x, s, g, z, q, y, 'Basic model with minimum spread')
+
+
+def run_one_instance_variable_production(group, filename, runtime):
+    # Running the model with given group, filename and runtime (including logging the file, this is done in run_model)
+    model = run_variable_production_model(group, filename, runtime, f'Running file: {filename}')
+
+    # Converting gurobi variables to dictionaries, because they are easier to work with
+    x,s,g,z,q,y = convert_vars_to_dicts(model)
+
+    # Writing to txt-file, not necessary per now
+    # write_to_txt(group, filename, runtime, x, s, g, z)
+
+    # Writing variables to json-file
+    write_to_json(group, filename, runtime, x, s, g, z, q, y, 'Model with variable production')
+
+
+def run_one_instance_charter_out(group, filename, runtime):
+    # Running the model with given group, filename and runtime (including logging the file, this is done in run_model)
+    model = run_charter_out_model(group, filename, runtime, f'Running file: {filename}')
+
+    # Converting gurobi variables to dictionaries, because they are easier to work with
+    x,s,g,z,q,y = convert_vars_to_dicts(model)
+
+    # Writing to txt-file, not necessary per now
+    # write_to_txt(group, filename, runtime, x, s, g, z)
+
+    # Writing variables to json-file
+    write_to_json(group, filename, runtime, x, s, g, z, q, y,'Model with chartering out')
+
+
+def run_one_instance(group, filename, runtime, modelType):
+
+    if modelType=='basic':
+        run_one_instance_basic(group, filename, runtime)
+    elif modelType=='variableProduction':
+        run_one_instance_variable_production(group, filename, runtime)
+    elif modelType=='charterOut':
+        run_one_instance_charter_out(group, filename, runtime)
+    else:
+        raise ValueError('Uknown model type for running')
+
     
 
 # Running all instances in a group, not testet yet 
@@ -40,19 +82,6 @@ def test_init_basic_model(group, filename):
     model = initialize_basic_model(group, filename)
     return model
 
-def run_one_instance_variable_production(group, filename, runtime):
-    # Running the model with given group, filename and runtime (including logging the file, this is done in run_model)
-    model = run_variable_production_model(group, filename, runtime, f'Running file: {filename}')
-
-    # Converting gurobi variables to dictionaries, because they are easier to work with
-    x,s,g,z,q = convert_vars_to_dicts(model)
-
-    # Writing to txt-file, not necessary per now
-    # write_to_txt(group, filename, runtime, x, s, g, z)
-
-    # Writing variables to json-file
-    write_to_json_variable_prod(group, filename, runtime, x, s, g, z, q, 'Model with variable production')
-
 
 """
 Call whatever functions you'll like below here
@@ -60,9 +89,13 @@ Call whatever functions you'll like below here
 
 # An example for how to run the code 
 group1 = 'A-1L-60D'
-filename1 = 'A-1L-6U-11F-12V-60D-b'
-runtime = 60*5
+filename1 = 'A-1L-6U-11F-7V-60D-a'
+#group1 = 'N-1L-60D'
+#filename1 = 'N-1L-5U-21F-18V-60D-c'
+runtime = 60*2
+modelType = CHARTER_OUT_MODEL
 
-#run_one_instance_basic(group1, filename1, runtime)
-run_one_instance_variable_production(group1, filename1, runtime)
+run_one_instance(group1, filename1, runtime, modelType)
+
+
 

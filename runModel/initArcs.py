@@ -71,7 +71,7 @@ def get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vess
                 sailing_waiting_time = maintenance_start_times[vessel]-t-operational_time
                 if ((sailing_waiting_time>0) and (distance/(sailing_waiting_time*24) <= vessel_max_speed[vessel])):
                     estimated_speed = distance/(sailing_waiting_time*24)
-                    exit_arc = (vessel,maintenance_vessel_ports[vessel],maintenance_start_times[vessel],0,all_days[-1]+1)
+                    exit_arc = (vessel,maintenance_vessel_ports[vessel],maintenance_start_times[vessel],'EXIT_PORT',all_days[-1]+1)
                     if estimated_speed >= vessel_min_speed[vessel]:
                         arc_speeds[m_to_arc] = math.floor(estimated_speed)
                         arc_waiting_times[m_to_arc] = 0
@@ -95,7 +95,7 @@ def get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vess
                                 sailing_costs[exit_arc]=0
     for loading in loading_port_ids:
         if maintenance_start_times[vessel]==all_days[-1]:
-            exit_arc = (vessel,maintenance_vessel_ports[vessel],all_days[-1],0,all_days[-1]+1)
+            exit_arc = (vessel,maintenance_vessel_ports[vessel],all_days[-1],'EXIT_PORT',all_days[-1]+1)
             if exit_arc not in maintenance_arcs:
                 maintenance_arcs.append(exit_arc)
                 sailing_costs[exit_arc]=0
@@ -139,23 +139,26 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
     maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
     spot_port_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
     fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days,
-    vessel_laden_speed_profile, vessel_ballast_speed_profile):
+    vessel_laden_speed_profile, vessel_ballast_speed_profile, modelType):
     feasible_arcs = []
     # Arc from artificial node
-    feasible_arcs.append((vessel,'ART_START',0,vessel_start_ports[vessel], vessel_available_days[vessel][0]))
-    sailing_costs[(vessel,'ART_START',0,vessel_start_ports[vessel], vessel_available_days[vessel][0])] = 0
-    arc_sailing_times[(vessel,'ART_START',0,vessel_start_ports[vessel], vessel_available_days[vessel][0])] = 0
+    feasible_arcs.append((vessel,'ART_PORT',0,vessel_start_ports[vessel], vessel_available_days[vessel][0]))
+    sailing_costs[(vessel,'ART_PORT',0,vessel_start_ports[vessel], vessel_available_days[vessel][0])] = 0
+    arc_sailing_times[(vessel,'ART_PORT',0,vessel_start_ports[vessel], vessel_available_days[vessel][0])] = 0
     # Arc indicating that a vessel is not used
-    feasible_arcs.append((vessel,'ART_START',0,'ART_START',all_days[-1]+1))
-    sailing_costs[(vessel,'ART_START',0,'ART_START',all_days[-1]+1)] = 0
-    arc_sailing_times[(vessel,0,0,0,all_days[-1]+1)]=0
-    # exit_arcs[vessel].append((vessel,0,0,0,all_days[-1]+1))
+    feasible_arcs.append((vessel,'ART_PORT',0,'EXIT_PORT',all_days[-1]+1))
+    sailing_costs[(vessel,'ART_PORT',0,'EXIT_PORT',all_days[-1]+1)] = 0
+    arc_sailing_times[(vessel,'ART_PORT',0,'EXIT_PORT',all_days[-1]+1)]=0
     if maintenance_vessels.__contains__(vessel):
         maintenance_arcs = get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vessel_available_days, maintenance_start_times, 
     maintenance_vessel_ports, distances, port_locations, maintenance_durations, vessel_max_speed, all_days, vessel_min_speed, arc_speeds, 
     arc_waiting_times, arc_sailing_times, sailing_costs, loading_port_ids, unloading_days, allowed_waiting, operational_times, fuel_price,
     vessel_laden_speed_profile, vessel_ballast_speed_profile)
         feasible_arcs.extend(maintenance_arcs)
+    if modelType == 'charterOut':
+        charter_out_arcs = get_charter_out_arcs(vessel, loading_days, sailing_costs, des_contract_ids, maintenance_ids,
+                            loading_port_ids,vessel_available_days)
+        feasible_arcs.extend(charter_out_arcs)
     port_alternatives = {}
     for t in (vessel_available_days[vessel]+[vessel_available_days[vessel][-1]+1]):
         port_alternatives[t] = []
@@ -186,7 +189,7 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
                         sailing_waiting_time = t_-t-arc_operational_time
                         if ((sailing_waiting_time>0) and (distance/(sailing_waiting_time*24) <= vessel_max_speed[vessel])):
                             estimated_speed = distance/(sailing_waiting_time*24)
-                            exit_arc = (vessel,j,t_,'ART_START',all_days[-1]+1)
+                            exit_arc = (vessel,j,t_,'EXIT_PORT',all_days[-1]+1)
                             if estimated_speed >= vessel_min_speed[vessel]:
                                 arc_speeds[a] = math.floor(estimated_speed)
                                 arc_waiting_times[a] = 0
@@ -214,3 +217,32 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
     print(vessel + ' number of arcs:' +str(len(feasible_arcs)))
     total_feasible_arcs.extend(feasible_arcs)
     return feasible_arcs
+
+
+def get_charter_out_arcs(vessel, loading_days, sailing_costs, des_contract_ids, maintenance_ids, loading_port_ids, vessel_available_days):
+
+    charter_out_arcs = []
+    chart_from_start_arc = (vessel,'ART_PORT',0,'ART_PORT', vessel_available_days[vessel][0])
+    sailing_costs[chart_from_start_arc] = 0
+    charter_out_arcs.append(chart_from_start_arc)
+
+    for t in vessel_available_days[vessel]: 
+        depot_charter_out_arc = (vessel, 'ART_PORT', t, 'ART_PORT', t+1)
+        sailing_costs[depot_charter_out_arc] = 0 
+        charter_out_arcs.append(depot_charter_out_arc)
+        for i in (des_contract_ids+maintenance_ids):
+            in_charter_out_arc = (vessel, i, t, 'ART_PORT', t)
+            sailing_costs[in_charter_out_arc] = 0
+            charter_out_arcs.append(in_charter_out_arc)
+        for j in loading_port_ids:
+            return_charter_out_arc = (vessel, 'ART_PORT', t, j, t)
+            sailing_costs[return_charter_out_arc] = 0
+            charter_out_arcs.append(return_charter_out_arc)
+    charter_out_arcs = list(set(charter_out_arcs))
+
+    return charter_out_arcs
+        
+
+
+    
+     
