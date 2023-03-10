@@ -312,8 +312,6 @@ def initialize_variable_production_model(group, filename):
     vessel_ballast_speed_profile, VARIABLE_PRODUCTION_MODEL) 
     for vessel in vessel_ids}
 
-    print(port_ids)
-
 
     #######################  INITIALIZING GUROBI ########################
     model = gp.Model()
@@ -482,9 +480,6 @@ def initialize_charter_out_model(group, filename):
 
     sailing_time_charter = set_sailing_time_charter(loading_port_ids, spot_port_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
     charter_total_cost = set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_port_ids, des_contract_ids, loading_days)
-
-    print(charter_total_cost)
-    print(scaled_charter_out_prices)
 
     ## Initializing arcs
     arc_speeds, arc_waiting_times, arc_sailing_times, sailing_costs, total_feasible_arcs = init_arc_sets()
