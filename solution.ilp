@@ -3,6 +3,6 @@
 Maximize
  
 Subject To
- fob_max_contracts[1004]: = 1
+ fob_max_contracts[2006]: = 1
 Bounds
 End
