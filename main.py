@@ -91,7 +91,7 @@ Call whatever functions you'll like below here
 
 # An example for how to run the code 
 group1 = 'N-1L-180D'
-filename1 = 'N-1L-7U-36F-23V-180D-B'
+filename1 = 'N-1L-7U-36F-23V-180D-b'
 #group1 = 'N-1L-60D'
 #filename1 = 'N-1L-5U-21F-18V-60D-c'
 runtime = 60*2
