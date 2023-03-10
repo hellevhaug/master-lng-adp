@@ -138,7 +138,7 @@ def read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, f
         if partition_start_time < 0:
             partition_start_time = 0
         fob_days[partition['id']] = [
-            i for i in range(partition_start_time+1,partition_start_time+partition_delta_time+1)]
+            i for i in range(partition_start_time+1,partition_start_time+partition_delta_time+2)]
 
         if len(contract['salesPrices'])==1:
             for t in fob_days[partition['id']]:
@@ -146,10 +146,12 @@ def read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, f
         else: 
             for price in contract['salesPrices']:
                 price_from_time = datetime.strptime(price['fromDateTime'].split('T')[0], '%Y-%m-%d')
-                if price_from_time < loading_from_time:
-                    price_from_time = loading_from_time
+                if price_from_time >= partition_to_time:
+                    price_from_time = partition_to_time
+                elif price_from_time < partition_from_time:
+                    price_from_time = partition_from_time
                 price_start_time = (price_from_time-loading_from_time).days
-                for t in range(price_start_time+1, len(fob_days[partition['id']])+1):
+                for t in range(price_start_time+1, partition_start_time+partition_delta_time+2):
                     fob_revenues[partition['id'], t] = price['price']
 
     return fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days
