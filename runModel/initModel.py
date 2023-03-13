@@ -444,8 +444,6 @@ def initialize_charter_out_model(group, filename):
     ## Initialize lists for contracts
     port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
 
-    print(fob_revenues)
-
     ## Initalize distances 
     distances = set_distances(data)
 
@@ -508,7 +506,6 @@ def initialize_charter_out_model(group, filename):
 
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
-    print(z)
 
     charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + spot_port_ids)]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
@@ -602,7 +599,7 @@ def initialize_charter_out_model(group, filename):
     model.addConstrs(init_charter_flow_constr(x, all_days, vessel_ids, port_ids), name='charter_flow')
 
     # NEW CONSTRAINT (changes to initial flow constraints)
-    model.addConstrs(init_charter_artificial_flow(x, vessel_start_ports, vessel_available_days, vessel_ids), name='charter_initial_flow')
+    model.addConstrs(init_charter_artificial_flow(x, vessel_start_ports, vessel_available_days, vessel_ids, all_days), name='charter_initial_flow')
 
     # NEW CONSTRAINT (5.26, must return to loading port after being chartered out)
     model.addConstrs(init_charter_return_to_loading_constr(x, loading_days, loading_port_ids, vessel_ids, port_ids), name='charter_return')

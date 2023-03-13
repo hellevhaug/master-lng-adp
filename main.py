@@ -41,8 +41,8 @@ def run_one_instance_variable_production(group, filename, runtime):
 def run_one_instance_charter_out(group, filename, runtime):
     # Running the model with given group, filename and runtime (including logging the file, this is done in run_model)
     model = run_charter_out_model(group, filename, runtime, f'Running file: {filename}')
-    model.computeIIS()
-    model.write('solution.ilp')
+    #model.computeIIS()
+    #model.write('solution.ilp')
 
     # Converting gurobi variables to dictionaries, because they are easier to work with
     x,s,g,z,q,y = convert_vars_to_dicts(model)
@@ -94,8 +94,8 @@ group1 = 'N-1L-180D'
 filename1 = 'N-1L-7U-39F-23V-180D-c'
 #group1 = 'N-1L-60D'
 #filename1 = 'N-1L-5U-21F-18V-60D-c'
-runtime = 60*5
-modelType = CHARTER_OUT_MODEL
+runtime = 60*60*3
+modelType = BASIC_MODEL
 
 run_one_instance(group1, filename1, runtime, modelType)
 

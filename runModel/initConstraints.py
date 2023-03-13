@@ -265,10 +265,11 @@ def init_charter_flow_constr(x, all_days, vessel_ids, port_ids):
 
     return charter_flow_constraints
 
-def init_charter_artificial_flow(x, vessel_start_ports, vessel_available_days, vessel_ids):
+def init_charter_artificial_flow(x, vessel_start_ports, vessel_available_days, vessel_ids, all_days):
 
     charter_artificial_flow_constraints = (x[vessel, 'ART_PORT',0, vessel_start_ports[vessel], vessel_available_days[vessel][0]] +
-                        x[vessel, 'ART_PORT',0,'ART_PORT',vessel_available_days[vessel][0]] == 1 for vessel in vessel_ids)
+                        x[vessel, 'ART_PORT',0,'ART_PORT',vessel_available_days[vessel][0]] + x[vessel,'ART_PORT',0,'EXIT_PORT',all_days[-1]+1] 
+                        == 1 for vessel in vessel_ids)
 
     return charter_artificial_flow_constraints
 
