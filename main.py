@@ -41,8 +41,8 @@ def run_one_instance_variable_production(group, filename, runtime):
 def run_one_instance_charter_out(group, filename, runtime):
     # Running the model with given group, filename and runtime (including logging the file, this is done in run_model)
     model = run_charter_out_model(group, filename, runtime, f'Running file: {filename}')
-    model.computeIIS()
-    model.write('solution.ilp')
+    #model.computeIIS()
+    #model.write('solution.ilp')
 
     # Converting gurobi variables to dictionaries, because they are easier to work with
     x,s,g,z,q,y = convert_vars_to_dicts(model)
@@ -90,11 +90,11 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-45D'
-filename1 = 'N-1L-6U-18F-18V-45D-b'
+group1 = 'A-2L-180D'
+filename1 = 'A-2L-6U-18F-15V-180D-b'
 
-runtime = 60*5
-modelType = CHARTER_OUT_MODEL
+runtime = 60*60
+modelType = BASIC_MODEL
 
 run_one_instance(group1, filename1, runtime, modelType)
 
@@ -102,9 +102,6 @@ run_one_instance(group1, filename1, runtime, modelType)
 
 # Infeasible: 
 # Group: A-2L-180D days et eller anna skjer her...
-# Group: N-1L-30D, Filename: N-1L-2U-2F-18V-30D-a INFEASIBLE 
-# Group: N-1L-30D, Filename: N-1L-2U-2F-18V-30D-b INFEASIBLE 
-# Group: N-1L-30D, Filename: N-1L-2U-2F-18V-30D-c INFEASIBLE 
 # Group: N-1L-45D, Extremely small GAP
 
 
