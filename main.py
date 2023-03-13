@@ -90,18 +90,17 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'A-2L-180D'
-filename1 = 'A-2L-6U-18F-15V-180D-b'
+group1 = 'N-1L-60D'
+filename1 = 'N-1L-7U-17F-18V-60D-a'
 
 runtime = 60*60
-modelType = BASIC_MODEL
+modelType = CHARTER_OUT_MODEL
 
 run_one_instance(group1, filename1, runtime, modelType)
 
 
 
-# Infeasible: 
-# Group: A-2L-180D days et eller anna skjer her...
-# Group: N-1L-45D, Extremely small GAP
-
+# Status on data: 
+# Problem with data sets A-2L-180D
+#Done with all til o gmed N-1L-60D
 
