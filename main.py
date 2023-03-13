@@ -90,14 +90,21 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-180D'
-filename1 = 'N-1L-7U-39F-23V-180D-c'
-#group1 = 'N-1L-60D'
-#filename1 = 'N-1L-5U-21F-18V-60D-c'
+group1 = 'N-1L-45D'
+filename1 = 'N-1L-6U-18F-18V-45D-b'
+
 runtime = 60*5
 modelType = CHARTER_OUT_MODEL
 
 run_one_instance(group1, filename1, runtime, modelType)
 
+
+
+# Infeasible: 
+# Group: A-2L-180D days et eller anna skjer her...
+# Group: N-1L-30D, Filename: N-1L-2U-2F-18V-30D-a INFEASIBLE 
+# Group: N-1L-30D, Filename: N-1L-2U-2F-18V-30D-b INFEASIBLE 
+# Group: N-1L-30D, Filename: N-1L-2U-2F-18V-30D-c INFEASIBLE 
+# Group: N-1L-45D, Extremely small GAP
 
 
