@@ -90,8 +90,8 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-60D'
-filename1 = 'N-1L-7U-17F-18V-60D-a'
+group1 = 'N-1L-120D'
+filename1 = 'N-1L-7U-30F-23V-120D-b'
 
 runtime = 60*60
 modelType = CHARTER_OUT_MODEL
@@ -102,5 +102,5 @@ run_one_instance(group1, filename1, runtime, modelType)
 
 # Status on data: 
 # Problem with data sets A-2L-180D
-#Done with all til o gmed N-1L-60D
+# Checked all instanses te og med N-1L-120D
 
