@@ -53,3 +53,34 @@ countries = countries.drop(23)
 df = get_coordinates_dataframe()
 plot_ports(df)
 
+### Gantt Chart ###
+
+import plotly.express as px
+import pandas as pd
+
+
+def gant_chart(datafile, variablesAsDict):
+
+    df = pd.DataFrame([])
+
+    for x in x-dict: #kommer an på formatet Helle lager
+        if round(x.value, 0) == 1 and x.contract in descontractInDatafile:
+            df.append(dict(Contract=x[j], Start=x[t_]-1, Finish=x[t_]))
+
+    for g in g-dict: 
+        if round(g.value, 0) != 0: 
+            df.append(dict(Contract=g[j], Start=g[t_]-1, Finish=g[t_]))
+        
+
+    for z in z-dict: 
+        if round(z.value, 0) != 0:
+            df.append(dict(Contract=z[j], Start=z[t_]-1, Finish=z[t_]))
+
+
+    fig = px.timeline(df, x_start="Start", x_end="Finish", y="Contract")
+    fig.update_yaxes(autorange="reversed") # otherwise tasks are listed from the bottom up
+    fig.show()
+
+
+    return 0
+
