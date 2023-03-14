@@ -99,8 +99,6 @@ Call whatever functions you'll like below here
 # An example for how to run the code 
 group1 = 'A-2L-180D'
 filename1 = 'A-2L-6U-20F-15V-180D-c'
-#group1 = 'N-1L-60D'
-#filename1 = 'N-1L-5U-21F-18V-60D-c'
 runtime = 60*60
 modelType = CHARTER_OUT_MODEL
 

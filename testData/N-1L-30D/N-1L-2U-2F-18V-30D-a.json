@@ -62,7 +62,7 @@
 	]
 },
 {"id": "FOBCON_1", "name": "FOBCON_1", "fobRequests": [
-	{"id": "1001", "name":"FOBCON_1-1", "from": "2020-09-30T04:30:00", "to": "2020-11-08T04:30:00", "minQuantity":120000, "quantity":120000, "storageId": "Lng-storage", "cooldownHours":0, "cooldownQuantity": 0, "purgeQuantity": 0}],
+	{"id": "1001", "name":"FOBCON_1-1", "from": "2020-10-01T04:30:00", "to": "2020-11-08T04:30:00", "minQuantity":120000, "quantity":120000, "storageId": "Lng-storage", "cooldownHours":0, "cooldownQuantity": 0, "purgeQuantity": 0}],
 	"salesPrices": [
 		{"fromDateTime": "2020-10-01T00:00:00", "price": 71}
 	]
@@ -78,7 +78,7 @@
 
 "forecast": {
 		"fromDateTime": "2020-10-01T00:00:00",
-		"toDateTime": "2020-10-25T00:00:00"
+		"toDateTime": "2020-11-01T00:00:00"
 	},		
 "network": {
 		"legDistances" : [
