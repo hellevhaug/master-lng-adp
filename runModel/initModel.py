@@ -69,7 +69,6 @@ def initialize_basic_model(group, filename):
     # Initialize lists for charter vessels
     charter_vessel_port_acceptances, charter_vessel_node_acceptances, charter_vessel_upper_capacity, charter_vessel_lower_capacity, charter_vessel_prices = initialize_charter_sets(data)
     charter_vessel_id, charter_vessel_loading_quantity, charter_vessel_speed, charter_vessel_prices, charter_vessel_node_acceptances, charter_vessel_port_acceptances = read_charter_vessels(data, loading_days, loading_from_time, loading_to_time, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, charter_vessel_port_acceptances, des_contract_ids)
-    minimum_charter_period = set_minimum_charter_time()
 
     sailing_time_charter = set_sailing_time_charter(loading_port_ids, spot_port_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
     charter_total_cost = set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_port_ids, des_contract_ids, loading_days)
@@ -181,42 +180,6 @@ def initialize_basic_model(group, filename):
 
     return model # This line must be moved to activate the extensions
 
-'''
-
-    ## Extension 1 - Variable production 
-    
-    # Initializing production rate variable
-    q = model.addVars(production_quantities, vtype='C', name='q')
-
-    # Constraint 5.19
-    model.addConstr(init_lower_prod_rate_constr(q, lower_prod_rate, loading_days, loading_port_ids), name='lower_prod_rate')
-    model.addConstr(init_upper_prod_rate_constr(q, upper_prod_rate, loading_days, loading_port_ids), name='upper_prod_rate')
-
-    #NB! The parameter minimum and maximum production rate for each loading port must be defined; Maximum can be set to the default amount from data.
-
-
-
-    ## Extension 2 - Chartering out vessels 
-
-    # Objective function (5.21)
-    model.addConstr(init_objective_extension_2(x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days, des_contract_revenues, vessel_capacities, vessel_boil_off_rate,
-    vessel_ids, loading_port_ids, loading_days, spot_port_ids, all_days, sailing_time_charter, unloading_days, charter_boil_off, 
-    tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, charter_total_cost, des_spot_ids, daily_charter_revenue), name='objective_extension_2')
-
-    # Constraints 5.22 
-    model.addConstr(init_charter_one_period_constr(x, all_days, node_ids, vessel_ids), name='charter_max_one_period')
-
-    # Constraints 5.23
-    model.addConstr(init_charter_flow_constraints(x, vessel_ids, node_ids, loading_port_ids, all_days, loading_days), name='charter_flow')
-
-    # Constraints 5.24 
-    model.addConstr(init_min_charter_time_constr(x, vessel_ids, all_days), name='min_charter_period')
-
-
-    ## Extension 3 - Split Deliveries 
-
-'''
-
 
 
 def initialize_model_dummy(group, filename):
@@ -292,7 +255,6 @@ def initialize_variable_production_model(group, filename):
     # Initialize lists for charter vessels
     charter_vessel_port_acceptances, charter_vessel_node_acceptances, charter_vessel_upper_capacity, charter_vessel_lower_capacity, charter_vessel_prices = initialize_charter_sets(data)
     charter_vessel_id, charter_vessel_loading_quantity, charter_vessel_speed, charter_vessel_prices, charter_vessel_node_acceptances, charter_vessel_port_acceptances = read_charter_vessels(data, loading_days, loading_from_time, loading_to_time, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, charter_vessel_port_acceptances, des_contract_ids)
-    minimum_charter_period = set_minimum_charter_time()
 
     sailing_time_charter = set_sailing_time_charter(loading_port_ids, spot_port_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
     charter_total_cost = set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_port_ids, des_contract_ids, loading_days)
@@ -515,6 +477,7 @@ def initialize_charter_out_model(group, filename):
     s = model.addVars(production_quantities, vtype='C', name='s')
 
     y = model.addVars(vessel_ids, vtype='B', name='y')
+   
 
     # Initializing constraints
 
@@ -522,7 +485,7 @@ def initialize_charter_out_model(group, filename):
     vessel_capacities, vessel_boil_off_rate, vessel_ids, loading_port_ids, loading_days, spot_port_ids, all_days, sailing_time_charter,
     unloading_days, charter_boil_off, tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, charter_total_cost,
     des_spot_ids, scaled_charter_out_prices),GRB.MAXIMIZE)
-
+    
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 

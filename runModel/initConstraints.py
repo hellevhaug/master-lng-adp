@@ -85,7 +85,7 @@ def init_flow_constr(x, all_days, vessel_ids, port_ids):
     flow_constraints = (x.sum(v,'*', [0]+all_days[:t],j,t)== x.sum(v,j,t,'*',all_days[t+1:]+[all_days[-1]+1]) 
     for v in vessel_ids for j in port_ids for t in all_days)
 
-    return flow_constraints
+    return flow_constraints 
 
 
 # Initialize artificial flow constraints
@@ -294,7 +294,7 @@ def init_charter_one_period_constr(x, all_days, node_ids, vessel_ids):
 
     return charter_one_period_constr
 
-# Initialize charter flow constraints
+# Initialize change in flow constraints
 def init_charter_flow_constraints(x, vessel_ids, node_ids, loading_port_ids, all_days, loading_days):
 
     charter_flow_constraints = (x.sum('*','*',t,'ART_PORT',t) == x.sum('*','ART_PORT',t_,j,t_) for t in loading_days for j in loading_port_ids for t_ in all_days)

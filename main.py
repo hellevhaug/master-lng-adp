@@ -90,7 +90,7 @@ def test_init_model(group, filename, modelType):
     else:
         raise ValueError('Uknown model type for running')
     return model
-
+    
 
 """
 Call whatever functions you'll like below here
