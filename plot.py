@@ -1,5 +1,8 @@
 import geopandas as gpd
 import matplotlib.pyplot as plt
+import plotly.express as px
+import pandas as pd
+
 
 from analysis.plotSolutions import *
 from readData.readLocationData import *
@@ -55,26 +58,34 @@ plot_ports(df)
 
 ### Gantt Chart ###
 
-import plotly.express as px
-import pandas as pd
 
 
-def gant_chart(datafile, variablesAsDict):
+def gant_chart(data):
 
+    #Må hente startdate for planning horizon for df skal ta inn DATO
     df = pd.DataFrame([])
 
-    for x in x-dict: #kommer an på formatet Helle lager
-        if round(x.value, 0) == 1 and x.contract in descontractInDatafile:
-            df.append(dict(Contract=x[j], Start=x[t_]-1, Finish=x[t_]))
+    des_contract_ids = read_des_contracts() #Lag liste med alle des_contracts
+    
 
-    for g in g-dict: 
-        if round(g.value, 0) != 0: 
-            df.append(dict(Contract=g[j], Start=g[t_]-1, Finish=g[t_]))
+
+    x_dict = get_x_vars(data) #sjekke hva som skal puttes inn her
+    g_dict = get_g_vars(data)
+    z_dict = get_z_vars(data)
+
+    for (v,i,t,j,t_), value in x_dict.items():
+        if round(value, 0) == 1 and j in des_contract_ids: #Hente ut des_contract_ids
+            t_date = 0
+            df.append(dict(Contract=j, Start=t_-1, Finish=t_))
+
+    for (i,t,j), value in g_dict.items(): #Hente data fra charter-operational-time
+        if round(value, 0) != 0: 
+            df.append(dict(Contract=j, Start=t-1, Finish=t))
         
 
-    for z in z-dict: 
-        if round(z.value, 0) != 0:
-            df.append(dict(Contract=z[j], Start=z[t_]-1, Finish=z[t_]))
+    for (f,t_), value in z_dict.items(): 
+        if round(value, 0) != 0:
+            df.append(dict(Contract=j, Start=t_-1, Finish=t_))
 
 
     fig = px.timeline(df, x_start="Start", x_end="Finish", y="Contract")
@@ -84,3 +95,18 @@ def gant_chart(datafile, variablesAsDict):
 
     return 0
 
+# Oppskrift på gantt chart: 
+'''
+import plotly.express as px
+import pandas as pd
+
+df = pd.DataFrame([
+    dict(Task="Job A", Start='2009-01-01', Finish='2009-02-28'),
+    dict(Task="Job B", Start='2009-03-05', Finish='2009-04-15'),
+    dict(Task="Job C", Start='2009-02-20', Finish='2009-05-30')
+])
+
+fig = px.timeline(df, x_start="Start", x_end="Finish", y="Task")
+fig.update_yaxes(autorange="reversed") # otherwise tasks are listed from the bottom up
+fig.show()
+'''
