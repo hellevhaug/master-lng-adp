@@ -80,8 +80,15 @@ def run_group(group):
 
 
 # Function for initialize a model without running it with a solver
-def test_init_basic_model(group, filename):
-    model = initialize_basic_model(group, filename)
+def test_init_model(group, filename, modelType):
+    if modelType=='basic':
+        model = initialize_basic_model(group, filename)
+    elif modelType=='variableProduction':
+        model = initialize_variable_production_model(group, filename)
+    elif modelType=='charterOut':
+        model = initialize_charter_out_model(group, filename)
+    else:
+        raise ValueError('Uknown model type for running')
     return model
 
 
@@ -90,14 +97,16 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-180D'
-filename1 = 'N-1L-7U-39F-23V-180D-c'
+group1 = 'A-2L-180D'
+filename1 = 'A-2L-6U-20F-15V-180D-c'
 #group1 = 'N-1L-60D'
 #filename1 = 'N-1L-5U-21F-18V-60D-c'
-runtime = 60*60*3
-modelType = BASIC_MODEL
+runtime = 60*60
+modelType = CHARTER_OUT_MODEL
 
-run_one_instance(group1, filename1, runtime, modelType)
+#run_one_instance(group1, filename1, runtime, modelType)
+test_init_model(group1, filename1, modelType)
+
 
 
 
