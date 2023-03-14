@@ -23,6 +23,8 @@ def get_x_vars(data):
     x_data = data['vars']['x']
     for x_var in x_data:
         v, i, t, j, t_ = x_var[2:-1].split(',')
+        t = int(t)
+        t_ = int(t_)
         value = x_data[x_var]
         if round(value, 0) == 1:
             x[v,i,t,j,t_] = value
@@ -35,6 +37,7 @@ def get_s_vars(data):
     s_data = data['vars']['s']
     for s_var in s_data:
         i, t = s_var[2:-1].split(',')
+        t = int(t)
         value = s_data[s_var]
         s[i,t] = value 
 
@@ -46,6 +49,7 @@ def get_g_vars(data):
     g_data = data['vars']['g']
     for g_var in g_data:
         i, t, j = g_var[2:-1].split(',')
+        t = int(t)
         value = g_data[g_var]
         if round(value, 0) != 0:
             g[i,t,j] = value
@@ -58,6 +62,7 @@ def get_z_vars(data):
     z_data = data['vars']['z']
     for z_var in z_data:
         f, t = z_var[2:-1].split(',')
+        t = int(t)
         value = z_data[z_var]
         if round(value, 0) == 1:
             z[f,t] = value
@@ -70,6 +75,7 @@ def get_q_vars(data):
     q_data = data['vars']['q']
     for q_var in q_data:
         i, t = q_var[2:-1].split(',')
+        t = int(t)
         value = q_data[q_var]
         q[i,t] = value 
 
