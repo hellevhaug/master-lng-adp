@@ -1,10 +1,10 @@
 import geopandas as gpd
 import matplotlib.pyplot as plt
 
-from supportFiles.plotSolutions import *
+from analysis.plotSolutions import *
 from readData.readLocationData import *
 from readData.readOtherData import *
-from supportFiles.exploreSolution import *
+from analysis.exploreSolution import *
 
 """
 File for plotting different stuffz

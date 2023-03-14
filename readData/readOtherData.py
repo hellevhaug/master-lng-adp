@@ -14,7 +14,13 @@ def set_loading_port_ids(filename):
         return NIG
     
     elif customer == 'A':
-        return ABU
+
+        if filename[2]=='1':
+            return ABU1
+        elif filename[2]=='2':
+            return ABU2
+        else: 
+            raise ValueError('Uknown number of loading ports')
     
     else: 
         raise ValueError('Unknown origin of data')

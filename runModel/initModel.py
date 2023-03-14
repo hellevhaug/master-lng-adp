@@ -85,7 +85,7 @@ def initialize_basic_model(group, filename):
     maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
     spot_port_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
     fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
-    vessel_ballast_speed_profile) 
+    vessel_ballast_speed_profile, BASIC_MODEL) 
     for vessel in vessel_ids}
 
 
@@ -271,7 +271,7 @@ def initialize_variable_production_model(group, filename):
     maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
     spot_port_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
     fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
-    vessel_ballast_speed_profile) 
+    vessel_ballast_speed_profile, VARIABLE_PRODUCTION_MODEL) 
     for vessel in vessel_ids}
 
 
@@ -374,21 +374,6 @@ def initialize_variable_production_model(group, filename):
 
     #NB! The parameter minimum and maximum production rate for each loading port must be defined; Maximum can be set to the default amount from data.
 
-    '''
-
-    ## Extension 1 - Variable production 
-    
-    # Initializing production rate variable
-    q = model.addVars(production_quantities, vtype='C', name='q')
-
-    # Constraint 5.19
-    model.addConstr(init_lower_prod_rate_constr(q, lower_prod_rate, loading_days, loading_port_ids), name='lower_prod_rate')
-    model.addConstr(init_upper_prod_rate_constr(q, upper_prod_rate, loading_days, loading_port_ids), name='upper_prod_rate')
-
-    #NB! The parameter minimum and maximum production rate for each loading port must be defined; Maximum can be set to the default amount from data.
-
-    '''
-
 
     return model # This line must be moved to activate the extensions
 
@@ -470,7 +455,7 @@ def initialize_charter_out_model(group, filename):
     maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
     spot_port_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
     fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
-    vessel_ballast_speed_profile) 
+    vessel_ballast_speed_profile, CHARTER_OUT_MODEL) 
     for vessel in vessel_ids}
 
 
@@ -491,14 +476,16 @@ def initialize_charter_out_model(group, filename):
 
     s = model.addVars(production_quantities, vtype='C', name='s')
 
+    y = model.addVars(vessel_ids, vtype='B', name='y')
+   
+
     # Initializing constraints
 
-    """
-    model.setObjective(init_objective(x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days,
-    des_contract_revenues, vessel_capacities, vessel_boil_off_rate, vessel_ids, loading_port_ids, loading_days, 
-    spot_port_ids, all_days, sailing_time_charter, unloading_days, charter_boil_off, tank_leftover_value, 
-    vessel_available_days, des_contract_ids, sailing_costs, charter_total_cost, des_spot_ids),GRB.MAXIMIZE)
-    """
+    model.setObjective(init_objective_charter(x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days, des_contract_revenues,
+    vessel_capacities, vessel_boil_off_rate, vessel_ids, loading_port_ids, loading_days, spot_port_ids, all_days, sailing_time_charter,
+    unloading_days, charter_boil_off, tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, charter_total_cost,
+    des_spot_ids, scaled_charter_out_prices),GRB.MAXIMIZE)
+    
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
@@ -520,7 +507,7 @@ def initialize_charter_out_model(group, filename):
     # Constraint 5.5
     model.addConstrs(init_maintenance_constr(x, maintenance_vessel_ports, maintenance_vessels), name='maintenance')
 
-
+    """"
     # Constraint 5.6
     model.addConstrs(init_flow_constr(x, all_days, vessel_ids, port_ids), name='flow')
 
@@ -528,7 +515,7 @@ def initialize_charter_out_model(group, filename):
     # Constraint 5.61
     model.addConstrs(init_artificial_flow_constr(x, vessel_start_ports, vessel_available_days, all_days, vessel_ids),
     name='artificial_node')
-
+    """
 
     # Constraint 5.8
     model.addConstrs(init_upper_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
@@ -564,25 +551,20 @@ def initialize_charter_out_model(group, filename):
     model.addConstrs(init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
     spot_port_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
 
-    ## Extension 2 - Chartering out vessels 
+    # NEW CONSTRAINT (5.22, only chartered out one time)
+    model.addConstrs(init_charter_one_time_constr(x, y, loading_days, port_ids, vessel_ids, vessel_available_days),
+                     name='charrter_one_time')
 
-    # Objective function (5.21)
-    model.setObjective(init_objective_charter_out(x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days, des_contract_revenues, vessel_capacities, vessel_boil_off_rate,
-    vessel_ids, loading_port_ids, loading_days, spot_port_ids, all_days, sailing_time_charter, unloading_days, charter_boil_off, 
-    tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, charter_total_cost, des_spot_ids, scaled_charter_out_prices))
+    # NEW CONSTRAINT (5.23, chartered out at least M days)
+    model.addConstrs(init_charter_min_time_constr(x, y, vessel_available_days, minimum_charter_period, vessel_ids), name='charter_min_time')
 
-    # Constraints 5.22 
-    model.addConstrs(init_charter_one_period_constr(x, all_days, port_ids, vessel_ids), name='charter_max_one_period')
+    # NEW CONSTRAINT (changes to flow constraints)
+    model.addConstrs(init_charter_flow_constr(x, all_days, vessel_ids, port_ids), name='charter_flow')
 
-    # Constraints 5.23
-    model.addConstrs(init_charter_flow_constraints(x, port_ids, all_days, vessel_ids), name='charter_flow')
+    # NEW CONSTRAINT (changes to initial flow constraints)
+    model.addConstrs(init_charter_artificial_flow(x, vessel_start_ports, vessel_available_days, vessel_ids, all_days), name='charter_initial_flow')
 
-    # Constraints 5.24 Additional charter flow constraint
-    model.addConstrs(init_additional_charter_flow_constraint(x, all_days, loading_port_ids, vessel_ids, port_ids, loading_days), name='additional_charter_flow')
-
-    # Constraints 5.25 
-    model.addConstrs(init_min_charter_time_constr(x, vessel_ids, all_days, minimum_charter_period), name='min_charter_period')
-
+    # NEW CONSTRAINT (5.26, must return to loading port after being chartered out)
+    model.addConstrs(init_charter_return_to_loading_constr(x, loading_days, loading_port_ids, vessel_ids, port_ids), name='charter_return')
 
     return model # This line must be moved to activate the extensions
-    
