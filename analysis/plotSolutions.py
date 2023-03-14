@@ -8,7 +8,7 @@ File defining helper-functions for plotting different aspects of a solution
 """
 
 def get_coordinates_dataframe():
-    path = 'supportFiles/coordinates.csv'
+    path = 'analysis/coordinates.csv'
     df = pd.read_csv(path, delimiter=',')
     df = df.set_index(['ID'])
     return df
