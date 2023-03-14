@@ -3,6 +3,7 @@ import os
 import datetime
 
 from supportFiles.convertVars import *
+from supportFiles.constants import *
 
 
 def set_info_dict(group, filename, runtime, now, modelType):
@@ -10,11 +11,22 @@ def set_info_dict(group, filename, runtime, now, modelType):
     info_dict['Group'] = group
     info_dict['Filename'] = filename
     info_dict['Runtime'] = runtime
-    info_dict['Model type'] = modelType
+    info_dict['ModelType'] = modelType
     now = datetime.datetime.now()
-    info_dict['Current time'] = now.strftime("%Y-%m-%d %H:%M:%S")
+    info_dict['CurrentTime'] = now.strftime("%Y-%m-%d %H:%M:%S")
     
     return info_dict
+
+
+def set_parameter_dict():
+    parameter_dict = {}
+    parameter_dict['AllowedWaitingTime'] = ALLOWED_WAITING
+    parameter_dict['MinimumCharterPeriod'] = MINIMUM_CHARTER_PERIOD
+    parameter_dict['MinimumDaysBetweenDelivery'] = MINIMUM_DAYS_BETWEEN_DELIVERY
+    parameter_dict['ProductionScaleRate'] = PRODUCTION_SCALE_RATE
+    parameter_dict['CharterOutFrictionRate'] = CHARTER_OUT_FRICTION
+
+    return parameter_dict
 
 
 def write_to_json(group, filename, runtime, x, s, g, z, q, y, modelType):
@@ -34,6 +46,7 @@ def write_to_json(group, filename, runtime, x, s, g, z, q, y, modelType):
     with open(path, 'a') as f:
         main_dict = {}
         main_dict['info'] = set_info_dict(group, filename, runtime, now, modelType)
+        main_dict['parameters'] = set_parameter_dict()
         main_dict['vars'] = aggregate_vars_to_dict(x,s,g,z,q,y)
         json.dump(main_dict, f, indent=3)
 
