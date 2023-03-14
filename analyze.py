@@ -37,4 +37,7 @@ def analyze_instance(group, filename):
 group1 = 'A-2L-180D'
 filename1 = 'A-2L-6U-18F-15V-180D-b'
 
-analyze_instance(group1, filename1)
+#analyze_instance(group1, filename1)
+
+data = read_solved_json_file('jsonFiles/N-1L-45D/N-1L-6U-13F-18V-45D-a/03-14-2023, 13-30.json')
+get_x_vars(data)
