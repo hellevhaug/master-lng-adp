@@ -1,5 +1,5 @@
 
-'''
+
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import plotly.express as px
@@ -14,9 +14,11 @@ from analysis.exploreSolution import *
 from datetime import datetime
 from readData.readContractData import *
 from readData.readVesselData import *
+from readData.readSpotData import *
 from supportFiles.constants import *
 
 
+'''
 """
 File for plotting different stuffz
 """
@@ -62,14 +64,15 @@ countries = countries.drop(23)
 """
 
 df = get_coordinates_dataframe()
-plot_ports(df)
+#plot_ports(df)
 
-
+'''
 
 ### Gantt Chart ###
 
+#Eays to make one for loading as well
 
-def gant_chart(logDataPath, testDataFile):
+def contract_gant_chart(logDataPath, group, testDataFile):
 
 ###
     loading_port_ids = set_loading_port_ids(testDataFile)
@@ -139,19 +142,26 @@ def gant_chart(logDataPath, testDataFile):
 
     df = pd.DataFrame([])
 
+    #DES-kontrakter
     for (v,i,t,j,t_), value in x_dict.items():
         if round(value, 0) == 1 and j in des_contract_ids:
-            t_date = 0
-            df.append(dict(Contract=j, Start=t_-1, Finish=t_))
-
-    for (i,t,j), value in g_dict.items(): #Hente data fra charter-operational-time
+            t_marked_date = loading_from_time+datetime.timedelta(days=t_)
+            
+            df.append(dict(Contract=j, Start=t_marked_date-datetime.timedelta(days=-1), Finish=t_))
+    
+    #DES-kontrakter som blir chartret
+    for (i,t,j), value in g_dict.items(): 
         if round(value, 0) != 0: 
+            t_date = loading_from_time+datetime.timedelta(days=t)
+            sailing_time = sailing_time_charter[(i,j)]
+            unloading_date = t_date+datetime.timedelta(days=sailing_time)#FIX
             df.append(dict(Contract=j, Start=t, Finish=t+1))
         
-
+    #FOB-kontrakter mottar LNG den dagen de løfter cargoen
     for (f,t_), value in z_dict.items(): 
         if round(value, 0) != 0:
-            df.append(dict(Contract=j, Start=t_, Finish=t_+1))
+            t_marked_date = loading_from_time+datetime.timedelta(days=t_)
+            df.append(dict(Contract=f, Start=t_, Finish=t_marked_date+datetime.timedelta(days=1)))
 
 
     fig = px.timeline(df, x_start="Start", x_end="Finish", y="Contract")
@@ -160,8 +170,14 @@ def gant_chart(logDataPath, testDataFile):
 
 
     return 0
-'''
 
+
+## Example of how to plot a gant chart ##
+group1 = 'A-2L-60D'
+data1 = 'A-2L-6U-11F-7V-60D-a'
+logFile1 = 'jsonFiles/A-2L-60D/A-2L-6U-11F-7V-60D-a/03-13-2023, 09-20.json'
+logData = read_solved_json_file(logFile1)
+contract_gant_chart(logData, group1, data1)
 
 
 # Oppskrift på gantt chart: 

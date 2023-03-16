@@ -84,8 +84,3 @@ def set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_
 
     return charter_total_cost
 
-
-
-data = read_data_file('A-1L-45D', 'N-1L-6U-13F-18V-45D-a')
-loading_from_time, loading_to_time, loading_days = read_planning_horizion(data)
-print(loading_from_time)
