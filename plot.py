@@ -187,6 +187,7 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
     df = pd.DataFrame(df_list)
     print('DataFrame:', df)
     fig = px.timeline(df, x_start="Start", x_end="Finish", y="Contract", color="Contract", title=chartType+" chart for "+testDataFile)
+    #fig = px.timeline(df, x_start="Start", x_end="Finish", y="Contract", color="Type", title=chartType+" chart for "+testDataFile)
     fig.update_yaxes(autorange="reversed") # otherwise tasks are listed from the bottom up
     fig.show()
 
@@ -194,8 +195,8 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
 
 
 ## Example of how to plot a gant chart ##
-group1 = 'N-1L-90D'
-data1 = 'N-1L-6U-25F-18V-90D-c'
-logFile1 = 'jsonFiles/N-1L-90D/N-1L-6U-25F-18V-90D-c/03-21-2023, 21-04.json'
+group1 = 'N-1L-180D'
+data1 = 'N-1L-7U-36F-23V-180D-b'
+logFile1 = 'jsonFiles/N-1L-180D/N-1L-7U-36F-23V-180D-b/03-21-2023, 22-09.json'
 logData = read_solved_json_file(logFile1)
 contract_gant_chart(logData, group1, data1, UNLOADING) #Can plot both loading and unloading

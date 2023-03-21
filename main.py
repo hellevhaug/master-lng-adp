@@ -77,9 +77,9 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-90D'
-filename1 = 'N-1L-6U-25F-18V-90D-c'
-runtime = 60*10
+group1 = 'N-1L-180D'
+filename1 = 'N-1L-7U-36F-23V-180D-b'
+runtime = 60*60
 modelType = BASIC_MODEL
 
 #run_one_instance(group1, filename1, runtime, modelType)
