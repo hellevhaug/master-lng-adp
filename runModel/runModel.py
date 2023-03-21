@@ -32,6 +32,7 @@ def run_charter_out_model(group, filename, time_limit, description):
     model.setParam('TimeLimit', time_limit)
     model.setParam('LogFile', f'logFiles/{group}/{filename}-charterout.log')
     model.optimize()
+    model.write('constraint.lp')
     # Finding out what should be returned here as well, mabye just like a status message 
     # Will figure out something smart here
     return model

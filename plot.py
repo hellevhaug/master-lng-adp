@@ -146,7 +146,7 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
             if round(value, 0) == 1 and j in des_contract_ids and i != 'ART_PORT':
                 t_marked_date = loading_from_time+timedelta(days=t_)
                 df_list.append(dict(Contract=j, Start=t_marked_date-timedelta(days=1), Finish=t_marked_date))
-        
+        '''
         #DES-kontrakter som blir chartret
         for (i,t,j), value in g_dict.items(): 
             if round(value, 0) != 0: 
@@ -154,7 +154,7 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
                 sailing_time = sailing_time_charter[(i,j)]
                 unloading_date = t_date+timedelta(days=sailing_time)
                 df_list.append(dict(Contract=j, Start=unloading_date-timedelta(days=1), Finish=unloading_date))
-
+        '''
         #FOB-kontrakter mottar LNG den dagen de løfter cargoen
         for (f,t_), value in z_dict.items(): 
             if round(value, 0) != 0:
@@ -168,13 +168,13 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
             if round(value, 0) == 1 and j in des_contract_ids and i != 'ART_PORT':
                 t_date = loading_from_time+timedelta(days=t)
                 df_list.append(dict(Contract=j, Start=t_date-timedelta(days=1), Finish=t_date))
-        
+        '''
         #DES-kontrakter som blir chartret
         for (i,t,j), value in g_dict.items(): 
             if round(value, 0) != 0: 
                 t_date = loading_from_time+timedelta(days=t)
                 df_list.append(dict(Contract=j, Start=t_date-timedelta(days=1), Finish=t_date))
-
+        '''
         #FOB-kontrakter mottar LNG den dagen de løfter cargoen
         for (f,t_), value in z_dict.items(): 
             if round(value, 0) != 0:
@@ -196,6 +196,6 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
 ## Example of how to plot a gant chart ##
 group1 = 'N-1L-90D'
 data1 = 'N-1L-6U-25F-18V-90D-c'
-logFile1 = 'jsonFiles/N-1L-90D/N-1L-6U-25F-18V-90D-c/03-21-2023, 12-39.json'
+logFile1 = 'jsonFiles/N-1L-90D/N-1L-6U-25F-18V-90D-c/03-21-2023, 13-35.json'
 logData = read_solved_json_file(logFile1)
 contract_gant_chart(logData, group1, data1, UNLOADING) #Can plot both loading and unloading
