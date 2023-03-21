@@ -159,7 +159,7 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
         for (f,t_), value in z_dict.items(): 
             if round(value, 0) != 0:
                 t_marked_date = loading_from_time+timedelta(days=t_)
-                contract_name = "FOBCON "+f[:1]
+                contract_name = "FOBCON "+f[7:8]
                 df_list.append(dict(Contract=contract_name, Start=t_marked_date, Finish=t_marked_date+timedelta(days=1)))
 
     if chartType == "loading": 
@@ -179,7 +179,8 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
         for (f,t_), value in z_dict.items(): 
             if round(value, 0) != 0:
                 t_marked_date = loading_from_time+timedelta(days=t_)
-                contract_name = "FOBCON "+f[:1]
+                print(f[7:8])
+                contract_name = "FOBCON "+f[7:8]
                 df_list.append(dict(Contract=contract_name, Start=t_marked_date, Finish=t_marked_date+timedelta(days=1)))
         
 
@@ -196,6 +197,6 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
 ## Example of how to plot a gant chart ##
 group1 = 'N-1L-90D'
 data1 = 'N-1L-6U-25F-18V-90D-c'
-logFile1 = 'jsonFiles/N-1L-90D/N-1L-6U-25F-18V-90D-c/03-21-2023, 13-35.json'
+logFile1 = 'jsonFiles/N-1L-90D/N-1L-6U-25F-18V-90D-c/03-21-2023, 16-12.json'
 logData = read_solved_json_file(logFile1)
-contract_gant_chart(logData, group1, data1, UNLOADING) #Can plot both loading and unloading
+contract_gant_chart(logData, group1, data1, LOADING) #Can plot both loading and unloading
