@@ -87,7 +87,7 @@ def initialize_basic_model(group, filename):
     fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
     vessel_ballast_speed_profile, BASIC_MODEL) 
     for vessel in vessel_ids}
-
+        
 
     #######################  INITIALIZING GUROBI ########################
     model = gp.Model()
@@ -154,8 +154,8 @@ def initialize_basic_model(group, filename):
     des_contract_partitions), name='lower_demand')
 
     #Constraint 5.9 
-    model.addConstrs(init_spread_delivery_constraints(x, vessel_ids, loading_port_ids, vessel_available_days, des_contract_ids, unloading_days,
-    days_between_delivery, des_spot_ids), name='spread_delivery')
+    model.addConstrs(init_spread_delivery_constraints(x, w, vessel_ids, loading_port_ids, vessel_available_days, des_contract_ids, unloading_days,
+    days_between_delivery, des_spot_ids, sailing_time_charter), name='spread_delivery')
 
 
     # Constraint 5.10
@@ -343,8 +343,8 @@ def initialize_variable_production_model(group, filename):
     des_contract_partitions), name='lower_demand')
 
     #Constraint 5.9 
-    model.addConstrs(init_spread_delivery_constraints(x, vessel_ids, loading_port_ids, vessel_available_days, des_contract_ids, unloading_days,
-    days_between_delivery, des_spot_ids), name='spread_delivery')
+    model.addConstrs(init_spread_delivery_constraints(x, w, vessel_ids, loading_port_ids, vessel_available_days, des_contract_ids, unloading_days,
+    days_between_delivery, des_spot_ids, sailing_time_charter), name='spread_delivery')
 
 
     # Constraint 5.10
@@ -527,8 +527,8 @@ def initialize_charter_out_model(group, filename):
     des_contract_partitions), name='lower_demand')
 
     #Constraint 5.9 
-    model.addConstrs(init_spread_delivery_constraints(x, vessel_ids, loading_port_ids, vessel_available_days, des_contract_ids, unloading_days,
-    days_between_delivery, des_spot_ids), name='spread_delivery')
+    model.addConstrs(init_spread_delivery_constraints(x, w, vessel_ids, loading_port_ids, vessel_available_days, des_contract_ids, unloading_days,
+    days_between_delivery, des_spot_ids, sailing_time_charter), name='spread_delivery')
 
 
     # Constraint 5.10

@@ -137,12 +137,23 @@ def init_spread_delivery_constraints_old(x, days_between_delivery, vessel_ids, d
         for j in des_contract_ids for t_ in unloading_days[j])
     return spread_delivery_constraints
 
-
-def init_spread_delivery_constraints(x, vessel_ids, loading_port_ids, vessel_available_days, des_contract_ids, unloading_days,
-    days_between_delivery, des_spot_ids):
+def init_spread_delivery_constraints_(x, g, vessel_ids, loading_port_ids, vessel_available_days, des_contract_ids, unloading_days,
+    days_between_delivery, des_spot_ids, sailing_time_charter):
     spread_delivery_constraints = (gp.quicksum(x[v,i,t,j,tau] for v in vessel_ids for i in loading_port_ids 
     for t in vessel_available_days[v] for tau in unloading_days[j][(t_-1):(t_-1)+days_between_delivery[j]] 
     if (v,i,t,j,tau) in x.keys()) <= 1 
+    for j in (des_contract_ids+des_spot_ids) for t_ in unloading_days[j][:len(unloading_days[j])+1-days_between_delivery[j]])
+
+    return spread_delivery_constraints
+
+
+def init_spread_delivery_constraints(x, w, vessel_ids, loading_port_ids, vessel_available_days, des_contract_ids, unloading_days,
+    days_between_delivery, des_spot_ids, sailing_time_charter):
+    spread_delivery_constraints = (gp.quicksum(x[v,i,t,j,t_+tau] for v in vessel_ids for i in loading_port_ids 
+    for t in vessel_available_days[v] for tau in range(1, days_between_delivery[j]+1) 
+    if (v,i,t,j,t_+tau) in x.keys()) 
+    + gp.quicksum(w[i, int(t_-sailing_time_charter[i,j]+tau),j] for tau in range(1,days_between_delivery[j]+1)
+    for i in loading_port_ids if (i, int(t_-sailing_time_charter[i,j]+tau-1), j) in w.keys()) <= 1 
     for j in (des_contract_ids+des_spot_ids) for t_ in unloading_days[j][:len(unloading_days[j])+1-days_between_delivery[j]])
 
     return spread_delivery_constraints

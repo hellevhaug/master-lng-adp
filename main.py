@@ -50,6 +50,15 @@ def run_group(group, runtime, modelType):
                 run_one_instance(directory, filestring, runtime, modelType)
 
 
+def run_all_model_types(group, file, runtime):
+    if group=='N-1L-30D':
+        print('Please do not do this, this model is actually too fast')
+    else:
+        modelTypes = MODEL_TYPES
+        for modelType in modelTypes:
+            run_one_instance(group, file, runtime, modelType)
+
+
 # Function for initialize a model without running it with a solver
 def test_init_model(group, filename, modelType):
     if modelType=='basic':
@@ -68,11 +77,13 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-90D'
-filename1 = 'N-1L-6U-25F-18V-90D-c'
-runtime = 60*100
+group1 = 'N-1L-45D'
+filename1 = 'N-1L-6U-13F-18V-45D-a'
+runtime = 60
 modelType = BASIC_MODEL
 
 run_one_instance(group1, filename1, runtime, modelType)
 #test_init_model(group1, filename1, modelType)
+
+#run_all_model_types(group1, filename1, runtime)
 

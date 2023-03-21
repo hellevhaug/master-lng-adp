@@ -1,0 +1,93 @@
+{
+   "info": {
+      "Group": "N-1L-30D",
+      "Filename": "03-21-2023, 17-51",
+      "Runtime": 600,
+      "ModelType": "Basic model with minimum spread",
+      "CurrentTime": "2023-03-21 17:51:18"
+   },
+   "parameters": {
+      "AllowedWaitingTime": 7,
+      "MinimumCharterPeriod": 60,
+      "MinimumDaysBetweenDelivery": 4,
+      "ProductionScaleRate": 0.3,
+      "CharterOutFrictionRate": 0.05
+   },
+   "vars": {
+      "x": {
+         "x[BAY,ART_PORT,0,DESCON_1,1]": 1.0,
+         "x[BAY,DESCON_1,1,NGBON,12]": 1.0,
+         "x[BAY,DESCON_1,22,EXIT_PORT,33]": 1.0,
+         "x[BAY,NGBON,12,DESCON_1,22]": 1.0,
+         "x[RIV,ART_PORT,0,DESCON_1,1]": 1.0,
+         "x[RIV,DESCON_1,1,RIV-M,33]": 1.0,
+         "x[SOK,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[CRV,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[RNI,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[ADA,ART_PORT,0,DESCON_1,1]": 1.0,
+         "x[ADA,DESCON_1,1,NGBON,16]": 1.0,
+         "x[ADA,DESCON_1,27,EXIT_PORT,33]": 1.0,
+         "x[ADA,NGBON,16,DESCON_1,27]": 1.0,
+         "x[AKW,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[ABA,ART_PORT,0,DESCON_1,3]": 1.0,
+         "x[ABA,DESCON_1,3,NGBON,22]": 1.0,
+         "x[ABA,DESCON_1,31,EXIT_PORT,33]": 1.0,
+         "x[ABA,NGBON,22,DESCON_1,31]": 1.0,
+         "x[ABU,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[FIN,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[PHC,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[BON,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[LAG,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[BOR,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[OGU,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[BEN,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[ENU,ART_PORT,0,EXIT_PORT,33]": 1.0,
+         "x[OYO,ART_PORT,0,EXIT_PORT,33]": 1.0
+      },
+      "s": {
+         "s[NGBON,1]": 108250.0,
+         "s[NGBON,2]": 148500.0,
+         "s[NGBON,3]": 188750.0,
+         "s[NGBON,4]": 74360.82474226804,
+         "s[NGBON,5]": 114610.82474226804,
+         "s[NGBON,6]": 154860.824742268,
+         "s[NGBON,7]": 195110.824742268,
+         "s[NGBON,8]": 235360.824742268,
+         "s[NGBON,9]": 275610.824742268,
+         "s[NGBON,10]": 195860.824742268,
+         "s[NGBON,11]": 236110.824742268,
+         "s[NGBON,12]": 139323.92474226802,
+         "s[NGBON,13]": 179573.92474226802,
+         "s[NGBON,14]": 219823.92474226802,
+         "s[NGBON,15]": 260073.92474226802,
+         "s[NGBON,16]": 159125.37474226803,
+         "s[NGBON,17]": 199375.37474226803,
+         "s[NGBON,18]": 239625.37474226803,
+         "s[NGBON,19]": 279875.374742268,
+         "s[NGBON,20]": 175795.47783505148,
+         "s[NGBON,21]": 216045.47783505148,
+         "s[NGBON,22]": 81264.51883505148,
+         "s[NGBON,23]": 121514.51883505148,
+         "s[NGBON,24]": 161764.51883505148,
+         "s[NGBON,25]": 72014.51883505148,
+         "s[NGBON,26]": 112264.51883505148,
+         "s[NGBON,27]": 152514.51883505148,
+         "s[NGBON,28]": 192764.51883505148,
+         "s[NGBON,29]": 233014.51883505148,
+         "s[NGBON,30]": 273264.51883505145,
+         "s[NGBON,31]": 313514.51883505145,
+         "s[NGBON,32]": 193764.51883505145
+      },
+      "g": {
+         "g[NGBON,4,DESCON_2]": 154639.17525773196,
+         "g[NGBON,20,DESCON_2]": 144329.8969072165,
+         "g[NGBON,32,DESCON_1]": 160000.0
+      },
+      "z": {
+         "z[FOBCON_1-1,10]": 1.0,
+         "z[FOBCON_3-1,25]": 1.0
+      },
+      "q": {},
+      "y": {}
+   }
+}

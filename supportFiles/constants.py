@@ -22,6 +22,7 @@ CHARTER_OUT_FRICTION = 0.05
 BASIC_MODEL = 'basic'
 VARIABLE_PRODUCTION_MODEL = 'variableProduction'
 CHARTER_OUT_MODEL = 'charterOut'
+MODEL_TYPES = [BASIC_MODEL,VARIABLE_PRODUCTION_MODEL,CHARTER_OUT_MODEL]
 
 ################## Plot constants ####################
 UNLOADING = 'unloading'
