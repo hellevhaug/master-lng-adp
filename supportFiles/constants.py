@@ -23,6 +23,9 @@ BASIC_MODEL = 'basic'
 VARIABLE_PRODUCTION_MODEL = 'variableProduction'
 CHARTER_OUT_MODEL = 'charterOut'
 
+################## Plot constants ####################
+UNLOADING = 'unloading'
+LOADING = 'loading'
 
 
 def read_important_constants():
