@@ -11,7 +11,7 @@ from readData.readLocationData import *
 from readData.readOtherData import *
 from analysis.exploreSolution import *
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from readData.readContractData import *
 from readData.readVesselData import *
 from readData.readSpotData import *
@@ -81,7 +81,7 @@ def contract_gant_chart(logDataPath, group, testDataFile):
     data = read_data_file(group, testDataFile)
 
     # Planning horizion
-    loading_from_time, loading_to_time, loading_days = read_planning_horizion(testDataFile)
+    loading_from_time, loading_to_time, loading_days = read_planning_horizion(data)
 
     ## Initialize lists for locations and ports
     location_ids, location_names, location_types, location_ports, port_types, port_locations = initialize_location_sets() 
@@ -100,7 +100,7 @@ def contract_gant_chart(logDataPath, group, testDataFile):
     port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
 
     ## Initalize distances 
-    distances = set_distances(testDataFile)
+    distances = set_distances(data)
 
     ## Initialize spot stuffz
     spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
@@ -111,13 +111,13 @@ def contract_gant_chart(logDataPath, group, testDataFile):
     #fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
 
     ## Initialize lists for vessels
-    vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(testDataFile)
-    vessel_start_ports,vessel_location_acceptances, vessel_port_acceptances = initialize_vessel_location_sets(testDataFile)
+    vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(data)
+    vessel_start_ports,vessel_location_acceptances, vessel_port_acceptances = initialize_vessel_location_sets(data)
     vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, vessel_boil_off_rate = initialize_vessel_speed_sets()
     maintenance_ids, maintenance_vessels, maintenance_vessel_ports, maintenance_durations, maintenance_start_times, maintenance_end_times  = initialize_maintenance_sets()
 
     # Producer vessels
-    vessel_ids, vessel_capacities, location_ports, port_locations, port_types, vessel_start_ports, vessel_location_acceptances, vessel_port_acceptances, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, vessel_boil_off_rate, vessel_available_days, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, maintenance_start_times, maintenance_durations = read_producer_vessels(testDataFile, vessel_ids, vessel_capacities, location_ports, port_locations, port_types, vessel_start_ports, vessel_location_acceptances,
+    vessel_ids, vessel_capacities, location_ports, port_locations, port_types, vessel_start_ports, vessel_location_acceptances, vessel_port_acceptances, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, vessel_boil_off_rate, vessel_available_days, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, maintenance_start_times, maintenance_durations = read_producer_vessels(data, vessel_ids, vessel_capacities, location_ports, port_locations, port_types, vessel_start_ports, vessel_location_acceptances,
                         vessel_port_acceptances, loading_port_ids, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, 
                         vessel_boil_off_rate, vessel_available_days, loading_from_time, loading_to_time, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, 
                         maintenance_start_times, maintenance_durations, last_unloading_day, des_contract_ids)
@@ -145,23 +145,23 @@ def contract_gant_chart(logDataPath, group, testDataFile):
     #DES-kontrakter
     for (v,i,t,j,t_), value in x_dict.items():
         if round(value, 0) == 1 and j in des_contract_ids:
-            t_marked_date = loading_from_time+datetime.timedelta(days=t_)
+            t_marked_date = loading_from_time+timedelta(days=t_)
             
-            df.append(dict(Contract=j, Start=t_marked_date-datetime.timedelta(days=-1), Finish=t_))
+            df.append(dict(Contract=j, Start=t_marked_date-timedelta(days=-1), Finish=t_), ignore_index=True)
     
     #DES-kontrakter som blir chartret
     for (i,t,j), value in g_dict.items(): 
         if round(value, 0) != 0: 
-            t_date = loading_from_time+datetime.timedelta(days=t)
+            t_date = loading_from_time+timedelta(days=t)
             sailing_time = sailing_time_charter[(i,j)]
-            unloading_date = t_date+datetime.timedelta(days=sailing_time)#FIX
-            df.append(dict(Contract=j, Start=t, Finish=t+1))
+            unloading_date = t_date+timedelta(days=sailing_time)#FIX
+            df.append(dict(Contract=j, Start=t, Finish=t+1), ignore_index=True)
         
     #FOB-kontrakter mottar LNG den dagen de løfter cargoen
     for (f,t_), value in z_dict.items(): 
         if round(value, 0) != 0:
-            t_marked_date = loading_from_time+datetime.timedelta(days=t_)
-            df.append(dict(Contract=f, Start=t_, Finish=t_marked_date+datetime.timedelta(days=1)))
+            t_marked_date = loading_from_time+timedelta(days=t_)
+            df.append(dict(Contract=f, Start=t_, Finish=t_marked_date+timedelta(days=1)), ignore_index=True)
 
 
     fig = px.timeline(df, x_start="Start", x_end="Finish", y="Contract")
