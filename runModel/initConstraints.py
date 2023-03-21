@@ -152,7 +152,7 @@ def init_spread_delivery_constraints(x, w, vessel_ids, loading_port_ids, vessel_
     spread_delivery_constraints = (gp.quicksum(x[v,i,t,j,t_+tau] for v in vessel_ids for i in loading_port_ids 
     for t in vessel_available_days[v] for tau in range(1, days_between_delivery[j]+1) 
     if (v,i,t,j,t_+tau) in x.keys()) 
-    + gp.quicksum(w[i, int(t_-sailing_time_charter[i,j]+tau),j] for tau in range(1,days_between_delivery[j]+1)
+    + gp.quicksum(w[i, int(t_-sailing_time_charter[i,j]+tau-1),j] for tau in range(1,days_between_delivery[j]+1)
     for i in loading_port_ids if (i, int(t_-sailing_time_charter[i,j]+tau-1), j) in w.keys()) <= 1 
     for j in (des_contract_ids+des_spot_ids) for t_ in unloading_days[j][:len(unloading_days[j])+1-days_between_delivery[j]])
 

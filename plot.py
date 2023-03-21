@@ -194,8 +194,8 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
 
 
 ## Example of how to plot a gant chart ##
-group1 = 'N-1L-45D'
-data1 = 'N-1L-6U-13F-18V-45D-a'
-logFile1 = 'jsonFiles/N-1L-45D/N-1L-6U-13F-18V-45D-a/03-21-2023, 20-04.json'
+group1 = 'N-1L-90D'
+data1 = 'N-1L-6U-25F-18V-90D-c'
+logFile1 = 'jsonFiles/N-1L-90D/N-1L-6U-25F-18V-90D-c/03-21-2023, 21-04.json'
 logData = read_solved_json_file(logFile1)
 contract_gant_chart(logData, group1, data1, UNLOADING) #Can plot both loading and unloading

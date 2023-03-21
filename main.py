@@ -77,13 +77,13 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-45D'
-filename1 = 'N-1L-6U-13F-18V-45D-a'
-runtime = 60
+group1 = 'N-1L-90D'
+filename1 = 'N-1L-6U-25F-18V-90D-c'
+runtime = 60*10
 modelType = BASIC_MODEL
 
-run_one_instance(group1, filename1, runtime, modelType)
+#run_one_instance(group1, filename1, runtime, modelType)
 #test_init_model(group1, filename1, modelType)
 
-#run_all_model_types(group1, filename1, runtime)
+run_all_model_types(group1, filename1, runtime)
 
