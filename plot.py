@@ -143,9 +143,9 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
     if chartType == "unloading":
             #DES-kontrakter
         for (v,i,t,j,t_), value in x_dict.items():
-            if round(value, 0) == 1 and j in des_contract_ids:
+            if round(value, 0) == 1 and j in des_contract_ids and i != 'ART_PORT':
                 t_marked_date = loading_from_time+timedelta(days=t_)
-                df_list.append(dict(Contract=j, Start=t_marked_date-timedelta(days=-1), Finish=t_marked_date))
+                df_list.append(dict(Contract=j, Start=t_marked_date-timedelta(days=1), Finish=t_marked_date))
         
         #DES-kontrakter som blir chartret
         for (i,t,j), value in g_dict.items(): 
@@ -165,9 +165,9 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
     if chartType == "loading": 
             #DES-kontrakter
         for (v,i,t,j,t_), value in x_dict.items():
-            if round(value, 0) == 1 and j in des_contract_ids:
+            if round(value, 0) == 1 and j in des_contract_ids and i != 'ART_PORT':
                 t_date = loading_from_time+timedelta(days=t)
-                df_list.append(dict(Contract=j, Start=t_date-timedelta(days=-1), Finish=t_date))
+                df_list.append(dict(Contract=j, Start=t_date-timedelta(days=1), Finish=t_date))
         
         #DES-kontrakter som blir chartret
         for (i,t,j), value in g_dict.items(): 
@@ -186,7 +186,7 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
     print('df_list:', df_list)
     df = pd.DataFrame(df_list)
     print('DataFrame:', df)
-    fig = px.timeline(df, x_start="Start", x_end="Finish", y="Contract", color="Contract")
+    fig = px.timeline(df, x_start="Start", x_end="Finish", y="Contract", color="Contract", title=chartType+" chart for "+testDataFile)
     fig.update_yaxes(autorange="reversed") # otherwise tasks are listed from the bottom up
     fig.show()
 
@@ -196,6 +196,6 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
 ## Example of how to plot a gant chart ##
 group1 = 'N-1L-90D'
 data1 = 'N-1L-6U-25F-18V-90D-c'
-logFile1 = 'jsonFiles/N-1L-90D/N-1L-6U-25F-18V-90D-c/03-21-2023, 11-47.json'
+logFile1 = 'jsonFiles/N-1L-90D/N-1L-6U-25F-18V-90D-c/03-21-2023, 12-39.json'
 logData = read_solved_json_file(logFile1)
-contract_gant_chart(logData, group1, data1, UNLOADING)
+contract_gant_chart(logData, group1, data1, UNLOADING) #Can plot both loading and unloading

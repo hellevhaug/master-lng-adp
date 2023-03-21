@@ -68,7 +68,7 @@ Call whatever functions you'll like below here
 group1 = 'N-1L-90D'
 filename1 = 'N-1L-6U-25F-18V-90D-c'
 runtime = 60*100
-modelType = CHARTER_OUT_MODEL
+modelType = BASIC_MODEL
 
 run_one_instance(group1, filename1, runtime, modelType)
 #test_init_model(group1, filename1, modelType)
