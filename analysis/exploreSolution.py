@@ -94,6 +94,19 @@ def get_y_vars(data):
     return y
 
 
+def get_solution_parameters(data):
+
+    parameters = data['parameters']
+
+    return parameters
+
+
+def get_solution_info(data):
+
+    info = data['info']
+
+    return info
+    
 
 
 
