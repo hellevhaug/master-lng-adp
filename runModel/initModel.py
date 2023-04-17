@@ -44,6 +44,7 @@ def initialize_basic_model(group, filename):
 
     ## Initialize spot stuffz
     spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
+    # HERE SPOTT STUFFZ WILL COME
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initialize fake fob stuffz + set fob_operational_times
@@ -99,7 +100,7 @@ def initialize_basic_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + spot_port_ids)]
+    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -285,7 +286,7 @@ def initialize_variable_production_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + spot_port_ids)]
+    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')

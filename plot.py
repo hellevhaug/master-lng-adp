@@ -26,6 +26,6 @@ group1 = 'A-2L-60D'
 datafile1 = 'A-2L-6U-11F-7V-60D-a'
 logFile1 = f'jsonFiles/A-2L-60D/A-2L-6U-11F-7V-60D-a/03-22-2023, 20-08.json'
 solutionData = read_solved_json_file(logFile1)
-#contract_gant_chart(solutionData, group1, datafile1, UNLOADING) #Can plot both loading and unloading
-#plot_inventory_levels(solutionData, group1, datafile1)
+contract_gant_chart(solutionData, group1, datafile1, UNLOADING) #Can plot both loading and unloading
+plot_inventory_levels(solutionData, group1, datafile1)
 plot_produced_lng(solutionData, group1, datafile1)
