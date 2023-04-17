@@ -127,9 +127,9 @@ des_contract_partitions, earliest_unloading_day, last_unloading_day):
 def read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, fob_demands, fob_days, fob_revenues):
     for partition in contract['fobRequests']:
 
-        fob_ids.append(partition['id'])
-        fob_contract_ids.append(partition['id'])
-        fob_demands[partition['id']] = partition['quantity']
+        fob_ids.append(partition['name'])
+        fob_contract_ids.append(partition['name'])
+        fob_demands[partition['name']] = partition['quantity']
 
         partition_from_time = datetime.strptime(partition['from'].split('T')[0], '%Y-%m-%d') # Start time of contract
         partition_to_time = datetime.strptime(partition['to'].split('T')[0], '%Y-%m-%d') # End time of contract
@@ -137,12 +137,12 @@ def read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, f
         partition_delta_time = (partition_to_time-partition_from_time).days
         if partition_start_time < 0:
             partition_start_time = 0
-        fob_days[partition['id']] = [
+        fob_days[partition['name']] = [
             i for i in range(partition_start_time+1,partition_start_time+partition_delta_time+2)]
 
         if len(contract['salesPrices'])==1:
-            for t in fob_days[partition['id']]:
-                fob_revenues[partition['id'], t] = contract['salesPrices'][0]['price']
+            for t in fob_days[partition['name']]:
+                fob_revenues[partition['name'], t] = contract['salesPrices'][0]['price']
         else: 
             for price in contract['salesPrices']:
                 price_from_time = datetime.strptime(price['fromDateTime'].split('T')[0], '%Y-%m-%d')
@@ -152,7 +152,7 @@ def read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, f
                     price_from_time = partition_from_time
                 price_start_time = (price_from_time-loading_from_time).days
                 for t in range(price_start_time+1, partition_start_time+partition_delta_time+2):
-                    fob_revenues[partition['id'], t] = price['price']
+                    fob_revenues[partition['name'], t] = price['price']
 
     return fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days
 

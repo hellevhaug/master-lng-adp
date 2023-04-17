@@ -83,3 +83,4 @@ def set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_
     charter_total_cost = {(i,t,j):sailing_time_charter[i,j]*charter_vessel_prices[t]*2 for i in loading_port_ids for j in des_contract_ids for t in loading_days}
 
     return charter_total_cost
+

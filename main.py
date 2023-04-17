@@ -14,9 +14,12 @@ def write_vars_to_file(group, filename, model, message):
         print('Variables written to file successfully.')
     
     except:
-        model.computeIIS()
-        model.write('solution.ilp')
-        print('Could not write variables to file, infeasible model.')
+        try:
+            model.computeIIS()
+            model.write('solution.ilp')
+            print('Could not write variables to file, infeasible model.')
+        except:
+            print('Model is feasible, but did not find a feasible solution withing the time limits.')
 
 
 def run_one_instance(group, filename, runtime, modelType):
@@ -47,6 +50,15 @@ def run_group(group, runtime, modelType):
                 run_one_instance(directory, filestring, runtime, modelType)
 
 
+def run_all_model_types(group, file, runtime):
+    if group=='N-1L-30D':
+        print('Please do not do this, this model is actually too fast')
+    else:
+        modelTypes = MODEL_TYPES
+        for modelType in modelTypes:
+            run_one_instance(group, file, runtime, modelType)
+
+
 # Function for initialize a model without running it with a solver
 def test_init_model(group, filename, modelType):
     if modelType=='basic':
@@ -65,14 +77,13 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-45D'
-filename1 = 'N-1L-6U-18F-18V-45D-b'
-runtime = 60*2
-modelType = CHARTER_OUT_MODEL
+group1 = 'A-2L-60D'
+filename1 = 'A-2L-6U-11F-7V-60D-a'
+runtime = 60*3
+modelType = BASIC_MODEL
 
-run_one_instance(group1, filename1, runtime, modelType)
+#run_one_instance(group1, filename1, runtime, modelType)
 #test_init_model(group1, filename1, modelType)
 
-
-
+run_all_model_types(group1, filename1, runtime)
 

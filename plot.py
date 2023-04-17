@@ -1,55 +1,31 @@
 import geopandas as gpd
 import matplotlib.pyplot as plt
+import plotly.express as px
+import pandas as pd
+
 
 from analysis.plotSolutions import *
 from readData.readLocationData import *
 from readData.readOtherData import *
 from analysis.exploreSolution import *
 
+from datetime import datetime, timedelta
+from readData.readContractData import *
+from readData.readVesselData import *
+from readData.readSpotData import *
+from supportFiles.constants import *
+
+
 """
 File for plotting different stuffz
 """
 
-def plot_ports(df):
-    countries = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
-    countries = countries.drop(159) # Antartica
-    fig, ax = plt.subplots(figsize=(8,6))
 
-    countries.plot(color="lightgrey",ax=ax)
-
-    df.plot(x="longitude", y="latitude", kind="scatter", 
-            c="red", colormap="YlOrRd", 
-            title="All loading- and unloading ports", 
-            ax=ax)
-
-    plt.show()
-
-
-def plot_vessel_routes(group, filename, solutionPIT):
-    df = get_coordinates_dataframe()
-
-    return 0
-
-
-def plot_inventory_storage():
-
-    return 0
-
-
-def plot_full_solution(group, filename, solutionPIT):
-
-    data = read_data_file(group, filename)
-    
-
-    return 0
-
-"""
-countries = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
-for index, row in countries.iterrows():
-    print(index, row['name'])
-countries = countries.drop(23)
-"""
-
-df = get_coordinates_dataframe()
-plot_ports(df)
-
+## Example of how to plot a gant chart ##
+group1 = 'A-2L-60D'
+datafile1 = 'A-2L-6U-11F-7V-60D-a'
+logFile1 = f'jsonFiles/A-2L-60D/A-2L-6U-11F-7V-60D-a/03-22-2023, 20-08.json'
+solutionData = read_solved_json_file(logFile1)
+#contract_gant_chart(solutionData, group1, datafile1, UNLOADING) #Can plot both loading and unloading
+#plot_inventory_levels(solutionData, group1, datafile1)
+plot_produced_lng(solutionData, group1, datafile1)
