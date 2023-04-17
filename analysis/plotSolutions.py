@@ -171,6 +171,9 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
 
     ## Initialize spot stuffz
     spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
+    des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
+    loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
+    fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
     #ays_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initialize fake fob stuffz + set fob_operational_times
@@ -197,7 +200,7 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
     charter_vessel_port_acceptances, charter_vessel_node_acceptances, charter_vessel_upper_capacity, charter_vessel_lower_capacity, charter_vessel_prices = initialize_charter_sets(data)
     charter_vessel_id, charter_vessel_loading_quantity, charter_vessel_speed, charter_vessel_prices, charter_vessel_node_acceptances, charter_vessel_port_acceptances = read_charter_vessels(data, loading_days, loading_from_time, loading_to_time, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, charter_vessel_port_acceptances, des_contract_ids)
 
-    sailing_time_charter = set_sailing_time_charter(loading_port_ids, spot_port_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
+    sailing_time_charter = set_sailing_time_charter(loading_port_ids, des_spot_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
     #charter_total_cost = set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_port_ids, des_contract_ids, loading_days)
 
     
@@ -227,8 +230,13 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
         #FOB-kontrakter mottar LNG den dagen de løfter cargoen
         for (f,t_), value in z_dict.items(): 
             if round(value, 0) != 0:
+                if f[3:4]=='S':
+                    contract_name = "FOBSPOT "+f[8:9]
+                elif f[0:1]=='A':
+                    contract_name = "ARTFOB "
+                else:
+                    contract_name = "FOBCON "+f[7:8]
                 t_marked_date = loading_from_time+timedelta(days=t_)
-                contract_name = "FOBCON "+f[7:8]
                 df_list.append(dict(Contract=contract_name, Start=t_marked_date, Finish=t_marked_date+timedelta(days=1), Type='FOB'))
 
     if chartType == "loading": 
@@ -247,8 +255,13 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
         #FOB-kontrakter mottar LNG den dagen de løfter cargoen
         for (f,t_), value in z_dict.items(): 
             if round(value, 0) != 0:
+                if f[3:4]=='S':
+                    contract_name = "FOBSPOT "+f[8:9]
+                elif f[0:1]=='A':
+                    contract_name = "ARTFOB "
+                else:
+                    contract_name = "FOBCON "+f[7:8]
                 t_marked_date = loading_from_time+timedelta(days=t_)
-                contract_name = "FOBCON "+f[7:8]
                 df_list.append(dict(Contract=contract_name, Start=t_marked_date, Finish=t_marked_date+timedelta(days=1), Type='FOB'))
         #print('df_list:', df_list)
 

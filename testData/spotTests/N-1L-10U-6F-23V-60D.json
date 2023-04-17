@@ -76,7 +76,7 @@
 	],
 "contracts": [
 {"id": "DESCON_1", "name": "DESCON_1", "desRequests": [
-{"id": "6532", "name":"DESCON_1-1", "from":"2020-11-16T19:00:00", "to":"2020-12-16T19:00:00", "minQuantity":120000, "quantity":180000, "portId":"KR", "storageId":"Lng-storage"}],
+{"id": "6532", "name":"DESCON_1-1", "from":"2020-10-16T19:00:00", "to":"2020-11-16T19:00:00", "minQuantity":120000, "quantity":180000, "portId":"KR", "storageId":"Lng-storage"}],
 "salesPrices": [
 	{"fromDateTime": "2020-10-01T00:00:00", "price": 100}
 	]},
@@ -100,31 +100,18 @@
 "salesPrices": [
 	{"fromDateTime": "2020-10-01T00:00:00", "price": 80}
 	]},
-{"id": "DESCON_6", "name": "DESCON_6", 
-"salesPrices": [
-	{"fromDateTime": "2020-10-01T00:00:00", "price": 80}
-	]},
-{"id": "DESCON_7", "name": "DESCON_7",
-"salesPrices": [
-	{"fromDateTime": "2020-10-01T00:00:00", "price": 80}
-	]},
 {"id": "DESCON_8", "name": "DESCON_8", "desRequests": [
 {"id": "6525", "name":"DESCON_8-1", "from":"2020-10-18T10:30:00", "to":"2020-11-17T10:30:00", "minQuantity":120000, "quantity":180000, "portId":"PT", "storageId":"Lng-storage"}],
 "salesPrices": [
 	{"fromDateTime": "2020-10-01T00:00:00", "price": 80}
 	]},
-{"id": "DESCON_9", "name": "DESCON_9"},
-{"id": "DESCON_10", "name": "DESCON_10"},
-{"id": "DESCON_11", "name": "DESCON_11"},
-{"id": "DESCON_12", "name": "DESCON_12"},
-{"id": "DESCON_13", "name": "DESCON_13"},
 {"id": "DESCON_14", "name": "DESCON_14", "desRequests": [
 {"id": "6519", "name":"DESCON_14-1", "from":"2020-10-31T04:30:00", "to":"2020-11-30T04:30:00", "minQuantity":120000, "quantity":180000, "portId":"TW", "storageId":"Lng-storage"}],
 "salesPrices": [
 	{"fromDateTime": "2020-10-01T00:00:00", "price": 80}
 	]},
 {"id": "DESCON_16", "name": "DESCON_16", "desRequests": [
-{"id": "6720", "name":"DESCON_16-1", "from":"2021-02-05T11:00:00", "to":"2021-03-07T11:00:00", "minQuantity":120000, "quantity":180000, "portId":"TW", "storageId":"Lng-storage"}],
+{"id": "6720", "name":"DESCON_16-1", "from":"2020-10-05T11:00:00", "to":"2020-11-07T11:00:00", "minQuantity":120000, "quantity":180000, "portId":"TW", "storageId":"Lng-storage"}],
 "salesPrices": [
 	{"fromDateTime": "2020-10-01T00:00:00", "price": 80}
 	]},
@@ -172,7 +159,7 @@
 ],
 "forecast": {
 		"fromDateTime": "2020-10-01T00:00:00",
-		"toDateTime": "2020-11-01T00:00:00"
+		"toDateTime": "2020-12-01T00:00:00"
 	},		
 "network": {
 "legDistances" : [
@@ -590,8 +577,8 @@
 },
 "maintenances" : [
 { 	"duration" : 60,
-	"from" : "2021-03-01T00:00:00",
-	"to" : "2021-03-05T00:00:00",
+	"from" : "2020-10-30T00:00:00",
+	"to" : "2020-12-05T00:00:00",
 	"location" : "SG"
 }
 ],

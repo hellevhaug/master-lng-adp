@@ -137,7 +137,7 @@ def set_external_data(data):
 
 def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
     maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
-    spot_port_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+    des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
     fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days,
     vessel_laden_speed_profile, vessel_ballast_speed_profile, modelType):
     feasible_arcs = []
@@ -178,7 +178,7 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
                     if (maintenance_ids.__contains__(i) and des_contract_ids.__contains__(j)):
                         continue
                     # Cannot travel from unloading to spot or from spot to unloading
-                    if (des_contract_ids.__contains__(i or j) and spot_port_ids.__contains__(i or j)):
+                    if (des_contract_ids.__contains__(i or j) and des_spot_ids.__contains__(i or j)):
                         continue
                     for t_ in range(t+1, min(t+65,len(all_days))):
                         if loading_port_ids.__contains__(j) and t_>len(loading_days)+1:

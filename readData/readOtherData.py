@@ -73,14 +73,14 @@ def set_fob_operational_times(fob_ids, loading_port_ids):
     return fob_operational_times
 
 
-def set_sailing_time_charter(loading_port_ids, spot_port_ids, des_contract_ids, distances, port_locations, charter_vessel_speed):
-    sailing_time_charter = {(i, j): calculate_charter_sailing_time(i, j, distances, port_locations, charter_vessel_speed) for i in loading_port_ids for j in (spot_port_ids+des_contract_ids)}
+def set_sailing_time_charter(loading_port_ids, des_spot_ids, des_contract_ids, distances, port_locations, charter_vessel_speed):
+    sailing_time_charter = {(i, j): calculate_charter_sailing_time(i, j, distances, port_locations, charter_vessel_speed) for i in loading_port_ids for j in (des_spot_ids+des_contract_ids)}
 
     return sailing_time_charter
 
 
-def set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_port_ids, des_contract_ids, loading_days):
-    charter_total_cost = {(i,t,j):sailing_time_charter[i,j]*charter_vessel_prices[t]*2 for i in loading_port_ids for j in des_contract_ids for t in loading_days}
+def set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_port_ids, des_contract_ids, loading_days, des_spot_ids):
+    charter_total_cost = {(i,t,j):sailing_time_charter[i,j]*charter_vessel_prices[t]*2 for i in loading_port_ids for j in (des_contract_ids+des_spot_ids) for t in loading_days}
 
     return charter_total_cost
 
