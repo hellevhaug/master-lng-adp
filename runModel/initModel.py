@@ -44,6 +44,13 @@ def initialize_basic_model(group, filename):
 
     ## Initialize spot stuffz
     spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
+    # Not all datasets have spot :)
+    try:
+        des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
+        loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
+        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+    except:
+        pass
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initialize fake fob stuffz + set fob_operational_times
@@ -70,8 +77,8 @@ def initialize_basic_model(group, filename):
     charter_vessel_port_acceptances, charter_vessel_node_acceptances, charter_vessel_upper_capacity, charter_vessel_lower_capacity, charter_vessel_prices = initialize_charter_sets(data)
     charter_vessel_id, charter_vessel_loading_quantity, charter_vessel_speed, charter_vessel_prices, charter_vessel_node_acceptances, charter_vessel_port_acceptances = read_charter_vessels(data, loading_days, loading_from_time, loading_to_time, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, charter_vessel_port_acceptances, des_contract_ids)
 
-    sailing_time_charter = set_sailing_time_charter(loading_port_ids, spot_port_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
-    charter_total_cost = set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_port_ids, des_contract_ids, loading_days)
+    sailing_time_charter = set_sailing_time_charter(loading_port_ids, des_spot_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
+    charter_total_cost = set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_port_ids, des_contract_ids, loading_days, des_spot_ids)
 
     ## Initializing arcs
     arc_speeds, arc_waiting_times, arc_sailing_times, sailing_costs, total_feasible_arcs = init_arc_sets()
@@ -83,7 +90,7 @@ def initialize_basic_model(group, filename):
 
     vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
     maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
-    spot_port_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+    des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
     fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
     vessel_ballast_speed_profile, BASIC_MODEL) 
     for vessel in vessel_ids}
@@ -99,7 +106,7 @@ def initialize_basic_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + spot_port_ids)]
+    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -173,10 +180,10 @@ def initialize_basic_model(group, filename):
 
     # Constraint 5.13 
     model.addConstrs(init_charter_upper_capacity_constr(g, w, charter_vessel_upper_capacity, loading_port_ids, loading_days, 
-    spot_port_ids, des_contract_ids), name='charter_upper_capacity')
+    des_spot_ids, des_contract_ids), name='charter_upper_capacity')
 
     model.addConstrs(init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
-    spot_port_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
+    des_spot_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
 
     return model # This line must be moved to activate the extensions
 
@@ -230,6 +237,13 @@ def initialize_variable_production_model(group, filename):
 
     ## Initialize spot stuffz
     spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
+    # Not all datasets have spot :)
+    try:
+        des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
+        loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
+        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+    except:
+        pass
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initialize fake fob stuffz + set fob_operational_times
@@ -256,7 +270,7 @@ def initialize_variable_production_model(group, filename):
     charter_vessel_port_acceptances, charter_vessel_node_acceptances, charter_vessel_upper_capacity, charter_vessel_lower_capacity, charter_vessel_prices = initialize_charter_sets(data)
     charter_vessel_id, charter_vessel_loading_quantity, charter_vessel_speed, charter_vessel_prices, charter_vessel_node_acceptances, charter_vessel_port_acceptances = read_charter_vessels(data, loading_days, loading_from_time, loading_to_time, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, charter_vessel_port_acceptances, des_contract_ids)
 
-    sailing_time_charter = set_sailing_time_charter(loading_port_ids, spot_port_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
+    sailing_time_charter = set_sailing_time_charter(loading_port_ids, des_spot_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
     charter_total_cost = set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_port_ids, des_contract_ids, loading_days)
 
     ## Initializing arcs
@@ -269,7 +283,7 @@ def initialize_variable_production_model(group, filename):
 
     vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
     maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
-    spot_port_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+    des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
     fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
     vessel_ballast_speed_profile, VARIABLE_PRODUCTION_MODEL) 
     for vessel in vessel_ids}
@@ -285,7 +299,7 @@ def initialize_variable_production_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + spot_port_ids)]
+    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -362,10 +376,10 @@ def initialize_variable_production_model(group, filename):
 
     # Constraint 5.13 
     model.addConstrs(init_charter_upper_capacity_constr(g, w, charter_vessel_upper_capacity, loading_port_ids, loading_days, 
-    spot_port_ids, des_contract_ids), name='charter_upper_capacity')
+    des_spot_ids, des_contract_ids), name='charter_upper_capacity')
 
     model.addConstrs(init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
-    spot_port_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
+    des_spot_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
 
 
     # Constraint 5.19
@@ -411,6 +425,13 @@ def initialize_charter_out_model(group, filename):
 
     ## Initialize spot stuffz
     spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
+    # Not all datasets have spot :)
+    try:
+        des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
+        loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
+        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+    except:
+        pass
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initialize fake fob stuffz + set fob_operational_times
@@ -440,7 +461,7 @@ def initialize_charter_out_model(group, filename):
     charter_out_friction = set_charter_out_friction()
     scaled_charter_out_prices = scale_charter_out_prices(charter_vessel_prices, charter_out_friction)
 
-    sailing_time_charter = set_sailing_time_charter(loading_port_ids, spot_port_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
+    sailing_time_charter = set_sailing_time_charter(loading_port_ids, des_spot_ids, des_contract_ids, distances, port_locations, charter_vessel_speed)
     charter_total_cost = set_charter_total_cost(sailing_time_charter, charter_vessel_prices, loading_port_ids, des_contract_ids, loading_days)
 
     ## Initializing arcs
@@ -453,7 +474,7 @@ def initialize_charter_out_model(group, filename):
 
     vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
     maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
-    spot_port_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+    des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
     fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
     vessel_ballast_speed_profile, CHARTER_OUT_MODEL) 
     for vessel in vessel_ids}
@@ -469,7 +490,7 @@ def initialize_charter_out_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + spot_port_ids)]
+    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -546,10 +567,10 @@ def initialize_charter_out_model(group, filename):
 
     # Constraint 5.13 
     model.addConstrs(init_charter_upper_capacity_constr(g, w, charter_vessel_upper_capacity, loading_port_ids, loading_days, 
-    spot_port_ids, des_contract_ids), name='charter_upper_capacity')
+    des_spot_ids, des_contract_ids), name='charter_upper_capacity')
 
     model.addConstrs(init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
-    spot_port_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
+    des_spot_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
 
     # NEW CONSTRAINT (5.22, only chartered out one time)
     model.addConstrs(init_charter_one_time_constr(x, y, loading_days, port_ids, vessel_ids, vessel_available_days),

@@ -10,10 +10,10 @@ tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, cha
     objective = (gp.quicksum(fob_revenues[f,t]*fob_demands[f]*z[f,t] 
     for f in fob_ids for t in fob_days[f]) + 
     gp.quicksum(des_contract_revenues[j,t_]*vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_] 
-    for v in vessel_ids for i in loading_port_ids for t in loading_days for j in spot_port_ids for t_ in all_days 
+    for v in vessel_ids for i in loading_port_ids for t in loading_days for j in des_spot_ids for t_ in all_days 
     if (v,i,t,j,t_) in x.keys()) + 
     gp.quicksum(des_contract_revenues[j,min(t+sailing_time_charter[i,j], len(unloading_days[j]))]*g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off)
-    for i in loading_port_ids for j in spot_port_ids for t in unloading_days[j]) + 
+    for i in loading_port_ids for j in des_spot_ids for t in unloading_days[j] if (j, min(t+sailing_time_charter[i,j], len(unloading_days[j]))) in des_contract_revenues.keys()) + 
     gp.quicksum(tank_leftover_value[i]*s[i, len(loading_days)] for i in loading_port_ids) +
     gp.quicksum(vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*des_contract_revenues[j,t_]*x[v,i,t,j,t_]
     for j in des_contract_ids for v in vessel_ids for i in loading_port_ids for t in vessel_available_days[v] for t_ in unloading_days[j] # Left-hand sums
@@ -190,19 +190,19 @@ def init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_t
 
 
 # Initialize charter upper capacity constraints
-def init_charter_upper_capacity_constr(g, w, charter_vessel_upper_capacity, loading_port_ids, loading_days, spot_port_ids, des_contract_ids):
+def init_charter_upper_capacity_constr(g, w, charter_vessel_upper_capacity, loading_port_ids, loading_days, des_spot_ids, des_contract_ids):
 
     charter_upper_capacity_contraints = (g[i,t,j]<=(charter_vessel_upper_capacity)*w[i,t,j] for i in loading_port_ids for t in loading_days
-    for j in (spot_port_ids+des_contract_ids))
+    for j in (des_spot_ids+des_contract_ids))
 
     return charter_upper_capacity_contraints
 
 
 # Initialize charter lower capacity constraints 
-def init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, spot_port_ids, des_contract_ids):
+def init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, des_spot_ids, des_contract_ids):
 
     charter_lower_capacity_contraints = (charter_vessel_lower_capacity*w[i,t,j]<= g[i,t,j] for i in loading_port_ids for t in loading_days 
-    for j in (spot_port_ids+des_contract_ids))
+    for j in (des_spot_ids+des_contract_ids))
 
     return charter_lower_capacity_contraints
 
@@ -237,10 +237,10 @@ tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, cha
     objective_charter_out = (gp.quicksum(fob_revenues[f,t]*fob_demands[f]*z[f,t] 
     for f in fob_ids for t in fob_days[f]) + 
     gp.quicksum(des_contract_revenues[j,t_]*vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_] 
-    for v in vessel_ids for i in loading_port_ids for t in loading_days for j in spot_port_ids for t_ in all_days 
+    for v in vessel_ids for i in loading_port_ids for t in loading_days for j in des_spot_ids for t_ in all_days 
     if (v,i,t,j,t_) in x.keys()) + 
     gp.quicksum(des_contract_revenues[j,min(t+sailing_time_charter[i,j], len(unloading_days[j]))]*g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off)
-    for i in loading_port_ids for j in spot_port_ids for t in unloading_days[j]) + 
+    for i in loading_port_ids for j in des_spot_ids for t in unloading_days[j] if (j, min(t+sailing_time_charter[i,j], len(unloading_days[j]))) in des_contract_revenues.keys()) + 
     gp.quicksum(tank_leftover_value[i]*s[i, len(loading_days)] for i in loading_port_ids) +
     gp.quicksum(vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*des_contract_revenues[j,t_]*x[v,i,t,j,t_]
     for j in des_contract_ids for v in vessel_ids for i in loading_port_ids for t in vessel_available_days[v] for t_ in unloading_days[j] # Left-hand sums
