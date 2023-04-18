@@ -250,7 +250,6 @@
 {"id": "dist_67", "name":"", "fromNode": "TW", "toNode": "SG", "distance": 1621},
 {"id": "dist_68", "name":"", "fromNode": "US", "toNode": "SG", "distance": 13088}],
 
-,
 "ports": [
 {"id": "AE", "name": "United Arab Emirates", "pilotIn": 8, "pilotOut": 8 , "terminal": { "unloadRate":10000}},
 {"id": "AR", "name": "Argentina", "pilotIn": 8, "pilotOut": 8 , "terminal": { "unloadRate":12000}},
