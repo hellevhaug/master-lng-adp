@@ -84,7 +84,7 @@ modelType = BASIC_MODEL
 spotGroup = 'spotTests'
 spotFilename='N-1L-10U-6F-23V-60D'
 
-run_one_instance(group1, filename1, runtime, modelType)
+run_one_instance(spotGroup, spotFilename, runtime, modelType)
 #test_init_model(spotGroup, spotFilename, modelType)
 
 #run_all_model_types(group1, filename1, runtime)

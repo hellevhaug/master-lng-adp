@@ -150,16 +150,16 @@
 	]}
 ],
 "spotDesRequests" : [
-{"id": "Spot1", "name":"DesSpot-1", "fromDateTime":"2020-11-02T00:00:00", "toDateTime":"2020-12-01T00:00:00", "minQuantity":120000, "quantity":180000, "portId":"KR", "productId": "Lng", "salesPrices": [ {"fromDateTime":"2020-11-02T00:00:00", "price": 130}]},
-{"id": "Spot2", "name":"DesSpot-2", "fromDateTime":"2020-11-15T00:00:00", "toDateTime":"2020-12-01T00:00:00", "minQuantity":120000, "quantity":180000, "portId":"ES", "productId": "Lng", "salesPrices": [ {"fromDateTime":"2020-11-02T00:00:00", "price": 110}]}
+{"id": "Spot1", "name":"DesSpot-1", "fromDateTime":"2020-10-02T00:00:00", "toDateTime":"2020-11-01T00:00:00", "minQuantity":120000, "quantity":180000, "portId":"KR", "productId": "Lng", "salesPrices": [ {"fromDateTime":"2020-11-02T00:00:00", "price": 130}]},
+{"id": "Spot2", "name":"DesSpot-2", "fromDateTime":"2020-10-15T00:00:00", "toDateTime":"2020-11-15T00:00:00", "minQuantity":120000, "quantity":180000, "portId":"ES", "productId": "Lng", "salesPrices": [ {"fromDateTime":"2020-11-02T00:00:00", "price": 110}]}
 ],
 "spotFobRequests" : [
-{"id": "Spot3", "name":"FobSpot-1", "fromDateTime":"2020-11-02T00:00:00", "toDateTime":"2020-11-10T00:00:00",  "quantity":120000, "storageId": "Lng-storage", "salesPrices": [ {"fromDateTime":"2020-11-02T00:00:00", "price": 100}]},
-{"id": "Spot4", "name":"FobSpot-2", "fromDateTime":"2020-11-20T00:00:00", "toDateTime":"2020-12-01T00:00:00",  "quantity":145000, "storageId": "Lng-storage", "salesPrices": [ {"fromDateTime":"2020-11-02T00:00:00", "price": 100}]}
+{"id": "Spot3", "name":"FobSpot-1", "fromDateTime":"2020-10-02T00:00:00", "toDateTime":"2020-11-20T00:00:00",  "quantity":120000, "storageId": "Lng-storage", "salesPrices": [ {"fromDateTime":"2020-11-02T00:00:00", "price": 100}]},
+{"id": "Spot4", "name":"FobSpot-2", "fromDateTime":"2020-10-20T00:00:00", "toDateTime":"2020-11-20T00:00:00",  "quantity":145000, "storageId": "Lng-storage", "salesPrices": [ {"fromDateTime":"2020-11-02T00:00:00", "price": 100}]}
 ],
 "forecast": {
 		"fromDateTime": "2020-10-01T00:00:00",
-		"toDateTime": "2020-12-01T00:00:00"
+		"toDateTime": "2020-11-01T00:00:00"
 	},		
 "network": {
 "legDistances" : [
