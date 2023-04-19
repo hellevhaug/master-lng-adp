@@ -139,7 +139,7 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
     maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
     des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
     fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days,
-    vessel_laden_speed_profile, vessel_ballast_speed_profile, modelType):
+    vessel_laden_speed_profile, vessel_ballast_speed_profile, modelType, des_loading_ports):
     feasible_arcs = []
     # Arc from artificial node
     feasible_arcs.append((vessel,'ART_PORT',0,vessel_start_ports[vessel], vessel_available_days[vessel][0]))
@@ -170,6 +170,9 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
                 for j in vessel_port_acceptances[vessel]:
                     # Cannot travel to node of same type
                     if port_types[i]==port_types[j]:
+                        continue
+                    # Customers cannot recieve LNG from loading ports not in des-loading_port_list
+                    if (des_contract_ids.__contains__(j) and not des_loading_ports[j].__contains__(i)):
                         continue
                     # Cannot travel from loading node to maintenance node, feasible the other way
                     if (loading_port_ids.__contains__(i) and maintenance_ids.__contains__(j)):
