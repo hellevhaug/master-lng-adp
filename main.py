@@ -106,16 +106,17 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'A-2L-60D'
-filename1 = 'A-2L-6U-11F-7V-60D-a'
+group1 = 'A-2L-180D'
+filename1 = 'A-2L-6U-18F-15V-180D-b'
 runtime = 60*3
 modelType = BASIC_MODEL
 spotGroup = 'spotTests'
 spotFilename='N-1L-10U-6F-23V-60D'
 
-#run_one_instance(group1, filename1, runtime, modelType)
+run_one_instance(group1, filename1, runtime, modelType)
 #test_init_model(group1, filename1, modelType)
 
 #run_all_model_types(group1, filename1, runtime)
-run_group(group1, runtime, modelType)
+#run_group(group1, runtime, modelType)
+
 
