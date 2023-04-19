@@ -53,6 +53,7 @@ def run_group(group, runTime, modelType):
                 try:
                     run_one_instance(group, filestring, runTime, modelType)
                 except:
+                    print(f'Failed to run filen: {filestring}')
                     pass
 
 
@@ -65,6 +66,7 @@ def run_all_files(runTime, modelType):
             try: 
                 run_group(group, runTime, modelType)
             except:
+                print(f'Failed to run group: {group}')
                 pass
     print('All files ran successfully')
 
@@ -79,6 +81,7 @@ def run_all_model_types(group, file, runtime):
             try:
                 run_one_instance(group, file, runtime, modelType)
             except:
+                print(f'Failed to run filen: {file}')
                 pass
 
 
