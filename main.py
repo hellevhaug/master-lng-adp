@@ -50,11 +50,14 @@ def run_group(group, runTime, modelType):
         if os.path.isfile(path):
             filestring, type = str(filename).split('.')
             if type=='json':
+                run_one_instance(group, filestring, runTime, modelType)
+                """
                 try:
                     run_one_instance(group, filestring, runTime, modelType)
                 except:
-                    print(f'Failed to run filen: {filestring}')
+                    print(f'Failed to run file: {filestring}')
                     pass
+                """
 
 
 # Running all files in testData-directory
@@ -81,7 +84,7 @@ def run_all_model_types(group, file, runtime):
             try:
                 run_one_instance(group, file, runtime, modelType)
             except:
-                print(f'Failed to run filen: {file}')
+                print(f'Failed to run file: {file}')
                 pass
 
 
@@ -108,15 +111,15 @@ Call whatever functions you'll like below here
 # An example for how to run the code 
 group1 = 'A-2L-180D'
 filename1 = 'A-2L-6U-18F-15V-180D-b'
-runtime = 60*3
+runtime = 60*5
 modelType = BASIC_MODEL
 spotGroup = 'spotTests'
-spotFilename='N-1L-10U-6F-23V-60D'
+spotFilename='N-1L-8U-9F-23V-30D'
 
-run_one_instance(group1, filename1, runtime, modelType)
+run_one_instance(spotGroup, spotFilename, runtime, modelType)
 #test_init_model(group1, filename1, modelType)
-
 #run_all_model_types(group1, filename1, runtime)
 #run_group(group1, runtime, modelType)
+#run_all_files(runtime, modelType)
 
 
