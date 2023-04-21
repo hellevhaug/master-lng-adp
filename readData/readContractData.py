@@ -73,6 +73,7 @@ lower_partition_demand, unloading_days, des_biggest_demand, des_biggest_partitio
 des_contract_partitions, earliest_unloading_day, last_unloading_day):
     
     for partition in contract['desRequests']:
+
         #Demand and stuff
         des_contract_partitions[contract['id']].append(partition['id'])
         partition_names[partition['id']] = partition['name']
@@ -158,3 +159,37 @@ def read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, f
 
 def set_minimum_days_between():
     return MINIMUM_DAYS_BETWEEN_DELIVERY
+
+
+def read_des_loading_ports(data, hasLoadingPortDesData, loading_port_ids):
+
+    des_loading_ports = {}
+
+    for contract in data['contracts']:
+        if contract['id'][:3]=='DES':
+            for partition in contract['desRequests']:
+                if not contract['id'] in des_loading_ports:
+                    if hasLoadingPortDesData == True:
+                        des_loading_ports[contract['id']] = [partition['storageId']]
+                    elif hasLoadingPortDesData == False:
+                        des_loading_ports[contract['id']] = loading_port_ids
+                else:
+                    pass
+    
+    return des_loading_ports
+
+
+def convert_des_loading_ports(des_loading_ports):
+
+    for contract,loading_port in des_loading_ports.items():
+        if loading_port == LOADING_NGBON:
+            des_loading_ports[contract] = 'NGBON'
+        elif loading_port == LOADING_FU:
+            des_loading_ports[contract] = 'FU'
+        elif loading_port == LOADING_DI:
+            des_loading_ports[contract] = 'DI'
+        
+        else:
+            raise ValueError('This is not a valid loading port')
+
+    

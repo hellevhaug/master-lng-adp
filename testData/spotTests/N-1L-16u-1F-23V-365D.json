@@ -167,7 +167,7 @@
 ],
 "spotDesRequests" : [
 {"id": "Spot1", "name":"DesSpot-1", "fromDateTime":"2024-11-02T00:00:00", "toDateTime":"2024-12-01T00:00:00", "minQuantity":120000, "quantity":180000, "portId":"KR", "productId": "Lng", "salesPrices": [ {"fromDateTime":"2024-11-02T00:00:00", "price": 160}]},
-{"id": "Spot2", "name":"DesSpot-2", "fromDateTime":"2024-11-15T00:00:00", "toDateTime":"202412-01T00:00:00", "minQuantity":120000, "quantity":180000, "portId":"ES", "productId": "Lng", "salesPrices": [ {"fromDateTime":"2024-11-02T00:00:00", "price": 175}]}
+{"id": "Spot2", "name":"DesSpot-2", "fromDateTime":"2024-11-15T00:00:00", "toDateTime":"2024-12-01T00:00:00", "minQuantity":120000, "quantity":180000, "portId":"ES", "productId": "Lng", "salesPrices": [ {"fromDateTime":"2024-11-02T00:00:00", "price": 175}]}
 ],
 "spotFobRequests" : [
 {"id": "Spot3", "name":"FobSpot-1", "fromDateTime":"2024-11-02T00:00:00", "toDateTime":"2024-11-10T00:00:00",  "quantity":120000, "storageId": "Lng-storage", "salesPrices": [ {"fromDateTime":"2024-11-02T00:00:00", "price": 180}]},
