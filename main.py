@@ -23,6 +23,21 @@ def write_vars_to_file(group, filename, model, message):
             print('Model is feasible, but did not find a feasible solution withing the time limits.')
 
 
+# Function for initialize a model without running it with a solver
+def test_init_model(group, filename, modelType):
+    if modelType=='basic':
+        model = initialize_basic_model(group, filename)
+    elif modelType=='variableProduction':
+        model = initialize_variable_production_model(group, filename)
+    elif modelType=='charterOut':
+        model = initialize_charter_out_model(group, filename)
+    elif modelType=='combinedModel':
+        model = initialize_combined_model(group, filename)
+    else:
+        raise ValueError('Uknown model type for running')
+    return model
+
+
 # Function for running a specific instance
 def run_one_instance(group, filename, runtime, modelType):
 
@@ -42,6 +57,20 @@ def run_one_instance(group, filename, runtime, modelType):
         raise ValueError('Uknown model type for running')
 
 
+# Oppdatering: Denne funker! Runs all model types one one instance
+def run_all_model_types(group, filename, runtime):
+    if group=='N-1L-30D':
+        print('Please do not do this, this model is actually too fast')
+    else:
+        modelTypes = MODEL_TYPES
+        for modelType in modelTypes:
+            try:
+                run_one_instance(group, filename, runtime, modelType)
+            except:
+                print(f'Failed to run file: {filename}')
+                pass
+
+
 # Running all instances in a group, not testet yet 
 def run_group(group, runTime, modelType):
     root = f'testData/{group}'
@@ -51,6 +80,24 @@ def run_group(group, runTime, modelType):
             filestring, type = str(filename).split('.')
             if type=='json':
                 run_one_instance(group, filestring, runTime, modelType)
+                """
+                try:
+                    run_one_instance(group, filestring, runTime, modelType)
+                except:
+                    print(f'Failed to run file: {filestring}')
+                    pass
+                """
+
+
+# Running all model types for all files in group
+def run_all_model_types_for_group(group, runTime):
+    root = f'testData/{group}'
+    for filename in os.listdir(root):
+        path = root + '/' + filename
+        if os.path.isfile(path):
+            filestring, type = str(filename).split('.')
+            if type=='json':
+                run_all_model_types(group, filestring, runTime)
                 """
                 try:
                     run_one_instance(group, filestring, runTime, modelType)
@@ -74,34 +121,18 @@ def run_all_files(runTime, modelType):
     print('All files ran successfully')
 
 
-# Oppdatering: Denne funker! Runs all model types one one instance
-def run_all_model_types(group, file, runtime):
-    if group=='N-1L-30D':
-        print('Please do not do this, this model is actually too fast')
-    else:
-        modelTypes = MODEL_TYPES
-        for modelType in modelTypes:
-            try:
-                run_one_instance(group, file, runtime, modelType)
+# Running all model types for all files in every group
+def run_all_files_all_model_types(runTime):
+    root = 'testData/'
+    for group in os.listdir(root):
+        path = root + group
+        if os.path.isdir(path):
+            try: 
+                run_all_model_types_for_group(group, runTime)
             except:
-                print(f'Failed to run file: {file}')
+                print(f'Failed to run group: {group}')
                 pass
-
-
-
-# Function for initialize a model without running it with a solver
-def test_init_model(group, filename, modelType):
-    if modelType=='basic':
-        model = initialize_basic_model(group, filename)
-    elif modelType=='variableProduction':
-        model = initialize_variable_production_model(group, filename)
-    elif modelType=='charterOut':
-        model = initialize_charter_out_model(group, filename)
-    elif modelType=='combinedModel':
-        model = initialize_combined_model(group, filename)
-    else:
-        raise ValueError('Uknown model type for running')
-    return model
+    print('All files ran successfully')
     
 
 """
@@ -111,15 +142,16 @@ Call whatever functions you'll like below here
 # An example for how to run the code 
 group1 = 'A-2L-180D'
 filename1 = 'A-2L-6U-18F-15V-180D-b'
-runtime = 60*5
+runtime = 60*2
 modelType = BASIC_MODEL
 spotGroup = 'spotTests'
 spotFilename='N-1L-8U-9F-23V-30D'
 
-#rrun_one_instance(spotGroup, spotFilename, runtime, modelType)
+#run_one_instance(spotGroup, spotFilename, runtime, modelType)
 #test_init_model(group1, filename1, modelType)
 #run_all_model_types(group1, filename1, runtime)
-run_group(spotGroup, runtime, modelType)
+#run_group(spotGroup, runtime, modelType)
 #run_all_files(runtime, modelType)
+run_all_files_all_model_types(runtime)
 
 
