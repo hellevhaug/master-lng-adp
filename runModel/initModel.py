@@ -12,7 +12,7 @@ from runModel.initConstraints import *
 from runModel.initArcs import *
 
 ### Basic model
-def initialize_basic_model(group, filename):
+def initialize_basic_model(group, filename, frozen_variables):
 
     # Finding out if it is data from Nigeria or Abu Dabi
     loading_port_ids = set_loading_port_ids(filename)
@@ -107,6 +107,12 @@ def initialize_basic_model(group, filename):
     # Initializing variables
     
     x = model.addVars(total_feasible_arcs, vtype='B', name='x')
+    for x_arc in frozen_variables['x']:
+        one_x = model.getVarByName(x_arc) # list or str?
+        value_to_fix = 5
+        one_x.setAttr("LB", value_to_fix)
+        one_x.setAttr("UB", value_to_fix)
+        model.update()
 
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
