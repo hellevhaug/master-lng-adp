@@ -22,20 +22,6 @@ def write_vars_to_file(group, filename, model, message):
         except:
             print('Model is feasible, but did not find a feasible solution withing the time limits.')
 
-def get_vars(group, filename, model):
-    
-    try:
-        x,s,g,z,q,y = convert_vars_to_dicts(model)
-        print('Variables returned after one horizon iteration')
-        return x,s,g,z,q,y
-    
-    except:
-        try:
-            model.computeIIS()
-            model.write('solution.ilp')
-            print('Could not retrieve variables, infeasible model.')
-        except:
-            print('Model is feasible, but did not find a feasible solution withing the time limits.')
 
 
 # Function for initialize a model without running it with a solver
@@ -181,7 +167,7 @@ runtime = 60*2 # seconds
 modelType = BASIC_MODEL
 spotGroup = 'spotTests'
 spotFilename='N-1L-8U-9F-23V-30D'
-RHH = "Y"
+RHH = "Y" # "Y" to run RHH algorithm
 horizon_length = 60 # days
 prediction_horizon = 60 # days
 
