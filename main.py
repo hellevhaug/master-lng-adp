@@ -46,7 +46,7 @@ def run_one_instance(group, filename, runtime, modelType, RHH, horizon_length, p
     if RHH == "Y":
         
         if modelType=='basic':
-            model = run_basic_model_RHH(group, filename, runtime, f'Running file: {filename}', horizon_length, prediction_horizon, frozen_variables)
+            model = run_basic_model_RHH(group, filename, runtime, f'Running file: {filename}', horizon_length, prediction_horizon)
             x,s,g,z,q,y = get_vars(group, filename, model)
         elif modelType=='variableProduction':
             model = run_variable_production_model(group, filename, runtime, f'Running file: {filename}')
@@ -161,17 +161,18 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'A-2L-180D'
-filename1 = 'A-2L-6U-18F-15V-180D-b'
-runtime = 60*2 # seconds
+group1 = 'N-1L-30D'
+filename1 = 'N-1L-2U-2F-18V-30D-a'
+runtime = 30 # seconds
 modelType = BASIC_MODEL
 spotGroup = 'spotTests'
 spotFilename='N-1L-8U-9F-23V-30D'
-RHH = "Y" # "Y" to run RHH algorithm
-horizon_length = 60 # days
-prediction_horizon = 60 # days
 
-run_one_instance(spotGroup, spotFilename, runtime, modelType, RHH, horizon_length, prediction_horizon)
+RHH = "Y" # "Y" to run RHH algorithm
+horizon_length = 30 # days
+prediction_horizon = 30 # days
+
+run_one_instance(group1, filename1, runtime, modelType, RHH, horizon_length, prediction_horizon)
 #test_init_model(group1, filename1, modelType)
 #run_all_model_types(group1, filename1, runtime)
 #run_group(spotGroup, runtime, modelType)

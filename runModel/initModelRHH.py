@@ -117,14 +117,28 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
     g = model.addVars(charter_dimensions, vtype='C', name='g')
 
     s = model.addVars(production_quantities, vtype='C', name='s')
+
+    model.update()
     
+    # Freezing variables
     for var_type in ['x','s','g','z']:
         for var in frozen_variables[var_type]:
             freeze_var = model.getVarByName(var.varName)
             value_to_fix = var.x
             freeze_var.setAttr("LB", value_to_fix)
             freeze_var.setAttr("UB", value_to_fix)
-            model.update()
+
+    
+    # Making variables float in the rest of the horizon: 
+    for var in model.getVars(): 
+        if var.varName[0] == 'x':
+            varName_str = var.varName
+            varName_list = varName_str.split('[')[1].split(']')[0].split(',')
+            # now looks like this: [v,FU,1]
+            if int(varName_list[2]) >= horizon_length*(iteration_count+1):
+                var.setAttr("VType", GRB.CONTINUOUS)
+
+    model.update()
 
     # Initializing constraints
 
