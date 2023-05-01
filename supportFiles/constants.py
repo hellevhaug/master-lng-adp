@@ -20,6 +20,7 @@ MINIMUM_DAYS_BETWEEN_DELIVERY = 4
 ALLOWED_WAITING = 7
 PRODUCTION_SCALE_RATE = 0.3
 CHARTER_OUT_FRICTION = 0.05
+DES_HAS_LOADING_PORT = True
 
 ######################################################
 

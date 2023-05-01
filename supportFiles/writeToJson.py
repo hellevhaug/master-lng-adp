@@ -25,6 +25,7 @@ def set_parameter_dict():
     parameter_dict['MinimumDaysBetweenDelivery'] = MINIMUM_DAYS_BETWEEN_DELIVERY
     parameter_dict['ProductionScaleRate'] = PRODUCTION_SCALE_RATE
     parameter_dict['CharterOutFrictionRate'] = CHARTER_OUT_FRICTION
+    parameter_dict['DesHasLoadingPort'] = DES_HAS_LOADING_PORT
 
     return parameter_dict
 

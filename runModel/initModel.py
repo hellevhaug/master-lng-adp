@@ -38,8 +38,9 @@ def initialize_basic_model(group, filename):
 
     ## Initialize lists for contracts
     port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    vessels_has_loading_port_data = DES_HAS_LOADING_PORT
     try:
-        des_loading_ports = read_des_loading_ports(data, True, loading_port_ids)
+        des_loading_ports = read_des_loading_ports(data, vessels_has_loading_port_data, loading_port_ids)
         convert_des_loading_ports(des_loading_ports)
     except:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
@@ -234,8 +235,9 @@ def initialize_variable_production_model(group, filename):
 
     ## Initialize lists for contracts
     port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    vessels_has_loading_port_data = DES_HAS_LOADING_PORT
     try:
-        des_loading_ports = read_des_loading_ports(data, True, loading_port_ids)
+        des_loading_ports = read_des_loading_ports(data, vessels_has_loading_port_data, loading_port_ids)
         convert_des_loading_ports(des_loading_ports)
     except:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
@@ -426,8 +428,9 @@ def initialize_charter_out_model(group, filename):
 
     ## Initialize lists for contracts
     port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    vessels_has_loading_port_data = DES_HAS_LOADING_PORT
     try:
-        des_loading_ports = read_des_loading_ports(data, True, loading_port_ids)
+        des_loading_ports = read_des_loading_ports(data, vessels_has_loading_port_data, loading_port_ids)
         convert_des_loading_ports(des_loading_ports)
     except:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
@@ -631,8 +634,9 @@ def initialize_combined_model(group, filename):
 
     ## Initialize lists for contracts
     port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    vessels_has_loading_port_data = DES_HAS_LOADING_PORT
     try:
-        des_loading_ports = read_des_loading_ports(data, True, loading_port_ids)
+        des_loading_ports = read_des_loading_ports(data, vessels_has_loading_port_data, loading_port_ids)
         convert_des_loading_ports(des_loading_ports)
     except:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
