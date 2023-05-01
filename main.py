@@ -64,14 +64,11 @@ def run_all_model_types(group, filename, runtime):
     else:
         modelTypes = MODEL_TYPES
         for modelType in modelTypes:
-            run_one_instance(group, filename, runtime, modelType)
-            """
             try:
                 run_one_instance(group, filename, runtime, modelType)
             except:
                 print(f'Failed to run file: {filename}')
                 pass
-            """
 
 
 # Running all instances in a group, not testet yet 
@@ -146,18 +143,19 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-365D'
-filename1 = 'N-1L-21U-33F23V-180D-b'
+group1 = 'N-1L-A'
+filename1 = 'N-1L-16U-18F-23V-180D'
 runtime = 60*2
 modelType = BASIC_MODEL
 #spotGroup = 'spotTests'
 #spotFilename='N-1L-8U-9F-23V-30D'
 
 #run_one_instance(spotGroup, spotFilename, runtime, modelType)
-#test_init_model(group1, filename1, modelType)
+test_init_model(group1, filename1, modelType)
 #run_all_model_types(group1, filename1, runtime)
+run_all_model_types_for_group(group1, runtime)
 #run_group(spotGroup, runtime, modelType)
 #run_all_files(runtime, modelType)
-run_all_files_all_model_types(runtime)
+#run_all_files_all_model_types(runtime)
 
 
