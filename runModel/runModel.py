@@ -19,10 +19,10 @@ def run_basic_model_RHH(group, filename, time_limit, description, horizon_length
     
     frozen_variables = {key: [] for key in ['x','s','g','z','q','y']}
     iteration_count = 0
-    total_horizon = horizon_length * 2 # This is only an initialisation of length of loading days
+    loading_days_length = 1000 # This is only an initialisation of length of loading days
 
-    while horizon_length * iteration_count <= total_horizon: # retrieve this
-        model, total_horizon = initialize_basic_model_RHH(group, filename, horizon_length, prediction_horizon, frozen_variables, iteration_count)
+    while horizon_length * iteration_count <= loading_days_length: # retrieve this
+        model, loading_days_length = initialize_basic_model_RHH(group, filename, horizon_length, prediction_horizon, frozen_variables, iteration_count)
     # ^^HERE WE CAN EXPLICITLY EXPORT ALL THE NON-CHANGING PARAMETERS AND RUN ONLY THE OPTIMIZATION ALGORITHM IN A LOOP
         print("------------------------------------------------------")
         print(description) 
@@ -36,47 +36,65 @@ def run_basic_model_RHH(group, filename, time_limit, description, horizon_length
         optimization_status = model.Status
         print("Optimization status:", optimization_status)
 
-        if optimization_status == gp.GRB.Status.OPTIMAL:
-
-        # Freeze the variables that start in the current horizon: 
-        
-            for var in model.getVars():
-                # x format: "x[AD-7,DESCON_1,28,ART_START,63]": 1.0, ...
-                if var.X != 0:
-                    if var.varName[0]=='x':
-                        varName_str = var.varName
-                        print(varName_str)
-                        varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                        print(varName_list)
-                        # now looks like this: ['x', 'AD-7', 'DESCON_1', '28', 'ART_START', '63']
-                        if int(varName_list[2]) <= horizon_length*(iteration_count+1)-1:
-                            frozen_variables['x'].append(var)
-                # s format: {"s[FU,1]": 90000.0,
-                    if var.varName[0]=='s':
-                        varName_str = var.varName
-                        varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                        # now looks like this: [s,FU,1]
-                        if int(varName_list[1]) <= horizon_length*(iteration_count+1):
-                            frozen_variables['s'].append(var)
-                # g format: {"g[FU,56,DESCON_1]": 142289.22952803085,
-                    if var.varName[0]=='g':
-                        varName_str = var.varName
-                        varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                        # now looks like this: [g,FU,56,DESCON_1]
-                        if int(varName_list[1]) <= horizon_length*(iteration_count+1):
-                            frozen_variables['g'].append(var)
-                # z format: {"z[1001,6]": 1.0,
-                    if var.varName[0]=='z':
-                        varName_str = var.varName
-                        varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                        # now looks like this: [z,1001,6]
-                        if int(varName_list[1]) <= horizon_length*(iteration_count+1):
-                            frozen_variables['z'].append(var)
+        if model.Status == GRB.Status.TIME_LIMIT:
+            best_bound = model.ObjBound
+            print("Best bound after time limit: ", best_bound)
+        elif model.Status == GRB.Status.OPTIMAL:
+            best_bound = model.ObjVal
+            print("Optimal solution found: ", best_bound)
+        elif model.Status == GRB.Status.INFEASIBLE:
+            print("Model is infeasible.")
+        elif model.Status == GRB.Status.UNBOUNDED:
+            print("Model is unbounded.")
         else:
-                model.computeIIS()
-                model.write('solution.ilp')
-                print('Could not write variables to file, infeasible model.')              
+            print("Optimization status:", model.Status)
+            print("Unexpected status. Check the Gurobi documentation for more information.")
+
+        if model.Status == GRB.Status.TIME_LIMIT:
+            if model.SolCount > 0:
+                print("Time limit reached, but a feasible solution was found.")
+                
+                # Freeze the variables that start in the current horizon: 
+                
+                for var in model.getVars():
+                    # x format: "x[AD-7,DESCON_1,28,ART_START,63]": 1.0, ...
+                    if var.X != 0:
+                        if var.varName[0]=='x':
+                            varName_str = var.varName
+                            print(varName_str)
+                            varName_list = varName_str.split('[')[1].split(']')[0].split(',')
+                            print(varName_list)
+                            # now looks like this: ['AD-7', 'DESCON_1', '28', 'ART_START', '63']
+                            if horizon_length*iteration_count <= int(varName_list[2]) < horizon_length*(iteration_count+1):
+                                frozen_variables['x'].append(var)
+                    # s format: {"s[FU,1]": 90000.0,
+                        if var.varName[0]=='s':
+                            varName_str = var.varName
+                            varName_list = varName_str.split('[')[1].split(']')[0].split(',')
+                            # now looks like this: [s,FU,1]
+                            if horizon_length*iteration_count <= int(varName_list[1]) < horizon_length*(iteration_count+1):
+                                frozen_variables['s'].append(var)
+                    # g format: {"g[FU,56,DESCON_1]": 142289.22952803085,
+                        if var.varName[0]=='g':
+                            varName_str = var.varName
+                            varName_list = varName_str.split('[')[1].split(']')[0].split(',')
+                            # now looks like this: [g,FU,56,DESCON_1]
+                            if horizon_length*iteration_count <= int(varName_list[1]) < horizon_length*(iteration_count+1):
+                                frozen_variables['g'].append(var)
+                    # z format: {"z[1001,6]": 1.0,
+                        if var.varName[0]=='z':
+                            varName_str = var.varName
+                            varName_list = varName_str.split('[')[1].split(']')[0].split(',')
+                            # now looks like this: [z,1001,6]
+                            if horizon_length*iteration_count <= int(varName_list[1]) < horizon_length*(iteration_count+1):
+                                frozen_variables['z'].append(var)
+    
+            else:
+                print("Time limit reached, and no feasible solution found.")
+        
         iteration_count += 1
+
+        print("loading days length: ", loading_days_length)
     
     #model.write(f'{filename}_basic.lp')
 

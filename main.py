@@ -161,9 +161,9 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-30D'
-filename1 = 'N-1L-2U-2F-18V-30D-a'
-runtime = 30 # seconds
+group1 = 'N-1L-60D'
+filename1 = 'N-1L-5U-21F-18V-60D-c'
+runtime = 300 # seconds
 modelType = BASIC_MODEL
 spotGroup = 'spotTests'
 spotFilename='N-1L-8U-9F-23V-30D'
