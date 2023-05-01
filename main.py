@@ -145,7 +145,7 @@ Call whatever functions you'll like below here
 # An example for how to run the code 
 group1 = 'N-1L-A'
 filename1 = 'N-1L-16U-18F-23V-180D'
-runtime = 60*2
+runtime = 60*60*3
 modelType = BASIC_MODEL
 #spotGroup = 'spotTests'
 #spotFilename='N-1L-8U-9F-23V-30D'
