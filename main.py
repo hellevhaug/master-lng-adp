@@ -127,11 +127,14 @@ def run_all_files_all_model_types(runTime):
     for group in os.listdir(root):
         path = root + group
         if os.path.isdir(path):
+            run_all_model_types_for_group(group, runTime)
+            """
             try: 
                 run_all_model_types_for_group(group, runTime)
             except:
                 print(f'Failed to run group: {group}')
                 pass
+             """
     print('All files ran successfully')
     
 
@@ -140,18 +143,17 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'A-2L-180D'
-filename1 = 'A-2L-6U-18F-15V-180D-b'
-runtime = 60*2
+group1 = 'N-1L-B'
+filename1 = 'N-1L-14U-19F-23V-180D'
+runtime = 60*3
 modelType = BASIC_MODEL
-spotGroup = 'spotTests'
-spotFilename='N-1L-8U-9F-23V-30D'
 
 #run_one_instance(spotGroup, spotFilename, runtime, modelType)
 #test_init_model(group1, filename1, modelType)
 #run_all_model_types(group1, filename1, runtime)
+run_all_model_types_for_group(group1, runtime)
 #run_group(spotGroup, runtime, modelType)
 #run_all_files(runtime, modelType)
-run_all_files_all_model_types(runtime)
+#run_all_files_all_model_types(runtime)
 
 
