@@ -128,26 +128,68 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
             freeze_var.setAttr("LB", value_to_fix)
             freeze_var.setAttr("UB", value_to_fix)
 
-    '''
-    # Making variables float in the rest of the horizon: 
-    for var in model.getVars(): 
-        if var.varName[0] == 'x':
-            varName_str = var.varName
-            varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-            # now looks like this: [v,FU,1]
-            if int(varName_list[2]) >= horizon_length*(iteration_count+1):
-                var.setAttr("VType", GRB.CONTINUOUS)
-    '''
+    if prediction_horizon == "ALL": 
+        # Making variables float in the rest of the horizon: 
+        for var in model.getVars(): 
+            if var.varName[0] == 'x':
+                varName_str = var.varName
+                varName_list = varName_str.split('[')[1].split(']')[0].split(',')
+                # now looks like this: [v,FU,1]
+                if int(varName_list[2]) >= horizon_length*(iteration_count+1):
+                    var.setAttr("VType", GRB.CONTINUOUS)
+    else: 
+        # Making variables float in the prediction horizon and deleting the rest: 
+        for var in model.getVars(): 
+            if var.varName[0] == 'x':
+                varName_str = var.varName
+                varName_list = varName_str.split('[')[1].split(']')[0].split(',')
+                # now looks like this: ['AD-7', 'DESCON_1', '28', 'ART_START', '63']
+                if  horizon_length*(iteration_count+1) <= int(varName_list[2]) <= horizon_length*(iteration_count+1)+prediction_horizon:
+                    var.setAttr("VType", GRB.CONTINUOUS)
+                    '''
+                elif  horizon_length*(iteration_count+1) < horizon_length*(iteration_count+1)+prediction_horizon:
+                    model.remove(var)
+                    key = (varName_list[0], varName_list[1], int(varName_list[2]), varName_list[3], int(varName_list[4]))
+                    del x[key]
+                    '''
+            elif var.varName[0]=='s':
+                varName_str = var.varName
+                varName_list = varName_str.split('[')[1].split(']')[0].split(',')
+                # now looks like this: [FU,1]
+                if  horizon_length*(iteration_count+1) <= int(varName_list[1]) <= horizon_length*(iteration_count+1)+prediction_horizon:
+                    var.setAttr("VType", GRB.CONTINUOUS)
+                    '''
+                elif  horizon_length*(iteration_count+1) < horizon_length*(iteration_count+1)+prediction_horizon:
+                    model.remove(var)
+                    key = (varName_list[0], int(varName_list[1]))
+                    del s[key]
+                    '''
+            elif var.varName[0]=='g':
+                varName_str = var.varName
+                varName_list = varName_str.split('[')[1].split(']')[0].split(',')
+                # now looks like this: [FU,56,DESCON_1]
+                if  horizon_length*(iteration_count+1) <= int(varName_list[1]) <= horizon_length*(iteration_count+1)+prediction_horizon:
+                    var.setAttr("VType", GRB.CONTINUOUS)
+                    '''
+                elif  horizon_length*(iteration_count+1) < horizon_length*(iteration_count+1)+prediction_horizon:
+                    model.remove(var)
+                    key = (varName_list[0], int(varName_list[1]), varName_list[2])
+                    del g[key]
+                    '''
+            elif var.varName[0]=='z':
+                varName_str = var.varName
+                varName_list = varName_str.split('[')[1].split(']')[0].split(',')
+                # now looks like this: [1001,6]
+                if  horizon_length*(iteration_count+1) <= int(varName_list[1]) <= horizon_length*(iteration_count+1)+prediction_horizon:
+                    var.setAttr("VType", GRB.CONTINUOUS)
+                    '''
+                elif  horizon_length*(iteration_count+1) < horizon_length*(iteration_count+1)+prediction_horizon:
+                    model.remove(var)
+                    key = (varName_list[0], int(varName_list[1]))
+                    del z[key]
+                    '''
 
-
-    # Making variables float in the prediction horizon: 
-    for var in model.getVars(): 
-        if var.varName[0] == 'x':
-            varName_str = var.varName
-            varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-            # now looks like this: [v,FU,1]
-            if int(varName_list[2]) >= horizon_length*(iteration_count+1):
-                var.setAttr("VType", GRB.CONTINUOUS)
+    
 
     model.update()
 

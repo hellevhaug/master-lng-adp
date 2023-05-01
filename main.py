@@ -47,16 +47,16 @@ def run_one_instance(group, filename, runtime, modelType, RHH, horizon_length, p
         
         if modelType=='basic':
             model = run_basic_model_RHH(group, filename, runtime, f'Running file: {filename}', horizon_length, prediction_horizon)
-            x,s,g,z,q,y = get_vars(group, filename, model)
+            write_vars_to_file(group, filename, model, 'Basic model with minimum spread')
         elif modelType=='variableProduction':
             model = run_variable_production_model(group, filename, runtime, f'Running file: {filename}')
-            x,s,g,z,q,y = get_vars(group, filename, model)
+            write_vars_to_file(group, filename, model, 'Model with variable production')
         elif modelType=='charterOut':
             model = run_charter_out_model(group, filename, runtime, f'Running file: {filename}')
-            x,s,g,z,q,y = get_vars(group, filename, model)
+            write_vars_to_file(group, filename, model, 'Model with chartering out')
         elif modelType=='combinedModel':
             model = run_combined_model(group, filename, runtime, f'Running file: {filename}')
-            x,s,g,z,q,y = get_vars(group, filename, model)
+            write_vars_to_file(group, filename, model, 'Model with combined extensions')
         else:
             raise ValueError('Uknown model type for running')
     
@@ -161,16 +161,16 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-60D'
-filename1 = 'N-1L-5U-21F-18V-60D-c'
-runtime = 300 # seconds
+group1 = 'N-1L-180D'
+filename1 = 'N-1L-6U-16F-18V-45D-c'
+runtime = 3000 # seconds
 modelType = BASIC_MODEL
 spotGroup = 'spotTests'
 spotFilename='N-1L-8U-9F-23V-30D'
 
 RHH = "Y" # "Y" to run RHH algorithm
 horizon_length = 30 # days
-prediction_horizon = 30 # days
+prediction_horizon = "ALL" # days "ALL" for entire period after horizon
 
 run_one_instance(group1, filename1, runtime, modelType, RHH, horizon_length, prediction_horizon)
 #test_init_model(group1, filename1, modelType)

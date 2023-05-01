@@ -1,7 +1,7 @@
 from runModel.initModel import *
 from runModel.initModelRHH import *
 from supportFiles.getVars import *
-
+from supportFiles.plotTimeSpace import *
 
 # Function for running basic model
 def run_basic_model(group, filename, time_limit, description):
@@ -33,6 +33,8 @@ def run_basic_model_RHH(group, filename, time_limit, description, horizon_length
         model.setParam('LogFile', f'logFiles/{group}/{filename}-basic.log')
         model.optimize()
 
+        #plot_time_space(model, loading_days_length)
+
         optimization_status = model.Status
         print("Optimization status:", optimization_status)
 
@@ -50,20 +52,17 @@ def run_basic_model_RHH(group, filename, time_limit, description, horizon_length
             print("Optimization status:", model.Status)
             print("Unexpected status. Check the Gurobi documentation for more information.")
 
-        if model.Status == GRB.Status.TIME_LIMIT:
+        if model.Status == GRB.Status.TIME_LIMIT and horizon_length*(iteration_count+1) <= loading_days_length:
             if model.SolCount > 0:
                 print("Time limit reached, but a feasible solution was found.")
                 
                 # Freeze the variables that start in the current horizon: 
-                
                 for var in model.getVars():
                     # x format: "x[AD-7,DESCON_1,28,ART_START,63]": 1.0, ...
                     if var.X != 0:
                         if var.varName[0]=='x':
                             varName_str = var.varName
-                            print(varName_str)
                             varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                            print(varName_list)
                             # now looks like this: ['AD-7', 'DESCON_1', '28', 'ART_START', '63']
                             if horizon_length*iteration_count <= int(varName_list[2]) < horizon_length*(iteration_count+1):
                                 frozen_variables['x'].append(var)
@@ -71,21 +70,21 @@ def run_basic_model_RHH(group, filename, time_limit, description, horizon_length
                         if var.varName[0]=='s':
                             varName_str = var.varName
                             varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                            # now looks like this: [s,FU,1]
+                            # now looks like this: [FU,1]
                             if horizon_length*iteration_count <= int(varName_list[1]) < horizon_length*(iteration_count+1):
                                 frozen_variables['s'].append(var)
                     # g format: {"g[FU,56,DESCON_1]": 142289.22952803085,
                         if var.varName[0]=='g':
                             varName_str = var.varName
                             varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                            # now looks like this: [g,FU,56,DESCON_1]
+                            # now looks like this: [FU,56,DESCON_1]
                             if horizon_length*iteration_count <= int(varName_list[1]) < horizon_length*(iteration_count+1):
                                 frozen_variables['g'].append(var)
                     # z format: {"z[1001,6]": 1.0,
                         if var.varName[0]=='z':
                             varName_str = var.varName
                             varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                            # now looks like this: [z,1001,6]
+                            # now looks like this: [1001,6]
                             if horizon_length*iteration_count <= int(varName_list[1]) < horizon_length*(iteration_count+1):
                                 frozen_variables['z'].append(var)
     
