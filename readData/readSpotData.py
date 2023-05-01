@@ -28,7 +28,7 @@ def read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, p
 
         # Demand
         upper_partition_demand[spot_des_contract['id'],spot_des_contract['id']] = spot_des_contract['quantity']
-        lower_partition_demand[spot_des_contract['id'],spot_des_contract['id']] = spot_des_contract['minQuantity']
+        lower_partition_demand[spot_des_contract['id'],spot_des_contract['id']] = 0
 
         # Time 
         last_unloading_day = loading_to_time
