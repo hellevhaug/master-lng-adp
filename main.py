@@ -151,7 +151,7 @@ modelType = BASIC_MODEL
 #spotFilename='N-1L-8U-9F-23V-30D'
 
 #run_one_instance(spotGroup, spotFilename, runtime, modelType)
-test_init_model(group1, filename1, modelType)
+#test_init_model(group1, filename1, modelType)
 #run_all_model_types(group1, filename1, runtime)
 run_all_model_types_for_group(group1, runtime)
 #run_group(spotGroup, runtime, modelType)
