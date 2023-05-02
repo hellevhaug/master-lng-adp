@@ -3,32 +3,32 @@ import gurobipy as gp
 ## Basic model 
 
 # Initialize objective
-def init_objective(x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days, des_contract_revenues, vessel_capacities, vessel_boil_off_rate,
+def init_objective(stop_time, x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days, des_contract_revenues, vessel_capacities, vessel_boil_off_rate,
 vessel_ids, loading_port_ids, loading_days, spot_port_ids, all_days, sailing_time_charter, unloading_days, charter_boil_off, 
 tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, charter_total_cost, des_spot_ids):
 
     objective = (gp.quicksum(fob_revenues[f,t]*fob_demands[f]*z[f,t] 
-    for f in fob_ids for t in fob_days[f]) + 
+    for f in fob_ids for t in fob_days[f] if t < stop_time) + 
     gp.quicksum(des_contract_revenues[j,t_]*vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_] 
     for v in vessel_ids for i in loading_port_ids for t in loading_days for j in des_spot_ids for t_ in all_days 
     if (v,i,t,j,t_) in x.keys()) + 
     # !!!NEW!!!
     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off)*des_contract_revenues[j,t+sailing_time_charter[i,j]] 
     for j in des_spot_ids for i in loading_port_ids for t in loading_days if (t+sailing_time_charter[i,j]) in unloading_days[j])
-    + gp.quicksum(tank_leftover_value[i]*s[i, len(loading_days)] for i in loading_port_ids) +
+    + gp.quicksum(tank_leftover_value[i]*s[i, stop_time] for i in loading_port_ids) +
     gp.quicksum(vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*des_contract_revenues[j,t_]*x[v,i,t,j,t_]
     for j in des_contract_ids for v in vessel_ids for i in loading_port_ids for t in vessel_available_days[v] for t_ in unloading_days[j] # Left-hand sums
     if (v,i,t,j,t_) in x.keys()) + 
     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off)*des_contract_revenues[j,t+sailing_time_charter[i,j]] 
-    for j in des_contract_ids for i in loading_port_ids for t in loading_days if (t+sailing_time_charter[i,j]) in unloading_days[j])-
+    for j in des_contract_ids for i in loading_port_ids for t in loading_days if (t+sailing_time_charter[i,j]) in unloading_days[j] if t < stop_time) -
     gp.quicksum(sailing_costs[v,i,t,j,t_]*x[v,i,t,j,t_] for v,i,t,j,t_ in x.keys())-
-    gp.quicksum(charter_total_cost[i,t,j]*w[i,t,j] for i in loading_port_ids for t in loading_days for j in (des_contract_ids+des_spot_ids)))
+    gp.quicksum(charter_total_cost[i,t,j]*w[i,t,j] for i in loading_port_ids for t in loading_days if t < stop_time for j in (des_contract_ids+des_spot_ids)))
 
     return objective
 
 
 # Initialize initial inventory constraints for loading ports 
-def init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
+def init_initial_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
     des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory):
 
     initial_loading_inventory_constraints = (s[i,t]==initial_inventory[i]+production_quantities[i,t]

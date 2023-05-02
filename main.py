@@ -161,16 +161,16 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-180D'
-filename1 = 'N-1L-6U-16F-18V-45D-c'
-runtime = 3000 # seconds
+group1 = 'N-1L-60D'
+filename1 = 'N-1L-6U-10F-18V-60D-b'
+runtime = 10 # seconds
 modelType = BASIC_MODEL
 spotGroup = 'spotTests'
 spotFilename='N-1L-8U-9F-23V-30D'
 
 RHH = "Y" # "Y" to run RHH algorithm
-horizon_length = 30 # days
-prediction_horizon = "ALL" # days "ALL" for entire period after horizon
+horizon_length = 10 # days
+prediction_horizon = 10 # days "ALL" for entire period after horizon
 
 run_one_instance(group1, filename1, runtime, modelType, RHH, horizon_length, prediction_horizon)
 #test_init_model(group1, filename1, modelType)
