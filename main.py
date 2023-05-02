@@ -17,7 +17,7 @@ def write_vars_to_file(group, filename, model, message):
     except:
         try:
             model.computeIIS()
-            model.write('solution.ilp')
+            model.write(f'IIS-{group}-{filename}.ilp')
             print('Could not write variables to file, infeasible model.')
         except:
             print('Model is feasible, but did not find a feasible solution withing the time limits.')
