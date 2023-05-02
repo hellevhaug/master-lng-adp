@@ -17,7 +17,7 @@ def write_vars_to_file(group, filename, model, message):
     except:
         try:
             model.computeIIS()
-            model.write('solution.ilp')
+            model.write(f'IIS-{group}-{filename}.ilp')
             print('Could not write variables to file, infeasible model.')
         except:
             print('Model is feasible, but did not find a feasible solution withing the time limits.')
@@ -143,15 +143,15 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-B'
-filename1 = 'N-1L-14U-19F-23V-180D'
+group1 = 'N-1L-D'
+filename1 = 'N-1L-14U-40F-23V-365D'
 runtime = 60*3
 modelType = BASIC_MODEL
 
 #run_one_instance(spotGroup, spotFilename, runtime, modelType)
-#test_init_model(group1, filename1, modelType)
+test_init_model(group1, filename1, modelType)
 #run_all_model_types(group1, filename1, runtime)
-run_all_model_types_for_group(group1, runtime)
+#run_all_model_types_for_group(group1, runtime)
 #run_group(spotGroup, runtime, modelType)
 #run_all_files(runtime, modelType)
 #run_all_files_all_model_types(runtime)
