@@ -1,0 +1,174 @@
+
+Gurobi 10.0.1 (win64) logging started Tue May  2 13:39:37 2023
+
+Set parameter LogFile to value "logFiles/N-1L-A/N-1L-16U-33F-23V-365D-varprod.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: Intel(R) Core(TM) i7-10700 CPU @ 2.90GHz, instruction set [SSE2|AVX|AVX2]
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+
+Optimize a model with 309337 rows, 3905051 columns and 24545806 nonzeros
+Model fingerprint: 0xb4496090
+Variable types: 10980 continuous, 3894071 integer (3894071 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 5e+06]
+Presolve removed 142870 rows and 66853 columns (presolve time = 5s) ...
+Presolve removed 154745 rows and 72855 columns (presolve time = 11s) ...
+Presolve removed 154745 rows and 72855 columns (presolve time = 15s) ...
+Presolve removed 159053 rows and 72855 columns (presolve time = 20s) ...
+Presolve removed 159053 rows and 72894 columns (presolve time = 25s) ...
+Presolve removed 159144 rows and 72959 columns (presolve time = 30s) ...
+Presolve removed 159144 rows and 72959 columns (presolve time = 35s) ...
+Presolve removed 159144 rows and 72959 columns (presolve time = 40s) ...
+Presolve removed 161902 rows and 75645 columns (presolve time = 46s) ...
+Presolve removed 161866 rows and 75609 columns
+Presolve time: 46.43s
+Presolved: 147471 rows, 3829442 columns, 22222986 nonzeros
+Variable types: 6624 continuous, 3822818 integer (3822818 binary)
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Elapsed ordering time = 5s
+Elapsed ordering time = 10s
+Elapsed ordering time = 15s
+Elapsed ordering time = 20s
+Ordering time: 21.27s
+
+Barrier statistics:
+ AA' NZ     : 1.041e+07
+ Factor NZ  : 4.415e+07 (roughly 2.0 GB of memory)
+ Factor Ops : 1.043e+11 (roughly 1 second per iteration)
+ Threads    : 5
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -2.77777614e+17  4.07385665e+12  2.63e+10 5.31e+04  3.60e+11   111s
+   1  -6.29644188e+16  6.51256818e+12  5.97e+09 1.43e+05  8.21e+10   116s
+   2  -1.61039287e+15  5.06384752e+12  1.54e+08 1.86e-09  2.12e+09   124s
+   3  -1.35861739e+14  4.07460683e+12  1.30e+07 1.86e-09  1.80e+08   132s
+   4  -1.93378322e+13  3.67830389e+12  1.85e+06 1.40e-09  2.62e+07   142s
+   5  -6.18899516e+12  2.93908574e+12  5.93e+05 1.63e-09  8.56e+06   149s
+   6  -1.58555392e+12  2.35133952e+12  1.53e+05 1.21e-08  2.40e+06   155s
+   7  -5.89674393e+11  1.70669835e+12  5.79e+04 1.44e-08  9.52e+05   160s
+   8  -3.30720208e+11  1.15242205e+12  3.33e+04 7.22e-09  5.36e+05   164s
+   9  -2.40930933e+11  7.20555595e+11  2.48e+04 6.29e-09  3.57e+05   169s
+  10  -1.16874590e+11  5.04153576e+11  1.30e+04 3.03e-09  1.94e+05   174s
+  11  -2.53844815e+10  2.52625567e+11  4.30e+03 1.98e-09  6.95e+04   181s
+  12  -1.43227863e+09  1.96324121e+11  2.02e+03 2.04e-09  4.05e+04   186s
+  13   9.69368798e+09  8.86370799e+10  9.64e+02 1.98e-09  1.63e+04   191s
+  14   1.62123395e+10  6.22582048e+10  3.43e+02 1.94e-09  8.01e+03   196s
+  15   1.83658073e+10  4.45290116e+10  1.39e+02 2.22e-09  4.19e+03   203s
+  16   1.85564356e+10  4.31325069e+10  1.22e+02 2.80e-09  3.88e+03   209s
+  17   1.87838826e+10  3.84609740e+10  1.00e+02 7.53e-09  3.12e+03   214s
+  18   1.88566773e+10  3.62468982e+10  9.34e+01 7.45e-09  2.78e+03   219s
+  19   1.91359230e+10  3.42160421e+10  6.80e+01 8.01e-09  2.34e+03   226s
+  20   1.92649447e+10  3.20062769e+10  5.75e+01 9.25e-09  1.97e+03   234s
+  21   1.92770995e+10  3.15213700e+10  5.65e+01 1.22e-08  1.90e+03   241s
+  22   1.95661376e+10  2.82607577e+10  3.30e+01 2.07e-08  1.32e+03   249s
+  23   1.96075858e+10  2.76273530e+10  3.01e+01 2.35e-08  1.21e+03   257s
+  24   1.96526735e+10  2.60783517e+10  2.73e+01 2.26e-08  9.90e+02   266s
+  25   1.97373887e+10  2.52345926e+10  2.06e+01 2.53e-08  8.35e+02   274s
+  26   1.97597258e+10  2.45743203e+10  1.88e+01 3.93e-08  7.39e+02   283s
+  27   1.97806474e+10  2.38823800e+10  1.71e+01 4.26e-08  6.40e+02   291s
+  28   1.98138810e+10  2.34591782e+10  1.44e+01 4.98e-08  5.67e+02   300s
+
+Barrier performed 28 iterations in 300.08 seconds (230.51 work units)
+Time limit reached
+
+
+
+Root relaxation: time limit, 0 iterations, 241.11 seconds (91.01 work units)
+
+Explored 1 nodes (0 simplex iterations) in 301.10 seconds (206.83 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 0
+
+Time limit reached
+Best objective -, best bound 2.853988223040e+13, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 142870 rows and 66854 columns (presolve time = 5s) ...
+Presolve removed 147291 rows and 75646 columns (presolve time = 10s) ...
+Presolve removed 154827 rows and 75646 columns (presolve time = 15s) ...
+Presolve removed 161902 rows and 75646 columns (presolve time = 20s) ...
+Presolve removed 161902 rows and 75646 columns (presolve time = 25s) ...
+Presolve removed 161902 rows and 75646 columns (presolve time = 30s) ...
+Presolve removed 161902 rows and 75646 columns (presolve time = 35s) ...
+Presolve removed 161902 rows and 75646 columns (presolve time = 40s) ...
+Presolve removed 161902 rows and 75646 columns (presolve time = 45s) ...
+Presolve removed 161866 rows and 75610 columns
+Presolve time: 46.14s
+Presolved: 147471 rows, 3829441 columns, 22222985 nonzeros
+Variable types: 6623 continuous, 3822818 integer (3822818 binary)
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Elapsed ordering time = 5s
+Elapsed ordering time = 10s
+Ordering time: 11.29s
+
+Barrier statistics:
+ AA' NZ     : 1.041e+07
+ Factor NZ  : 4.415e+07 (roughly 2.0 GB of memory)
+ Factor Ops : 1.043e+11 (roughly 1 second per iteration)
+ Threads    : 5
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -0.00000000e+00  2.98590631e+05  2.63e+10 0.00e+00  2.38e+04    99s
+   1  -0.00000000e+00  4.78244722e+05  5.26e+09 5.05e-03  4.79e+03   103s
+   2  -0.00000000e+00  3.58507892e+05  2.69e+07 1.39e-16  2.45e+01   107s
+   3  -0.00000000e+00  2.79117852e+05  1.15e+07 1.39e-16  1.06e+01   113s
+   4  -0.00000000e+00  5.86262434e+04  1.06e+06 8.24e-17  2.43e-01   120s
+   5  -0.00000000e+00  1.07704299e+04  1.63e+05 2.54e-07  1.00e-02   126s
+   6  -0.00000000e+00  1.90915330e+03  6.11e+04 3.31e-07  1.31e-03   131s
+   7  -0.00000000e+00  8.36751335e+02  3.97e+04 2.66e-07  5.61e-04   136s
+   8  -0.00000000e+00  6.00615847e+02  2.31e+04 2.32e-07  2.99e-04   140s
+   9  -0.00000000e+00  2.38906112e+02  1.25e+04 1.92e-07  1.13e-04   144s
+  10  -0.00000000e+00  7.23454810e+01  1.69e+03 1.94e-07  1.59e-05   150s
+  11  -0.00000000e+00  2.36810403e+01  3.15e+02 1.06e-07  4.06e-06   156s
+  12  -0.00000000e+00  1.79352815e+01  1.53e+02 8.42e-08  2.81e-06   161s
+  13  -0.00000000e+00  1.40366153e+01  1.21e+02 7.02e-08  2.19e-06   165s
+  14  -0.00000000e+00  1.06320115e+01  7.67e+01 5.67e-08  1.62e-06   170s
+  15  -0.00000000e+00  7.81239763e+00  5.37e+01 4.46e-08  1.18e-06   176s
+  16  -0.00000000e+00  6.47132632e+00  4.47e+01 3.37e-08  9.78e-07   183s
+  17  -0.00000000e+00  5.21260389e+00  3.44e+01 2.89e-08  7.84e-07   190s
+  18  -0.00000000e+00  4.42043101e+00  3.21e+01 2.29e-08  6.72e-07   197s
+  19  -0.00000000e+00  3.08742032e+00  2.82e+01 1.82e-08  4.88e-07   204s
+  20  -0.00000000e+00  2.59728063e+00  1.87e+01 1.35e-08  3.97e-07   211s
+  21  -0.00000000e+00  2.31616781e+00  1.44e+01 1.34e-08  3.49e-07   218s
+  22  -0.00000000e+00  1.97932905e+00  1.05e+01 1.92e-08  2.94e-07   225s
+  23  -0.00000000e+00  1.69297973e+00  9.23e+00 2.41e-08  2.55e-07   230s
+  24  -0.00000000e+00  1.33323642e+00  6.71e+00 3.32e-08  1.99e-07   238s
+  25  -0.00000000e+00  1.04870563e+00  5.64e+00 3.63e-08  1.58e-07   245s
+  26  -0.00000000e+00  9.26100819e-01  5.41e+00 3.74e-08  1.40e-07   250s
+  27  -0.00000000e+00  6.49713564e-01  2.95e+00 4.39e-08  9.30e-08   257s
+  28  -0.00000000e+00  2.65655989e-01  1.11e+00 4.03e-08  3.82e-08   264s
+  29  -0.00000000e+00  1.22099550e-01  1.59e-01 2.59e-08  1.73e-08   271s
+  30  -0.00000000e+00  2.22553673e-02  7.28e-03 6.49e-09  3.41e-09   277s
+  31  -0.00000000e+00  2.15959249e-03  4.26e-04 8.45e-10  3.70e-10   282s
+  32  -0.00000000e+00  5.39011535e-07  1.11e-07 2.44e-13  9.53e-14   287s
+  33  -0.00000000e+00  1.73505673e-12  1.74e-10 3.62e-17  3.06e-19   293s
+
+Barrier solved model in 33 iterations and 292.84 seconds (251.88 work units)
+Optimal objective -0.00000000e+00
+
+
+
+Root relaxation: time limit, 0 iterations, 239.11 seconds (129.29 work units)
+
+Explored 1 nodes (0 simplex iterations) in 301.16 seconds (241.01 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 0
+
+Time limit reached
+Best objective -, best bound -0.000000000000e+00, gap -
+IIS runtime: 301.50 seconds (241.01 work units)
