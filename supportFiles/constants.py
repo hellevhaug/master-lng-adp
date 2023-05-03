@@ -4,8 +4,8 @@ ABU2 = ['FU','DI']
 FAKEFOB = 'ART_FIC'
 
 LOADING_NGBON = 'Lng_storage'
-LOADING_FU = 'FU'
-LOADING_DI = 'DI'
+LOADING_FU = 'FU-storage'
+LOADING_DI = 'DI-storage'
 
 CHARTER_BOIL_OFF = 0.0012 # Hardkodet 
 TANK_LEFTOVER_VALUE = {'NGBON':40, 'FU':40, 'DI':40} # Hardkodet

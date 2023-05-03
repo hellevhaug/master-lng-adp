@@ -51,6 +51,10 @@ def read_all_contracts(data, port_types, port_locations, location_ports, loading
             lower_partition_demand, unloading_days, des_biggest_demand, des_biggest_partition, des_contract_revenues, 
             des_contract_partitions, earliest_unloading_day, last_unloading_day)
 
+            if len(des_contract_partitions[contract['id']])!=len(set(des_contract_partitions[contract['id']])):
+                contract_id = contract['id']
+                raise ValueError(f'There is duplicates in long-term DES partitions for {contract_id}, fix data')
+
         elif contract['id'][:3]=='FOB':
 
             fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days = read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, fob_demands, fob_days, fob_revenues)
