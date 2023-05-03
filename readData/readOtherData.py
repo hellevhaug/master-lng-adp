@@ -51,11 +51,12 @@ def set_distances(data):
     return distances
 
 
-def read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity):
+def read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity, fob_loading_ports):
     fob_spot_art_ports = {}
     for loading_port in loading_port_ids:
         fake_fob_id = f'ART_FIC_{loading_port}'
         fob_spot_art_ports[loading_port] = fake_fob_id
+        fob_loading_ports[fake_fob_id] = [loading_port]
         fob_ids.append(fake_fob_id)
         fob_spot_ids.append(fake_fob_id)
         fob_days[fake_fob_id] = loading_days
@@ -64,7 +65,7 @@ def read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_day
             fob_demands[fake_fob_id] = fake_fob_quantity[loading_port]
             fob_revenues[fake_fob_id, t] = 0
 
-    return fob_spot_art_ports
+    return fob_spot_art_ports, fob_loading_ports
 
 
 def set_fob_operational_times(fob_ids, loading_port_ids):

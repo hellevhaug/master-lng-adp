@@ -67,7 +67,7 @@ def initialize_basic_model(group, filename):
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initialize fake fob stuffz + set fob_operational_times
-    fob_spot_art_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity)
+    fob_spot_art_ports, fob_loading_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity, fob_loading_ports)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
 
     # Convert loading ports for FOB, both contracts and spot 
@@ -276,7 +276,7 @@ def initialize_variable_production_model(group, filename):
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initialize fake fob stuffz + set fob_operational_times
-    fob_spot_art_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity)
+    fob_spot_art_ports, fob_loading_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity, fob_loading_ports)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
 
     # Convert fob loading ports
@@ -478,7 +478,7 @@ def initialize_charter_out_model(group, filename):
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initialize fake fob stuffz + set fob_operational_times
-    fob_spot_art_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity)
+    fob_spot_art_ports, fob_loading_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity, fob_loading_ports)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
 
     # Convert fob loading ports
@@ -693,7 +693,7 @@ def initialize_combined_model(group, filename):
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initialize fake fob stuffz + set fob_operational_times
-    fob_spot_art_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity)
+    fob_spot_art_ports, fob_loading_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity, fob_loading_ports)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
 
     # Convert fob loading ports
