@@ -85,7 +85,7 @@
 	{"fromDateTime": "2024-10-01T00:00:00", "price": 130}
 	]},
 {"id": "DESCON_3", "name": "DESCON_3", "desRequests": [
-{"id": "131", "name":"DESCON_3-1", "from":"2024-10-01T00:00:00", "to":"2025-08-10T00:00:00", "minQuantity":9300000, "quantity":1033333, "portId":"ES", "storageId":"Lng-storage", "minSpread": 5}],
+{"id": "131", "name":"DESCON_3-1", "from":"2024-10-01T00:00:00", "to":"2025-08-10T00:00:00", "minQuantity":930000, "quantity":1033333, "portId":"ES", "storageId":"Lng-storage", "minSpread": 5}],
 "salesPrices": [
 	{"fromDateTime": "2024-10-01T00:00:00", "price": 80}
 	]},
