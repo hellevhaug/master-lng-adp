@@ -180,15 +180,10 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
                     # Cannot travel from maintenance node to unloading node
                     if (maintenance_ids.__contains__(i) and des_contract_ids.__contains__(j)):
                         continue
-                    # Cannot travel from unloading to spot
-                    if (des_contract_ids.__contains__(i) and des_spot_ids.__contains__(j)):
-                        continue
-                    # Cannot travel from spot to unloading
-                    if (des_contract_ids.__contains__(j) and des_spot_ids.__contains__(i)):
-                        continue
                     # Cut off not feasible arcs for vessels
                     if (des_contract_ids.__contains__(j) or des_spot_ids.__contains__(j)) and t > unloading_days[j][-1]:
                         continue
+                    # Cannot travel from unloading to spot or other way around
                     if port_types[i]=='u' and port_types[j]=='s' or port_types[i]=='s' and port_types[j]=='u':
                         continue
                     for t_ in range(t+1, min(t+65,len(all_days))):

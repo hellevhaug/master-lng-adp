@@ -11,7 +11,7 @@ tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, cha
     for f in fob_ids for t in fob_days[f]) + 
     gp.quicksum(des_contract_revenues[j,t_]*vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_] 
     for v in vessel_ids for i in loading_port_ids for t in loading_days for j in des_spot_ids for t_ in all_days 
-    if (v,i,t,j,t_) in x.keys()) + 
+    if (v,i,t,j,t_) in x.keys() and (j,t_) in des_contract_revenues.keys()) + 
     # !!!NEW!!!
     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off)*des_contract_revenues[j,t+sailing_time_charter[i,j]] 
     for j in des_spot_ids for i in loading_port_ids for t in loading_days if (t+sailing_time_charter[i,j]) in unloading_days[j])
@@ -239,7 +239,7 @@ tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, cha
     for f in fob_ids for t in fob_days[f]) + 
     gp.quicksum(des_contract_revenues[j,t_]*vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_] 
     for v in vessel_ids for i in loading_port_ids for t in loading_days for j in des_spot_ids for t_ in all_days 
-    if (v,i,t,j,t_) in x.keys()) + 
+    if (v,i,t,j,t_) in x.keys() and (j,t_) in des_contract_revenues.keys()) + 
     # !!!NEW!!!
     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off)*des_contract_revenues[j,t+sailing_time_charter[i,j]] 
     for j in des_spot_ids for i in loading_port_ids for t in loading_days if (t+sailing_time_charter[i,j]) in unloading_days[j])

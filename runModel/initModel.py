@@ -56,6 +56,8 @@ def initialize_basic_model(group, filename):
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
+        if len(fob_spot_ids+des_spot_ids)!=len(set(fob_spot_ids+des_spot_ids)):
+            raise ValueError('There are duplicates in spot data')
     except KeyError:
         print('This dataset does not have spot ')
     except:
@@ -714,6 +716,8 @@ def initialize_combined_model(group, filename):
 
     # Now all ports is defined, should include DES-contracts, DES-spot, loading- and maintenance ports :')
     port_ids = [port_id for port_id in port_locations]
+
+    print(port_ids)
 
     # Charter vessels
     # Initialize lists for charter vessels
