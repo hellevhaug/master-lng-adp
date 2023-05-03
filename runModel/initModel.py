@@ -66,12 +66,12 @@ def initialize_basic_model(group, filename):
 
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
+    # Convert loading ports for FOB, both contracts and spot 
+    convert_loading_ports(fob_loading_ports)
+
     ## Initialize fake fob stuffz + set fob_operational_times
     fob_spot_art_ports, fob_loading_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity, fob_loading_ports)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
-
-    # Convert loading ports for FOB, both contracts and spot 
-    convert_loading_ports(fob_loading_ports)
 
     ## Initialize lists for vessels
     vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(data)
@@ -275,12 +275,12 @@ def initialize_variable_production_model(group, filename):
         pass
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
+    # Convert fob loading ports
+    convert_loading_ports(fob_loading_ports)
+
     ## Initialize fake fob stuffz + set fob_operational_times
     fob_spot_art_ports, fob_loading_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity, fob_loading_ports)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
-
-    # Convert fob loading ports
-    convert_loading_ports(fob_loading_ports)
 
     ## Initialize lists for vessels
     vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(data)
@@ -477,12 +477,12 @@ def initialize_charter_out_model(group, filename):
         pass
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
+    # Convert fob loading ports
+    convert_loading_ports(fob_loading_ports)
+
     ## Initialize fake fob stuffz + set fob_operational_times
     fob_spot_art_ports, fob_loading_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity, fob_loading_ports)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
-
-    # Convert fob loading ports
-    convert_loading_ports(fob_loading_ports)
 
     ## Initialize lists for vessels
     vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(data)
@@ -692,12 +692,12 @@ def initialize_combined_model(group, filename):
         pass
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
+    # Convert fob loading ports
+    convert_loading_ports(fob_loading_ports)
+
     ## Initialize fake fob stuffz + set fob_operational_times
     fob_spot_art_ports, fob_loading_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity, fob_loading_ports)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
-
-    # Convert fob loading ports
-    convert_loading_ports(fob_loading_ports)
 
     ## Initialize lists for vessels
     vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(data)
@@ -716,8 +716,6 @@ def initialize_combined_model(group, filename):
 
     # Now all ports is defined, should include DES-contracts, DES-spot, loading- and maintenance ports :')
     port_ids = [port_id for port_id in port_locations]
-
-    print(port_ids)
 
     # Charter vessels
     # Initialize lists for charter vessels
