@@ -55,8 +55,10 @@ def initialize_basic_model(group, filename):
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+    except KeyError:
+        print('This dataset does not have spot ')
     except:
-        print('something went wrong')
+        print('Something went wrong!')
         pass
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
@@ -254,7 +256,10 @@ def initialize_variable_production_model(group, filename):
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+    except KeyError:
+        print('This dataset does not have spot ')
     except:
+        print('Something went wrong!')
         pass
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
@@ -447,7 +452,10 @@ def initialize_charter_out_model(group, filename):
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+    except KeyError:
+        print('This dataset does not have spot ')
     except:
+        print('Something went wrong!')
         pass
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
@@ -653,7 +661,10 @@ def initialize_combined_model(group, filename):
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+    except KeyError:
+        print('This dataset does not have spot ')
     except:
+        print('Something went wrong!')
         pass
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 

@@ -143,8 +143,8 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-D'
-filename1 = 'N-1L-14U-40F-23V-365D'
+group1 = 'A-2L-A'
+filename1 = 'A-2L-6U-41F-15V-365D'
 runtime = 60*3
 modelType = BASIC_MODEL
 
