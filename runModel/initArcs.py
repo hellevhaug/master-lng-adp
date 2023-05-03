@@ -189,6 +189,8 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
                     # Cut off not feasible arcs for vessels
                     if (des_contract_ids.__contains__(j) or des_spot_ids.__contains__(j)) and t > unloading_days[j][-1]:
                         continue
+                    if port_types[i]=='u' and port_types[j]=='s' or port_types[i]=='s' and port_types[j]=='u':
+                        continue
                     for t_ in range(t+1, min(t+65,len(all_days))):
                         if loading_port_ids.__contains__(j) and t_>len(loading_days)+1:
                             continue
