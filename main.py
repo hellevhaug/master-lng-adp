@@ -143,13 +143,15 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
+group = 'N-1L-A'
+filename = 'N-1L-16U-33F-23V-365D'
 group1 = 'A-2L-A'
-filename1 = 'A-2L-6U-41F-15V-365D'
+filename1 = 'A-2L-6U-23F-15V-180D'
 runtime = 60*3
 modelType = BASIC_MODEL
 
 #run_one_instance(spotGroup, spotFilename, runtime, modelType)
-test_init_model(group1, filename1, modelType)
+test_init_model(group, filename, modelType)
 #run_all_model_types(group1, filename1, runtime)
 #run_all_model_types_for_group(group1, runtime)
 #run_group(spotGroup, runtime, modelType)

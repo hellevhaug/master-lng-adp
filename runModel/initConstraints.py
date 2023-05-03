@@ -29,14 +29,14 @@ tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, cha
 
 # Initialize initial inventory constraints for loading ports 
 def init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory):
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports):
 
     initial_loading_inventory_constraints = (s[i,t]==initial_inventory[i]+production_quantities[i,t]
     -gp.quicksum(vessel_capacities[v]*x[v,i,t,j,t_] 
     for v in vessel_ids for j in des_contract_ids for t_ in all_days if (v,i,t,j,t_) in x.keys())
     - gp.quicksum(g[i,t,j] for j in des_contract_ids)
     - gp.quicksum(fob_demands[f]*z[f,t] 
-    for f in fob_ids if (f,t) in z.keys())
+    for f in fob_ids if (f,t) in z.keys() and i in fob_loading_ports[f])
     for i in loading_port_ids for t in loading_days[:1])
 
     return initial_loading_inventory_constraints
@@ -44,13 +44,13 @@ def init_initial_loading_inventory_constr(s, g, z, x, production_quantities, ves
 
 # Initialize loading inventory constraints
 def init_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days):
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports):
 
     loading_inventory_constraints = (s[i,t]==s[i,(t-1)]+production_quantities[i,t]-gp.quicksum(vessel_capacities[v]*x[v,i,t,j,t_] 
     for v in vessel_ids for j in des_contract_ids for t_ in all_days if (v,i,t,j,t_) in x.keys())
     - gp.quicksum(g[i,t,j] for j in des_contract_ids)
     - gp.quicksum(fob_demands[f]*z[f,t] 
-    for f in (fob_ids) if (f,t) in z.keys())
+    for f in (fob_ids) if (f,t) in z.keys() and i in fob_loading_ports[f])
     for i in loading_port_ids for t in loading_days[1:])
 
     return loading_inventory_constraints

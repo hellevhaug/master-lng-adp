@@ -3,7 +3,7 @@ ABU1 = ['FU']
 ABU2 = ['FU','DI']
 FAKEFOB = 'ART_FIC'
 
-LOADING_NGBON = 'Lng_storage'
+LOADING_NGBON = 'Lng-storage'
 LOADING_FU = 'FU-storage'
 LOADING_DI = 'DI-storage'
 

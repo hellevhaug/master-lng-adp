@@ -37,13 +37,14 @@ def initialize_basic_model(group, filename):
     production_quantities = set_production_quantities(production_quantity, loading_days)
 
     ## Initialize lists for contracts
-    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_ports, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
     vessels_has_loading_port_data = DES_HAS_LOADING_PORT
     try:
         des_loading_ports = read_des_loading_ports(data, vessels_has_loading_port_data, loading_port_ids)
-        convert_des_loading_ports(des_loading_ports)
-    except:
+        convert_loading_ports(des_loading_ports)
+    except KeyError:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
+
 
     ## Initalize distances 
     distances = set_distances(data)
@@ -54,18 +55,21 @@ def initialize_basic_model(group, filename):
     try:
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
-        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
     except KeyError:
         print('This dataset does not have spot ')
     except:
         print('Something went wrong!')
         pass
+
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initialize fake fob stuffz + set fob_operational_times
     fob_spot_art_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
 
+    # Convert loading ports for FOB, both contracts and spot 
+    convert_loading_ports(fob_loading_ports)
 
     ## Initialize lists for vessels
     vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(data)
@@ -78,6 +82,10 @@ def initialize_basic_model(group, filename):
                         vessel_port_acceptances, loading_port_ids, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, 
                         vessel_boil_off_rate, vessel_available_days, loading_from_time, loading_to_time, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, 
                         maintenance_start_times, maintenance_durations, last_unloading_day, des_contract_ids)
+    
+    # Adding spot ports to vessel port acceptances
+    add_spot_to_vessel_acceptances(vessel_port_acceptances, des_spot_ids)
+
 
     # Now all ports is defined, should include DES-contracts, DES-spot, loading- and maintenance ports :')
     port_ids = [port_id for port_id in port_locations]
@@ -93,6 +101,8 @@ def initialize_basic_model(group, filename):
     ## Initializing arcs
     arc_speeds, arc_waiting_times, arc_sailing_times, sailing_costs, total_feasible_arcs = init_arc_sets()
     fuel_price, charter_boil_off, tank_leftover_value, allowed_waiting = set_external_data(data)
+
+    #print(vessel_port_acceptances['BAY'])
 
     # Setting operational times for vessel-port-combinations
     operational_times = {(v,i,j): set_operational_time(v,i,j, maintenance_ids, maintenance_durations) 
@@ -133,13 +143,13 @@ def initialize_basic_model(group, filename):
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports), name='inventory_control')
 
 
     # Constraint 5.4
@@ -238,12 +248,12 @@ def initialize_variable_production_model(group, filename):
 
 
     ## Initialize lists for contracts
-    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_ports, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
     vessels_has_loading_port_data = DES_HAS_LOADING_PORT
     try:
         des_loading_ports = read_des_loading_ports(data, vessels_has_loading_port_data, loading_port_ids)
-        convert_des_loading_ports(des_loading_ports)
-    except:
+        convert_loading_ports(des_loading_ports)
+    except KeyError:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
 
     ## Initalize distances 
@@ -255,7 +265,7 @@ def initialize_variable_production_model(group, filename):
     try:
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
-        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
     except KeyError:
         print('This dataset does not have spot ')
     except:
@@ -266,6 +276,9 @@ def initialize_variable_production_model(group, filename):
     ## Initialize fake fob stuffz + set fob_operational_times
     fob_spot_art_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
+
+    # Convert fob loading ports
+    convert_loading_ports(fob_loading_ports)
 
     ## Initialize lists for vessels
     vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(data)
@@ -278,6 +291,9 @@ def initialize_variable_production_model(group, filename):
                         vessel_port_acceptances, loading_port_ids, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, 
                         vessel_boil_off_rate, vessel_available_days, loading_from_time, loading_to_time, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, 
                         maintenance_start_times, maintenance_durations, last_unloading_day, des_contract_ids)
+    
+    # Adding spot ports to vessel port acceptances
+    add_spot_to_vessel_acceptances(vessel_port_acceptances, des_spot_ids)
 
     # Now all ports is defined, should include DES-contracts, DES-spot, loading- and maintenance ports :')
     port_ids = [port_id for port_id in port_locations]
@@ -336,13 +352,13 @@ def initialize_variable_production_model(group, filename):
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, q, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(s, g, z, x, q, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports), name='inventory_control')
 
 
     # Constraint 5.4
@@ -434,12 +450,12 @@ def initialize_charter_out_model(group, filename):
     production_quantities = set_production_quantities(production_quantity, loading_days)
 
     ## Initialize lists for contracts
-    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_ports, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
     vessels_has_loading_port_data = DES_HAS_LOADING_PORT
     try:
         des_loading_ports = read_des_loading_ports(data, vessels_has_loading_port_data, loading_port_ids)
-        convert_des_loading_ports(des_loading_ports)
-    except:
+        convert_loading_ports(des_loading_ports)
+    except KeyError:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
 
     ## Initalize distances 
@@ -451,7 +467,7 @@ def initialize_charter_out_model(group, filename):
     try:
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
-        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
     except KeyError:
         print('This dataset does not have spot ')
     except:
@@ -462,6 +478,9 @@ def initialize_charter_out_model(group, filename):
     ## Initialize fake fob stuffz + set fob_operational_times
     fob_spot_art_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
+
+    # Convert fob loading ports
+    convert_loading_ports(fob_loading_ports)
 
     ## Initialize lists for vessels
     vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(data)
@@ -474,6 +493,9 @@ def initialize_charter_out_model(group, filename):
                         vessel_port_acceptances, loading_port_ids, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, 
                         vessel_boil_off_rate, vessel_available_days, loading_from_time, loading_to_time, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, 
                         maintenance_start_times, maintenance_durations, last_unloading_day, des_contract_ids)
+    
+    # Adding spot ports to vessel port acceptances
+    add_spot_to_vessel_acceptances(vessel_port_acceptances, des_spot_ids)
 
     # Now all ports is defined, should include DES-contracts, DES-spot, loading- and maintenance ports :')
     port_ids = [port_id for port_id in port_locations]
@@ -535,13 +557,13 @@ def initialize_charter_out_model(group, filename):
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports), name='inventory_control')
 
 
     # Constraint 5.4
@@ -643,12 +665,12 @@ def initialize_combined_model(group, filename):
     
 
     ## Initialize lists for contracts
-    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_ports, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
     vessels_has_loading_port_data = DES_HAS_LOADING_PORT
     try:
         des_loading_ports = read_des_loading_ports(data, vessels_has_loading_port_data, loading_port_ids)
-        convert_des_loading_ports(des_loading_ports)
-    except:
+        convert_loading_ports(des_loading_ports)
+    except KeyError:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
 
     ## Initalize distances 
@@ -660,7 +682,7 @@ def initialize_combined_model(group, filename):
     try:
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
-        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
     except KeyError:
         print('This dataset does not have spot ')
     except:
@@ -671,6 +693,9 @@ def initialize_combined_model(group, filename):
     ## Initialize fake fob stuffz + set fob_operational_times
     fob_spot_art_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
+
+    # Convert fob loading ports
+    convert_loading_ports(fob_loading_ports)
 
     ## Initialize lists for vessels
     vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(data)
@@ -683,6 +708,9 @@ def initialize_combined_model(group, filename):
                         vessel_port_acceptances, loading_port_ids, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, 
                         vessel_boil_off_rate, vessel_available_days, loading_from_time, loading_to_time, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, 
                         maintenance_start_times, maintenance_durations, last_unloading_day, des_contract_ids)
+    
+    # Adding spot ports to vessel port acceptances
+    add_spot_to_vessel_acceptances(vessel_port_acceptances, des_spot_ids)
 
     # Now all ports is defined, should include DES-contracts, DES-spot, loading- and maintenance ports :')
     port_ids = [port_id for port_id in port_locations]
@@ -748,13 +776,13 @@ def initialize_combined_model(group, filename):
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports), name='inventory_control')
 
 
     # Constraint 5.4
