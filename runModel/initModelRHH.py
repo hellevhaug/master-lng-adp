@@ -121,14 +121,24 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
     charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
 
     if prediction_horizon != "ALL":
-        charter_dimensions = [(i,t,j) for (i,t,j) in charter_dimensions if t <= horizon_length*(iteration_count+1)+prediction_horizon]
+        charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days if t <= horizon_length*(iteration_count+1)+prediction_horizon for j in (des_contract_ids + des_spot_ids)]
+        #charter_dimensions = [(i,t,j) for (i,t,j) in charter_dimensions if t <= horizon_length*(iteration_count+1)+prediction_horizon]
     
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
+    #print("G VARS: ", g)
+    lb = {}
+    ub = {}
+    model.update()
+    for key, var in g.items(): 
+    #    #print(type(g[var].X))
+    #    print(var.VarName)
+        lb[key] = var.lb
+        ub[key] = var.ub
 
     if prediction_horizon != "ALL":
-        production_quantities = [(i, t) for (i,t) in production_quantities if t <= horizon_length*(iteration_count+1)+prediction_horizon]
+        production_quantities = {(i,t): value for (i,t), value in production_quantities.items() if t <= horizon_length*(iteration_count+1)+prediction_horizon}
 
     s = model.addVars(production_quantities, vtype='C', name='s')
     #('NGBON', 6): <gurobi.Var *Awaiting Model Update*>,
@@ -152,11 +162,15 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
             # print("post freeze: ", s[var], s[var].lb, s[var].ub)
     for var in g:
         if g[var].VarName in frozen_variables:
-            # print("pre freeze: ", g[var])
-            # print("freezing to: ", round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)]))
+            #print("pre freeze: ", g[var])
+            #print("freezing to: ", round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)]))
             g[var].lb = round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)])
             g[var].ub = round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)])
-            print("post freeze: ", g[var], g[var].lb, g[var].ub)
+            #print("pre freeze: ", g[var], g[var].lb, g[var].ub)
+            model.update()
+            for key, var in g.items(): 
+                lb[key] = var.lb
+                ub[key] = var.ub
     for var in z:
         if z[var].VarName in frozen_variables:
             # print("pre freeze: ", z[var])
@@ -230,11 +244,14 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
                 # now looks like this: ['AD-7', 'DESCON_1', '28', 'ART_START', '63']
                 if  horizon_length*(iteration_count+1) <= int(varName_list[2]) <= horizon_length*(iteration_count+1)+prediction_horizon:
                     var.setAttr("VType", GRB.CONTINUOUS)
+                    model.update()
                     '''
                 elif  horizon_length*(iteration_count+1) < horizon_length*(iteration_count+1)+prediction_horizon:
                     model.remove(var)
                     key = (varName_list[0], varName_list[1], int(varName_list[2]), varName_list[3], int(varName_list[4]))
                     del x[key]
+                    '''
+# s is also continous:
                     '''
             elif var.varName[0]=='s':
                 varName_str = var.varName
@@ -242,19 +259,21 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
                 # now looks like this: [FU,1]
                 if  horizon_length*(iteration_count+1) <= int(varName_list[1]) <= horizon_length*(iteration_count+1)+prediction_horizon:
                     var.setAttr("VType", GRB.CONTINUOUS)
-                    '''
+
                 elif  horizon_length*(iteration_count+1) < horizon_length*(iteration_count+1)+prediction_horizon:
                     model.remove(var)
                     key = (varName_list[0], int(varName_list[1]))
                     del s[key]
                     '''
+# g is also continous:
+                ''' 
             elif var.varName[0]=='g':
                 varName_str = var.varName
                 varName_list = varName_str.split('[')[1].split(']')[0].split(',')
                 # now looks like this: [FU,56,DESCON_1]
                 if  horizon_length*(iteration_count+1) <= int(varName_list[1]) <= horizon_length*(iteration_count+1)+prediction_horizon:
                     var.setAttr("VType", GRB.CONTINUOUS)
-                    '''
+                    
                 elif  horizon_length*(iteration_count+1) < horizon_length*(iteration_count+1)+prediction_horizon:
                     model.remove(var)
                     key = (varName_list[0], int(varName_list[1]), varName_list[2])
@@ -266,6 +285,7 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
                 # now looks like this: [1001,6]
                 if  horizon_length*(iteration_count+1) <= int(varName_list[1]) <= horizon_length*(iteration_count+1)+prediction_horizon:
                     var.setAttr("VType", GRB.CONTINUOUS)
+                    model.update()
                     '''
                 elif  horizon_length*(iteration_count+1) < horizon_length*(iteration_count+1)+prediction_horizon:
                     model.remove(var)
@@ -275,13 +295,15 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
 
     
 
-    model.update()
+        model.update()
 
     # Initializing constraints
 
-    stop_time = horizon_length*(iteration_count+1)+prediction_horizon
+    
     if prediction_horizon == "ALL":
         stop_time = len(loading_days)
+    else: 
+        stop_time = horizon_length*(iteration_count+1)+prediction_horizon if horizon_length*(iteration_count+1)+prediction_horizon < len(all_days) else len(all_days)
 
     model.setObjective(init_objective(stop_time, x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days,
     des_contract_revenues, vessel_capacities, vessel_boil_off_rate, vessel_ids, loading_port_ids, loading_days, 
@@ -290,17 +312,16 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
 
 
     # Constraint 5.2
-    # initial_inventory_RHH = s[i, stop_time] for i in loading_port_ids
     if len(last_inventory) > 0: 
         initial_inventory = last_inventory
-    model.addConstrs(init_initial_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, [horizon_length*iteration_count+1, 1], initial_inventory),
+    model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, [stop_time], initial_inventory),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
-    model.addConstrs(init_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days), name='inventory_control')
+    model.addConstrs(init_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, horizon_length, iteration_count), name='inventory_control')
 
 
     # Constraint 5.4
@@ -323,11 +344,11 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
 
 
     # Constraint 5.8
-    model.addConstrs(init_upper_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
+    model.addConstrs(init_upper_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
     partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, upper_partition_demand, des_contract_ids, des_spot_ids,
     des_contract_partitions), name='upper_demand')
 
-    model.addConstrs(init_lower_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
+    model.addConstrs(init_lower_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
     partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, lower_partition_demand, des_contract_ids, des_spot_ids,
     des_contract_partitions), name='lower_demand')
 
@@ -345,15 +366,15 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
 
 
     # Constraint 5.12
-    model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
+    model.addConstrs(init_berth_constr(stop_time, x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
     fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
 
 
     # Constraint 5.13 
-    model.addConstrs(init_charter_upper_capacity_constr(g, w, charter_vessel_upper_capacity, loading_port_ids, loading_days, 
+    model.addConstrs(init_charter_upper_capacity_constr(stop_time, g, w, charter_vessel_upper_capacity, loading_port_ids, loading_days, 
     des_spot_ids, des_contract_ids), name='charter_upper_capacity')
 
-    model.addConstrs(init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
+    model.addConstrs(init_charter_lower_capacity_constr(stop_time, g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
     des_spot_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
 
     return model, len(loading_days) # This line must be moved to activate the extensions
