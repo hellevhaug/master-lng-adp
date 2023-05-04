@@ -85,7 +85,7 @@ def initialize_basic_model(group, filename):
                         vessel_boil_off_rate, vessel_available_days, loading_from_time, loading_to_time, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, 
                         maintenance_start_times, maintenance_durations, last_unloading_day, des_contract_ids)
     
-    # Adding spot ports to vessel port acceptances
+    # Adding spot ports to vessel port acceptances, this should mabye not be here, we will see.
     add_spot_to_vessel_acceptances(vessel_port_acceptances, des_spot_ids)
 
 
@@ -104,7 +104,6 @@ def initialize_basic_model(group, filename):
     arc_speeds, arc_waiting_times, arc_sailing_times, sailing_costs, total_feasible_arcs = init_arc_sets()
     fuel_price, charter_boil_off, tank_leftover_value, allowed_waiting = set_external_data(data)
 
-    #print(vessel_port_acceptances['BAY'])
 
     # Setting operational times for vessel-port-combinations
     operational_times = {(v,i,j): set_operational_time(v,i,j, maintenance_ids, maintenance_durations) 

@@ -159,6 +159,12 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
         charter_out_arcs = get_charter_out_arcs(vessel, loading_days, sailing_costs, des_contract_ids, maintenance_ids,
                             loading_port_ids,vessel_available_days)
         feasible_arcs.extend(charter_out_arcs)
+    """"
+    des_spot_arcs = get_des_spot_arcs(vessel, des_spot_ids, unloading_days, loading_port_ids, operational_times, distances, port_locations, vessel_max_speed,
+                      all_days, vessel_min_speed, arc_speeds, arc_waiting_times, arc_sailing_times, sailing_costs, vessel_laden_speed_profile
+                      , vessel_ballast_speed_profile, allowed_waiting, fuel_price)
+    feasible_arcs.extend(des_spot_arcs)
+    """
     port_alternatives = {}
     for t in (vessel_available_days[vessel]+[vessel_available_days[vessel][-1]+1]):
         port_alternatives[t] = []
@@ -252,6 +258,73 @@ def get_charter_out_arcs(vessel, loading_days, sailing_costs, des_contract_ids, 
     return charter_out_arcs
         
 
+def get_des_spot_arcs(vessel, des_spot_ids, unloading_days, loading_port_ids, operational_times, distances, port_locations, vessel_max_speed,
+                      all_days, vessel_min_speed, arc_speeds, arc_waiting_times, arc_sailing_times, sailing_costs, vessel_laden_speed_profile
+                      , vessel_ballast_speed_profile, allowed_waiting, fuel_price):
+
+    des_spot_arcs = []
+
+    for des_spot_id in des_spot_ids:
+        for t_ in unloading_days[des_spot_id]:
+            for t in range(t_-50, t_-10):
+                if t>=1:
+                    for loading_port in loading_port_ids:
+                        spot_to_arc = (vessel,loading_port,t,des_spot_id,t_)
+                        distance = distances[port_locations[loading_port],port_locations[des_spot_id]]
+                        arc_operational_time = operational_times[vessel,loading_port,des_spot_id]
+                        sailing_waiting_time = t_-t-arc_operational_time
+                        if ((sailing_waiting_time>0) and (distance/(sailing_waiting_time*24) <= vessel_max_speed[vessel])):
+                            estimated_speed = distance/(sailing_waiting_time*24)
+                            exit_arc = (vessel,des_spot_id,t_,'EXIT_PORT',all_days[-1]+1)
+                            if estimated_speed >= vessel_min_speed[vessel]:
+                                arc_speeds[spot_to_arc] = math.floor(estimated_speed)
+                                arc_waiting_times[spot_to_arc] = 0
+                                arc_sailing_times[spot_to_arc] = sailing_waiting_time
+                                sailing_costs[spot_to_arc] = sailing_waiting_time*(get_daily_fuel(estimated_speed,vessel,loading_port, loading_port_ids, vessel_min_speed, vessel_laden_speed_profile, vessel_ballast_speed_profile))*fuel_price
+                                des_spot_arcs.append(spot_to_arc)
+                                if (exit_arc not in des_spot_arcs) and (not loading_port_ids.__contains__(des_spot_id)):
+                                    des_spot_arcs.append(exit_arc)
+                                    sailing_costs[exit_arc]=0
+                                    arc_sailing_times[exit_arc]=0
+                            else: 
+                                estimated_waiting = sailing_waiting_time-math.floor(distance/(vessel_min_speed[vessel]*24))
+                                if estimated_waiting <= allowed_waiting:
+                                    arc_waiting_times[spot_to_arc] = estimated_waiting
+                                    arc_sailing_times[spot_to_arc] = sailing_waiting_time-estimated_waiting
+                                    des_spot_arcs.append(spot_to_arc)
+                                    arc_speeds[spot_to_arc] = vessel_min_speed[vessel]
+                                    sailing_costs[spot_to_arc] = (math.floor(distance/(vessel_min_speed[vessel]*24)))*(get_daily_fuel(vessel_min_speed[vessel], vessel, loading_port, loading_port_ids, vessel_min_speed, vessel_laden_speed_profile, vessel_ballast_speed_profile))*fuel_price
+                                    if (exit_arc not in des_spot_arcs) and (not loading_port_ids.__contains__(spot_to_arc)):
+                                        des_spot_arcs.append(exit_arc)
+                                        sailing_costs[exit_arc]=0
+                                        arc_sailing_times[exit_arc]=0
+                            
+                            for _t in range(t_, t_+50):
+                                for loading_port_ in loading_port_ids:
+                                    spot_from_arc = (vessel,des_spot_id, t_, loading_port_, _t)
+                                    distance = distances[port_locations[des_spot_id],port_locations[loading_port]]
+                                    arc_operational_time = operational_times[vessel,des_spot_id,loading_port]
+                                    sailing_waiting_time = t_-t-arc_operational_time
+                                    if ((sailing_waiting_time>0) and (distance/(sailing_waiting_time*24) <= vessel_max_speed[vessel])):
+                                        estimated_speed = distance/(sailing_waiting_time*24)
+                                        if estimated_speed >= vessel_min_speed[vessel]:
+                                            arc_speeds[spot_from_arc] = math.floor(estimated_speed)
+                                            arc_waiting_times[spot_from_arc] = 0
+                                            arc_sailing_times[spot_from_arc] = sailing_waiting_time
+                                            sailing_costs[spot_from_arc] = sailing_waiting_time*(get_daily_fuel(estimated_speed,vessel,des_spot_id, loading_port_ids, vessel_min_speed, vessel_laden_speed_profile, vessel_ballast_speed_profile))*fuel_price
+                                            des_spot_arcs.append(spot_from_arc)
+                                        else: 
+                                            estimated_waiting = sailing_waiting_time-math.floor(distance/(vessel_min_speed[vessel]*24))
+                                            if estimated_waiting <= allowed_waiting:
+                                                arc_waiting_times[spot_from_arc] = estimated_waiting
+                                                arc_sailing_times[spot_from_arc] = sailing_waiting_time-estimated_waiting
+                                                des_spot_arcs.append(spot_from_arc)
+                                                arc_speeds[spot_from_arc] = vessel_min_speed[vessel]
+                                                sailing_costs[spot_from_arc] = (math.floor(distance/(vessel_min_speed[vessel]*24)))*(get_daily_fuel(vessel_min_speed[vessel], vessel, des_spot_id, loading_port_ids, vessel_min_speed, vessel_laden_speed_profile, vessel_ballast_speed_profile))*fuel_price
+
+                     
+    des_spot_arcs = list(set(des_spot_arcs))
+    return des_spot_arcs
 
     
      
