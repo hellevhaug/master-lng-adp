@@ -3,6 +3,7 @@ from runModel.initModel import *
 
 # Function for running basic model
 def run_basic_model(group, filename, time_limit, description):
+    print(f'\n You are now running file {filename}, in group {group}')
     model = initialize_basic_model(group, filename)
     print(description)
     model.setParam('TimeLimit', time_limit)

@@ -150,7 +150,7 @@ filename1 = 'A-2L-6U-20F-15V-120D'
 runtime = 60*60*3
 modelType = BASIC_MODEL
 
-run_one_instance(group, filename, runtime, modelType)
+run_one_instance(group1, filename1, runtime, modelType)
 #test_init_model(group, filename, modelType)
 #run_all_model_types(group1, filename1, runtime)
 #run_all_model_types_for_group(group1, runtime)

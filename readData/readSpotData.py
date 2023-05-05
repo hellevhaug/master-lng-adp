@@ -54,8 +54,6 @@ def read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, p
         
         unloading_days[spot_des_contract['id']] = partition_days[spot_des_contract['id']]
 
-        print(spot_des_contract['id'],unloading_days[spot_des_contract['id']])
-
         # Price
         if len(spot_des_contract['salesPrices'])==1:
             for t in unloading_days[spot_des_contract['id']]:

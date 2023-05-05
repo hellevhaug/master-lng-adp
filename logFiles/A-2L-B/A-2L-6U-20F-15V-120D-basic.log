@@ -1,0 +1,157 @@
+
+Gurobi 9.5.2 (mac64[x86]) logging started Fri May  5 13:14:56 2023
+
+Set parameter LogFile to value "logFiles/A-2L-B/A-2L-6U-20F-15V-120D-basic.log"
+Gurobi Optimizer version 9.5.2 build v9.5.2rc0 (mac64[x86])
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+Optimize a model with 30719 rows, 335257 columns and 2082279 nonzeros
+Model fingerprint: 0x751aadbd
+Variable types: 1745 continuous, 333512 integer (333512 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+06]
+Presolve removed 17733 rows and 48299 columns (presolve time = 5s) ...
+Presolve removed 17695 rows and 48261 columns
+Presolve time: 6.46s
+Presolved: 13024 rows, 286996 columns, 1645997 nonzeros
+Variable types: 1716 continuous, 285280 integer (285266 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    2.5057742e+08   3.730483e+04   3.227849e+09     14s
+   18496    2.5052330e+08   4.570915e+01   2.531597e+11     15s
+   47093    2.5051523e+08   4.154277e+00   5.131442e+10     20s
+   64906    2.5051411e+08   2.068939e+00   2.111679e+10     25s
+   81946    2.5051186e+08   3.642550e-01   2.833039e+10     30s
+   88721    2.5030000e+08   1.686290e+03   0.000000e+00     35s
+   89801    2.5030000e+08   6.564629e+03   0.000000e+00     40s
+   91421    2.5030000e+08   2.103416e+04   0.000000e+00     45s
+   94131    2.5030000e+08   5.467021e+03   0.000000e+00     50s
+   95791    2.5030000e+08   1.152720e+05   0.000000e+00     55s
+   96921    2.5030000e+08   1.897986e+03   0.000000e+00     60s
+   97831    2.5030000e+08   1.218039e+03   0.000000e+00     65s
+Warning: Markowitz tolerance tightened to 0.5
+   99889    2.5030000e+08   1.343443e-01   4.315166e+09     70s
+  101456    2.5030000e+08   4.289930e+01   0.000000e+00     75s
+  102816    2.5030000e+08   2.226479e+02   0.000000e+00     80s
+  104176    2.5030000e+08   1.162451e+01   0.000000e+00     85s
+Concurrent spin time: 0.01s
+
+Solved with dual simplex
+
+Root relaxation: objective 1.032725e+09, 87876 iterations, 76.48 seconds (48.11 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 1.0327e+09    0  201          - 1.0327e+09      -     -   88s
+     0     0 1.0327e+09    0  206          - 1.0327e+09      -     -  109s
+     0     0 1.0326e+09    0  199          - 1.0326e+09      -     -  153s
+     0     0 1.0326e+09    0  201          - 1.0326e+09      -     -  154s
+     0     0 1.0326e+09    0  222          - 1.0326e+09      -     -  160s
+     0     0 1.0326e+09    0  206          - 1.0326e+09      -     -  163s
+     0     0 1.0326e+09    0  201          - 1.0326e+09      -     -  167s
+     0     0 1.0326e+09    0  201          - 1.0326e+09      -     -  168s
+     0     0 1.0326e+09    0  194          - 1.0326e+09      -     -  172s
+     0     0 1.0326e+09    0  198          - 1.0326e+09      -     -  173s
+     0     0 1.0326e+09    0  211          - 1.0326e+09      -     -  178s
+     0     0 1.0326e+09    0  211          - 1.0326e+09      -     -  179s
+     0     0 1.0326e+09    0  196          - 1.0326e+09      -     -  183s
+     0     0 1.0326e+09    0  199          - 1.0326e+09      -     -  184s
+     0     0 1.0326e+09    0  200          - 1.0326e+09      -     -  186s
+
+Cutting planes:
+  Cover: 18
+  Implied bound: 13
+  Clique: 2
+  MIR: 13
+  Flow cover: 58
+  GUB cover: 3
+  Zero half: 1
+  Network: 28
+  RLT: 3
+  Relax-and-lift: 10
+
+Explored 1 nodes (101616 simplex iterations) in 212.88 seconds (134.25 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 0
+
+Solve interrupted
+Best objective -, best bound 1.032627743331e+09, gap -
+IIS runtime: 3.19 seconds (3.92 work units)
+
+Gurobi 9.5.2 (mac64[x86]) logging started Fri May  5 13:42:13 2023
+
+Set parameter LogFile to value "logFiles/A-2L-B/A-2L-6U-20F-15V-120D-basic.log"
+Gurobi Optimizer version 9.5.2 build v9.5.2rc0 (mac64[x86])
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+Optimize a model with 30719 rows, 335257 columns and 2082279 nonzeros
+Model fingerprint: 0x47d3e513
+Variable types: 1745 continuous, 333512 integer (333512 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+06]
+Presolve removed 17733 rows and 48299 columns (presolve time = 5s) ...
+Presolve removed 17695 rows and 48261 columns
+Presolve time: 6.92s
+Presolved: 13024 rows, 286996 columns, 1645997 nonzeros
+Variable types: 1716 continuous, 285280 integer (285266 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    2.5057742e+08   3.730483e+04   3.227849e+09     12s
+   28638    2.5052363e+08   8.555940e+00   4.837209e+10     15s
+   52434    2.5051655e+08   3.437173e+00   3.778644e+10     20s
+   68236    2.5051885e+08   1.517824e+00   7.509238e+10     25s
+   83041    2.5051688e+08   2.948547e-01   3.122939e+10     30s
+   87652    2.5030000e+08   5.724243e+03   0.000000e+00     35s
+   88752    2.5030000e+08   3.066267e+04   0.000000e+00     40s
+   90883    2.5030000e+08   5.789124e+05   0.000000e+00     45s
+   92583    2.5030000e+08   2.809470e+04   0.000000e+00     50s
+   94583    2.5030000e+08   1.218072e+03   0.000000e+00     56s
+   95783    2.5030000e+08   2.824336e+03   0.000000e+00     60s
+   96883    2.5030000e+08   4.345852e+02   0.000000e+00     65s
+Warning: Markowitz tolerance tightened to 0.5
+   99578    2.5030000e+08   2.786854e-01   2.266930e+10     70s
+  101550    2.5030000e+08   2.192495e-01   7.998686e+08     76s
+  102350    2.5030000e+08   2.192495e-01   7.998686e+08     80s
+  103250    2.5030000e+08   2.192495e-01   7.998686e+08     86s
+Concurrent spin time: 0.01s
+
+Solved with dual simplex
+
+Root relaxation: objective 1.032725e+09, 86696 iterations, 81.22 seconds (52.81 work units)
+Total elapsed time = 90.44s
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 1.0327e+09    0  197          - 1.0327e+09      -     -   92s
+     0     0 1.0327e+09    0  184          - 1.0327e+09      -     -  126s
+     0     0 1.0326e+09    0  182          - 1.0326e+09      -     -  137s
+     0     0 1.0326e+09    0  187          - 1.0326e+09      -     -  139s
+     0     0 1.0326e+09    0  197          - 1.0326e+09      -     -  143s
+     0     0 1.0326e+09    0  194          - 1.0326e+09      -     -  183s
+     0     0 1.0326e+09    0  199          - 1.0326e+09      -     -  184s
+     0     0 1.0326e+09    0  199          - 1.0326e+09      -     -  185s
+     0     0 1.0326e+09    0  210          - 1.0326e+09      -     -  189s
+     0     0 1.0326e+09    0  204          - 1.0326e+09      -     -  191s
+     0     0 1.0326e+09    0  207          - 1.0326e+09      -     -  191s
+     0     0 1.0326e+09    0  221          - 1.0326e+09      -     -  195s
+     0     0 1.0326e+09    0  216          - 1.0326e+09      -     -  196s
+     0     0 1.0326e+09    0  200          - 1.0326e+09      -     -  199s
