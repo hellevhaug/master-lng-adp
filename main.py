@@ -143,7 +143,7 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group = 'A-1L-A'
+group = 'A-2L-A'
 filename = 'A-2L-6U-17F-15V-120D'
 group1 = 'A-2L-B'
 filename1 = 'A-2L-6U-20F-15V-120D'
