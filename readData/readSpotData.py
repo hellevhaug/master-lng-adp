@@ -35,6 +35,7 @@ def read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, p
         earliest_unloading_day = loading_to_time
 
         partition_from_time = datetime.strptime(spot_des_contract['fromDateTime'].split('T')[0], '%Y-%m-%d') # Start time of contract
+        print(spot_des_contract['id'],partition_from_time)
         if partition_from_time < earliest_unloading_day:
             earliest_unloading_day = partition_from_time
         if partition_from_time > last_unloading_day:
@@ -42,18 +43,19 @@ def read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, p
             raise ValueError(f'There is a contract that starts after last unloading day ({id}), fix data')
         
         partition_to_time = datetime.strptime(spot_des_contract['toDateTime'].split('T')[0], '%Y-%m-%d') # End time of contract
+        print(spot_des_contract['id'],partition_to_time)
         if partition_to_time>last_unloading_day:
             last_unloading_day = partition_to_time
         partition_start_time = (partition_from_time-loading_from_time).days
         partition_delta_time = (partition_to_time-partition_from_time).days
+        print(spot_des_contract['id'],partition_delta_time)
         if partition_start_time < 0:
             partition_start_time = 0 
         
         partition_days[spot_des_contract['id']] = [
             i for i in range(partition_start_time+1,partition_start_time+partition_delta_time+1)]
         
-        unloading_days[spot_des_contract['id']] = [i for i in range((earliest_unloading_day-loading_from_time).days + 1,
-        (earliest_unloading_day-loading_from_time).days + 2 + (last_unloading_day-earliest_unloading_day).days)]
+        unloading_days[spot_des_contract['id']] = partition_days[spot_des_contract['id']]
 
         # Price
         if len(spot_des_contract['salesPrices'])==1:
