@@ -15,24 +15,54 @@ def run_basic_model(group, filename, time_limit, description):
     # Will figure out something smart here
     return model
 
-def run_basic_model_RHH(group, filename, time_limit, description, horizon_length, prediction_horizon):
+def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, horizon_length, prediction_horizon):
     
     #frozen_variables = {key: [] for key in ['x','s','g','z','q','y']}
     frozen_variables = []
     frozen_variables_values = []
     iteration_count = 0
-    loading_days_length = 1000 # This is only an initialisation of length of loading days
     last_inventory = {}
 
-    while horizon_length * iteration_count <= loading_days_length: # retrieve this
-        model, loading_days_length = initialize_basic_model_RHH(group, filename, horizon_length, prediction_horizon, frozen_variables, frozen_variables_values, iteration_count, last_inventory)
-    # ^^HERE WE CAN EXPLICITLY EXPORT ALL THE NON-CHANGING PARAMETERS AND RUN ONLY THE OPTIMIZATION ALGORITHM IN A LOOP
+    total_feasible_arcs,fob_ids,fob_days,loading_port_ids,\
+    loading_days,des_contract_ids,spot_port_ids,production_quantities,\
+    fob_revenues,fob_demands,des_contract_revenues,\
+    vessel_capacities,vessel_boil_off_rate,vessel_ids,all_days,\
+    sailing_time_charter,unloading_days,charter_boil_off,\
+    tank_leftover_value,vessel_available_days,sailing_costs,\
+    charter_total_cost,des_spot_ids,initial_inventory,max_inventory,\
+    min_inventory,maintenance_vessel_ports,maintenance_vessels,port_ids,\
+    vessel_start_ports,partition_days,upper_partition_demand,\
+    des_contract_partitions,lower_partition_demand,days_between_delivery,\
+    fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
+    fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
+    charter_vessel_lower_capacity, loading_to_time = read_global_data_RHH(group, filename)
+
+    while horizon_length * iteration_count <= len(loading_days): # retrieve this
+
+        model = initialize_basic_model_RHH(horizon_length, prediction_horizon, \
+        frozen_variables, frozen_variables_values, iteration_count, \
+        last_inventory, total_feasible_arcs,fob_ids,fob_days,loading_port_ids,\
+        loading_days,des_contract_ids,spot_port_ids,production_quantities,\
+        fob_revenues,fob_demands,des_contract_revenues,\
+        vessel_capacities,vessel_boil_off_rate,vessel_ids,all_days,\
+        sailing_time_charter,unloading_days,charter_boil_off,\
+        tank_leftover_value,vessel_available_days,sailing_costs,\
+        charter_total_cost,des_spot_ids,initial_inventory,max_inventory,\
+        min_inventory,maintenance_vessel_ports,maintenance_vessels,port_ids,\
+        vessel_start_ports,partition_days,upper_partition_demand,\
+        des_contract_partitions,lower_partition_demand,days_between_delivery,\
+        fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
+        fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
+        charter_vessel_lower_capacity)
         print("------------------------------------------------------")
         print(description) 
         print("Horizon interval: period", horizon_length*iteration_count, "-", horizon_length*(iteration_count+1)-1)
         print("Number of freezed variables: ", len(frozen_variables))
+        print("Tot. loading days length: ", len(loading_days))
+        print("Days frozen: ", horizon_length*iteration_count)
         print("------------------------------------------------------")
         model.setParam('TimeLimit', time_limit)
+        model.setParam('MIPGap', gap_limit)
         model.setParam('LogFile', f'logFiles/{group}/{filename}-basic.log')
         model.optimize()
 
@@ -61,7 +91,7 @@ def run_basic_model_RHH(group, filename, time_limit, description, horizon_length
             print("----------------------------Unexpected status. Check the Gurobi documentation for more information.")
             break
 
-        if model.Status == GRB.Status.TIME_LIMIT and horizon_length*(iteration_count+1) <= loading_days_length:
+        if horizon_length*(iteration_count) <= len(loading_days):
             if model.SolCount > 0:
                 
                 # Freeze the variables that start in the current horizon: 
@@ -117,8 +147,7 @@ def run_basic_model_RHH(group, filename, time_limit, description, horizon_length
                 print("Time limit reached, and no feasible solution found.")
         
         iteration_count += 1
-
-        print("loading days length: ", loading_days_length)
+        model.update()
     
     #model.write(f'{filename}_basic.lp')
 

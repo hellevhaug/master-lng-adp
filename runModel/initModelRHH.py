@@ -12,7 +12,8 @@ from runModel.initConstraints import *
 from runModel.initArcs import *
 
 ### Basic model
-def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horizon, frozen_variables, frozen_variables_values, iteration_count, last_inventory):
+
+def read_global_data_RHH(group, filename):
 
     # Finding out if it is data from Nigeria or Abu Dabi
     loading_port_ids = set_loading_port_ids(filename)
@@ -62,7 +63,7 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
     fob_spot_art_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
 
-    ## Initialize lists for vessels
+    ## Initialize lists for vessels
     vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(data)
     vessel_start_ports,vessel_location_acceptances, vessel_port_acceptances = initialize_vessel_location_sets(data)
     vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, vessel_boil_off_rate = initialize_vessel_speed_sets()
@@ -77,7 +78,7 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
     # Now all ports is defined, should include DES-contracts, DES-spot, loading- and maintenance ports :')
     port_ids = [port_id for port_id in port_locations]
 
-    # Charter vessels
+    # Charter vessels
     # Initialize lists for charter vessels
     charter_vessel_port_acceptances, charter_vessel_node_acceptances, charter_vessel_upper_capacity, charter_vessel_lower_capacity, charter_vessel_prices = initialize_charter_sets(data)
     charter_vessel_id, charter_vessel_loading_quantity, charter_vessel_speed, charter_vessel_prices, charter_vessel_node_acceptances, charter_vessel_port_acceptances = read_charter_vessels(data, loading_days, loading_from_time, loading_to_time, charter_vessel_prices, loading_port_ids, charter_vessel_node_acceptances, charter_vessel_port_acceptances, des_contract_ids)
@@ -99,7 +100,37 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
     fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
     vessel_ballast_speed_profile, BASIC_MODEL, des_loading_ports) 
     for vessel in vessel_ids}
-        
+
+    return total_feasible_arcs,fob_ids,fob_days,loading_port_ids,\
+    loading_days,des_contract_ids,spot_port_ids,production_quantities,\
+    fob_revenues,fob_demands,des_contract_revenues,\
+    vessel_capacities,vessel_boil_off_rate,vessel_ids,all_days,\
+    sailing_time_charter,unloading_days,charter_boil_off,\
+    tank_leftover_value,vessel_available_days,sailing_costs,\
+    charter_total_cost,des_spot_ids,initial_inventory,max_inventory,\
+    min_inventory,maintenance_vessel_ports,maintenance_vessels,port_ids,\
+    vessel_start_ports,partition_days,upper_partition_demand,\
+    des_contract_partitions,lower_partition_demand,days_between_delivery,\
+    fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
+    fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
+    charter_vessel_lower_capacity, loading_to_time
+
+
+def initialize_basic_model_RHH(horizon_length, prediction_horizon, \
+    frozen_variables, frozen_variables_values, iteration_count, \
+    last_inventory, total_feasible_arcs,fob_ids,fob_days,loading_port_ids,\
+    loading_days,des_contract_ids,spot_port_ids,production_quantities,\
+    fob_revenues,fob_demands,des_contract_revenues,\
+    vessel_capacities,vessel_boil_off_rate,vessel_ids,all_days,\
+    sailing_time_charter,unloading_days,charter_boil_off,\
+    tank_leftover_value,vessel_available_days,sailing_costs,\
+    charter_total_cost,des_spot_ids,initial_inventory,max_inventory,\
+    min_inventory,maintenance_vessel_ports,maintenance_vessels,port_ids,\
+    vessel_start_ports,partition_days,upper_partition_demand,\
+    des_contract_partitions,lower_partition_demand,days_between_delivery,\
+    fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
+    fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
+    charter_vessel_lower_capacity):
 
     #######################  INITIALIZING GUROBI ########################
     model = gp.Model()
@@ -127,15 +158,6 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
-    #print("G VARS: ", g)
-    lb = {}
-    ub = {}
-    model.update()
-    for key, var in g.items(): 
-    #    #print(type(g[var].X))
-    #    print(var.VarName)
-        lb[key] = var.lb
-        ub[key] = var.ub
 
     if prediction_horizon != "ALL":
         production_quantities = {(i,t): value for (i,t), value in production_quantities.items() if t <= horizon_length*(iteration_count+1)+prediction_horizon}
@@ -146,38 +168,35 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
     model.update()
 
     # dette kunne vært en dobbel loop men github copilot wanted otherwize, og jeg gidder ikke bytte selvom jeg egt har brukt like lang tid på å skrive dette som det hadde tatt å endre det. Heihå. 
-    for var in x:
-        if x[var].VarName in frozen_variables:
-            # print("pre freeze: ", x[var])
-            # print("freezing to: ", round(frozen_variables_values[frozen_variables.index(x[var].VarName,0)]))
-            x[var].lb = round(frozen_variables_values[frozen_variables.index(x[var].VarName,0)])
-            x[var].ub = round(frozen_variables_values[frozen_variables.index(x[var].VarName,0)])
-            # print("post freeze: ", x[var], x[var].lb, x[var].ub)
-    for var in s:
-        if s[var].VarName in frozen_variables:
-            # print("pre freeze: ", s[var])
-            # print("freezing to: ", round(frozen_variables_values[frozen_variables.index(s[var].VarName,0)]))
-            s[var].lb = round(frozen_variables_values[frozen_variables.index(s[var].VarName,0)])
-            s[var].ub = round(frozen_variables_values[frozen_variables.index(s[var].VarName,0)])
-            # print("post freeze: ", s[var], s[var].lb, s[var].ub)
-    for var in g:
-        if g[var].VarName in frozen_variables:
-            #print("pre freeze: ", g[var])
-            #print("freezing to: ", round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)]))
-            g[var].lb = round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)])
-            g[var].ub = round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)])
-            #print("pre freeze: ", g[var], g[var].lb, g[var].ub)
-            model.update()
-            for key, var in g.items(): 
-                lb[key] = var.lb
-                ub[key] = var.ub
-    for var in z:
-        if z[var].VarName in frozen_variables:
-            # print("pre freeze: ", z[var])
-            # print("freezing to: ", round(frozen_variables_values[frozen_variables.index(z[var].VarName,0)]))
-            z[var].lb = round(frozen_variables_values[frozen_variables.index(z[var].VarName,0)])
-            z[var].ub = round(frozen_variables_values[frozen_variables.index(z[var].VarName,0)])
-            # print("post freeze: ", z[var], z[var].lb, z[var].ub)
+    if iteration_count > 0:
+        frozen_variables_dict = {var_name: value for var_name, value in zip(frozen_variables, frozen_variables_values)}
+        for var in x:
+            if x[var].VarName in frozen_variables_dict:
+                value = round(frozen_variables_dict[x[var].VarName])
+                x[var].lb = value
+                x[var].ub = value
+                # print("post freeze: ", x[var], x[var].lb, x[var].ub)
+        for var in s:
+            if s[var].VarName in frozen_variables:
+                # print("pre freeze: ", s[var])
+                # print("freezing to: ", round(frozen_variables_values[frozen_variables.index(s[var].VarName,0)]))
+                s[var].lb = round(frozen_variables_values[frozen_variables.index(s[var].VarName,0)])
+                s[var].ub = round(frozen_variables_values[frozen_variables.index(s[var].VarName,0)])
+                # print("post freeze: ", s[var], s[var].lb, s[var].ub)
+        for var in g:
+            if g[var].VarName in frozen_variables:
+                #print("pre freeze: ", g[var])
+                #print("freezing to: ", round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)]))
+                g[var].lb = round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)])
+                g[var].ub = round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)])
+                #print("pre freeze: ", g[var], g[var].lb, g[var].ub)
+        for var in z:
+            if z[var].VarName in frozen_variables:
+                # print("pre freeze: ", z[var])
+                # print("freezing to: ", round(frozen_variables_values[frozen_variables.index(z[var].VarName,0)]))
+                z[var].lb = round(frozen_variables_values[frozen_variables.index(z[var].VarName,0)])
+                z[var].ub = round(frozen_variables_values[frozen_variables.index(z[var].VarName,0)])
+                # print("post freeze: ", z[var], z[var].lb, z[var].ub)
 
 
     '''
@@ -244,7 +263,6 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
                 # now looks like this: ['AD-7', 'DESCON_1', '28', 'ART_START', '63']
                 if  horizon_length*(iteration_count+1) <= int(varName_list[2]) <= horizon_length*(iteration_count+1)+prediction_horizon:
                     var.setAttr("VType", GRB.CONTINUOUS)
-                    model.update()
                     '''
                 elif  horizon_length*(iteration_count+1) < horizon_length*(iteration_count+1)+prediction_horizon:
                     model.remove(var)
@@ -285,7 +303,6 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
                 # now looks like this: [1001,6]
                 if  horizon_length*(iteration_count+1) <= int(varName_list[1]) <= horizon_length*(iteration_count+1)+prediction_horizon:
                     var.setAttr("VType", GRB.CONTINUOUS)
-                    model.update()
                     '''
                 elif  horizon_length*(iteration_count+1) < horizon_length*(iteration_count+1)+prediction_horizon:
                     model.remove(var)
@@ -293,13 +310,11 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
                     del z[key]
                     '''
 
-    
-
         model.update()
+        #Not sure if needed^^
 
     # Initializing constraints
 
-    
     if prediction_horizon == "ALL":
         stop_time = len(loading_days)
     else: 
@@ -377,7 +392,8 @@ def initialize_basic_model_RHH(group, filename, horizon_length, prediction_horiz
     model.addConstrs(init_charter_lower_capacity_constr(stop_time, g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
     des_spot_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
 
-    return model, len(loading_days) # This line must be moved to activate the extensions
+    model.update()
+    return model # This line must be moved to activate the extensions
 
 
 ### Dummy model?

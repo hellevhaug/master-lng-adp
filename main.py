@@ -46,7 +46,7 @@ def run_one_instance(group, filename, runtime, modelType, RHH, horizon_length, p
     if RHH == "Y":
         
         if modelType=='basic':
-            model = run_basic_model_RHH(group, filename, runtime, f'Running file: {filename}', horizon_length, prediction_horizon)
+            model = run_basic_model_RHH(gap_limit, group, filename, runtime, f'Running file: {filename}', horizon_length, prediction_horizon)
             write_vars_to_file(group, filename, model, 'Basic model with minimum spread')
         elif modelType=='variableProduction':
             model = run_variable_production_model(group, filename, runtime, f'Running file: {filename}')
@@ -161,9 +161,10 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-90D'
-filename1 = 'N-1L-6U-25F-18V-90D-c'
-runtime = 600 # seconds
+group1 = 'N-1L-60D'
+filename1 = 'N-1L-5U-21F-18V-60D-c'
+runtime = 30 # seconds
+gap_limit = 0.005
 modelType = BASIC_MODEL
 spotGroup = 'spotTests'
 spotFilename='N-1L-8U-9F-23V-30D'
