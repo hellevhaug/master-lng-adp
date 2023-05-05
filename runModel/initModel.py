@@ -144,13 +144,13 @@ def initialize_basic_model(group, filename):
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports, des_spot_ids),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids), name='inventory_control')
 
 
     # Constraint 5.4
@@ -353,13 +353,13 @@ def initialize_variable_production_model(group, filename):
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, q, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports, des_spot_ids),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(s, g, z, x, q, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids), name='inventory_control')
 
 
     # Constraint 5.4
@@ -558,13 +558,13 @@ def initialize_charter_out_model(group, filename):
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports, des_spot_ids),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids), name='inventory_control')
 
 
     # Constraint 5.4
@@ -777,13 +777,13 @@ def initialize_combined_model(group, filename):
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports, des_spot_ids),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids), name='inventory_control')
 
 
     # Constraint 5.4
