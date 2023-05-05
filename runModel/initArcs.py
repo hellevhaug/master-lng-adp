@@ -196,7 +196,7 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
                         if loading_port_ids.__contains__(j) and t_>len(loading_days)+1:
                             continue
                         # Cut off not feasible arcs for vessels
-                        if (des_spot_ids.__contains__(j) or des_contract_ids.__contains__(j)) and t_ > unloading_days[j][-1]:
+                        if (des_spot_ids.__contains__(j) or des_contract_ids.__contains__(j)) and not unloading_days[j].__contains__(t_):
                             continue
                         a = (vessel, i, t, j, t_)
                         distance = distances[port_locations[i],port_locations[j]]

@@ -127,7 +127,7 @@ def initialize_basic_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
+    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids) if t+sailing_time_charter[i,j] in unloading_days[j]]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -333,7 +333,7 @@ def initialize_variable_production_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
+    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids) if t+sailing_time_charter[i,j] in unloading_days[j]]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -538,7 +538,7 @@ def initialize_charter_out_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
+    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)  if t+sailing_time_charter[i,j] in unloading_days[j]]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -753,7 +753,7 @@ def initialize_combined_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
+    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)  if t+sailing_time_charter[i,j] in unloading_days[j]]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
