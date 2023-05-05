@@ -75,6 +75,10 @@ def read_all_contracts(data, port_types, port_locations, location_ports, loading
 def read_des_contracts(contract, last_day, loading_from_time, partition_names, partition_days, upper_partition_demand, 
 lower_partition_demand, unloading_days, des_biggest_demand, des_biggest_partition, des_contract_revenues, 
 des_contract_partitions, earliest_unloading_day, last_unloading_day):
+
+    # Sets for unloading days sets per contract 
+    earliest_partition_unloading_day = earliest_unloading_day
+    last_partition_unloading_day = loading_from_time
     
     for partition in contract['desRequests']:
 
@@ -97,9 +101,16 @@ des_contract_partitions, earliest_unloading_day, last_unloading_day):
             id = partition['id']
             raise ValueError(f'There is a contract that starts after last unloading day ({id}), fix data')
         
+        if partition_from_time < earliest_partition_unloading_day:
+            earliest_partition_unloading_day = partition_from_time
+
         partition_to_time = datetime.strptime(partition['to'].split('T')[0], '%Y-%m-%d') # End time of contract
         if partition_to_time>last_unloading_day:
             last_unloading_day = partition_to_time
+        
+        if partition_to_time > last_partition_unloading_day:
+            last_partition_unloading_day = partition_to_time
+
         partition_start_time = (partition_from_time-loading_from_time).days
         partition_delta_time = (partition_to_time-partition_from_time).days
         if partition_start_time < 0:
@@ -110,9 +121,15 @@ des_contract_partitions, earliest_unloading_day, last_unloading_day):
 
     if(last_unloading_day>last_day):
         last_day=last_unloading_day
+
+    print(contract['id'], earliest_partition_unloading_day)
+    print(contract['id'], last_partition_unloading_day)
     
-    unloading_days[contract['id']] = [i for i in range((earliest_unloading_day-loading_from_time).days + 1,
-    (earliest_unloading_day-loading_from_time).days + 2 + (last_unloading_day-earliest_unloading_day).days)]
+    unloading_days[contract['id']] = [i for i in range((earliest_partition_unloading_day-loading_from_time).days + 1,
+    (earliest_partition_unloading_day-loading_from_time).days + 2 + (last_partition_unloading_day-earliest_partition_unloading_day).days)]
+
+    print([contract['id']],unloading_days[contract['id']])
+    print('\n')
     
     if len(contract['salesPrices'])==1:
         for t in unloading_days[contract['id']]:
