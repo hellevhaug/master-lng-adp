@@ -135,7 +135,7 @@
 	{"fromDateTime": "2024-10-01T00:00:00", "price": 80}
 	]},
 {"id": "DESCON_6", "name": "DESCON_6", "desRequests": [
-{"id": "0601", "name":"DESCON_6-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":184566, "quantity":215833, "portId":"ES", "storageId":"Lng-storage", "minSpread": 5},
+{"id": "0601", "name":"DESCON_6-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":0, "quantity":215833, "portId":"ES", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "0602", "name":"DESCON_6-2", "from":"2024-10-01T00:00:00", "to":"2024-12-01T00:00:00", "minQuantity":292700, "quantity":344000, "portId":"ES", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "0603", "name":"DESCON_6-3", "from":"2024-10-01T00:00:00", "to":"2025-01-01T00:00:00", "minQuantity":322700, "quantity":410000, "portId":"ES", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "0604", "name":"DESCON_6-4", "from":"2024-10-01T00:00:00", "to":"2025-02-01T00:00:00", "minQuantity":665700, "quantity":895000, "portId":"ES", "storageId":"Lng-storage", "minSpread": 5},
@@ -149,7 +149,7 @@
 	{"fromDateTime": "2025-04-01T00:00:00", "price": 120}
 	]},
 {"id": "DESCON_7", "name": "DESCON_7", "desRequests": [
-{"id": "0701", "name":"DESCON_7-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":244566, "quantity":465833, "portId":"TW", "storageId":"Lng-storage", "minSpread": 5},
+{"id": "0701", "name":"DESCON_7-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":0, "quantity":465833, "portId":"TW", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "0702", "name":"DESCON_7-2", "from":"2024-10-01T00:00:00", "to":"2024-12-01T00:00:00", "minQuantity":492700, "quantity":544000, "portId":"TW", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "0703", "name":"DESCON_7-3", "from":"2024-10-01T00:00:00", "to":"2025-01-01T00:00:00", "minQuantity":622700, "quantity":710000, "portId":"TW", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "0704", "name":"DESCON_7-4", "from":"2024-10-01T00:00:00", "to":"2025-02-01T00:00:00", "minQuantity":965700, "quantity":1150000, "portId":"TW", "storageId":"Lng-storage", "minSpread": 5},
@@ -161,7 +161,7 @@
 	{"fromDateTime": "2024-10-01T00:00:00", "price": 80}
 	]},
 {"id": "DESCON_8", "name": "DESCON_8", "desRequests": [
-{"id": "0801", "name":"DESCON_8-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":184566, "quantity":215833, "portId":"FR", "storageId":"Lng-storage", "minSpread": 5},
+{"id": "0801", "name":"DESCON_8-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":0, "quantity":215833, "portId":"FR", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "0802", "name":"DESCON_8-2", "from":"2024-10-01T00:00:00", "to":"2024-12-01T00:00:00", "minQuantity":292700, "quantity":444000, "portId":"FR", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "0803", "name":"DESCON_8-3", "from":"2024-10-01T00:00:00", "to":"2025-01-01T00:00:00", "minQuantity":322700, "quantity":510000, "portId":"FR", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "0804", "name":"DESCON_8-4", "from":"2024-10-01T00:00:00", "to":"2025-02-01T00:00:00", "minQuantity":565700, "quantity":995000, "portId":"FR", "storageId":"Lng-storage", "minSpread": 5},
@@ -173,7 +173,7 @@
 	{"fromDateTime": "2024-10-01T00:00:00", "price": 80}
 	]},	
 {"id": "DESCON_9", "name": "DESCON_9", "desRequests": [
-{"id": "0901", "name":"DESCON_9-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":152250, "quantity":221166, "portId":"PT", "storageId":"Lng-storage", "minSpread": 5},
+{"id": "0901", "name":"DESCON_9-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":0, "quantity":221166, "portId":"PT", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "0902", "name":"DESCON_9-2", "from":"2024-10-01T00:00:00", "to":"2024-12-01T00:00:00", "minQuantity":212700, "quantity":284000, "portId":"PT", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "0903", "name":"DESCON_9-3", "from":"2024-10-01T00:00:00", "to":"2025-01-01T00:00:00", "minQuantity":252700, "quantity":330000, "portId":"PT", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "0904", "name":"DESCON_9-4", "from":"2024-10-01T00:00:00", "to":"2025-02-01T00:00:00", "minQuantity":305700, "quantity":460000, "portId":"PT", "storageId":"Lng-storage", "minSpread": 5},
@@ -185,7 +185,7 @@
 	{"fromDateTime": "2024-10-01T00:00:00", "price": 80}
 	]},	
 {"id": "DESCON_10", "name": "DESCON_10", "desRequests": [
-{"id": "1001", "name":"DESCON_10-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":244566, "quantity":465833, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
+{"id": "1001", "name":"DESCON_10-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":0, "quantity":465833, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1002", "name":"DESCON_10-2", "from":"2024-10-01T00:00:00", "to":"2024-12-01T00:00:00", "minQuantity":492700, "quantity":734000, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1003", "name":"DESCON_10-3", "from":"2024-10-01T00:00:00", "to":"2025-01-01T00:00:00", "minQuantity":602700, "quantity":930000, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1004", "name":"DESCON_10-4", "from":"2024-10-01T00:00:00", "to":"2025-02-01T00:00:00", "minQuantity":857000, "quantity":1050000, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
@@ -197,7 +197,7 @@
 	{"fromDateTime": "2024-10-01T00:00:00", "price": 120}
 	]},	
 {"id": "DESCON_11", "name": "DESCON_11", "desRequests": [
-{"id": "1101", "name":"DESCON_11-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":244566, "quantity":465833, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
+{"id": "1101", "name":"DESCON_11-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":0, "quantity":465833, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1102", "name":"DESCON_11-2", "from":"2024-10-01T00:00:00", "to":"2024-12-01T00:00:00", "minQuantity":492700, "quantity":544000, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1103", "name":"DESCON_11-3", "from":"2024-10-01T00:00:00", "to":"2025-01-01T00:00:00", "minQuantity":622700, "quantity":710000, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1104", "name":"DESCON_11-4", "from":"2024-10-01T00:00:00", "to":"2025-02-01T00:00:00", "minQuantity":965700, "quantity":1150000, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
@@ -209,7 +209,7 @@
 	{"fromDateTime": "2024-10-01T00:00:00", "price": 155}
 	]},		
 {"id": "DESCON_12", "name": "DESCON_12", "desRequests": [
-{"id": "1201", "name":"DESCON_12-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":82133, "quantity":95666, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
+{"id": "1201", "name":"DESCON_12-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":0, "quantity":95666, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1202", "name":"DESCON_12-2", "from":"2024-10-01T00:00:00", "to":"2024-12-01T00:00:00", "minQuantity":142700, "quantity":243000, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1203", "name":"DESCON_12-3", "from":"2024-10-01T00:00:00", "to":"2025-01-01T00:00:00", "minQuantity":232700, "quantity":329000, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1204", "name":"DESCON_12-4", "from":"2024-10-01T00:00:00", "to":"2025-02-01T00:00:00", "minQuantity":315700, "quantity":399000, "portId":"KW", "storageId":"Lng-storage", "minSpread": 5},
@@ -221,7 +221,7 @@
 	{"fromDateTime": "2024-10-01T00:00:00", "price": 132}
 	]},
 {"id": "DESCON_13", "name": "DESCON_13", "desRequests": [
-{"id": "1301", "name":"DESCON_13-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":244566, "quantity":265833, "portId":"ES", "storageId":"Lng-storage", "minSpread": 5},
+{"id": "1301", "name":"DESCON_13-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":0, "quantity":265833, "portId":"ES", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1302", "name":"DESCON_13-2", "from":"2024-10-01T00:00:00", "to":"2024-12-01T00:00:00", "minQuantity":492700, "quantity":734000, "portId":"ES", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1303", "name":"DESCON_13-3", "from":"2024-10-01T00:00:00", "to":"2025-01-01T00:00:00", "minQuantity":602700, "quantity":930000, "portId":"ES", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1304", "name":"DESCON_13-4", "from":"2024-10-01T00:00:00", "to":"2025-02-01T00:00:00", "minQuantity":857000, "quantity":1150000, "portId":"ES", "storageId":"Lng-storage", "minSpread": 5},
@@ -233,7 +233,7 @@
 	{"fromDateTime": "2024-10-01T00:00:00", "price": 95}
 	]},
 {"id": "DESCON_14", "name": "DESCON_14", "desRequests": [
-{"id": "1401", "name":"DESCON_14-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":82133, "quantity":95666, "portId":"PT", "storageId":"Lng-storage", "minSpread": 5},
+{"id": "1401", "name":"DESCON_14-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":0, "quantity":95666, "portId":"PT", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1402", "name":"DESCON_14-2", "from":"2024-10-01T00:00:00", "to":"2024-12-01T00:00:00", "minQuantity":142700, "quantity":243000, "portId":"PT", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1403", "name":"DESCON_14-3", "from":"2024-10-01T00:00:00", "to":"2025-01-01T00:00:00", "minQuantity":232700, "quantity":329000, "portId":"PT", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1404", "name":"DESCON_14-4", "from":"2024-10-01T00:00:00", "to":"2025-02-01T00:00:00", "minQuantity":315700, "quantity":399000, "portId":"PT", "storageId":"Lng-storage", "minSpread": 5},
@@ -245,7 +245,7 @@
 	{"fromDateTime": "2024-10-01T00:00:00", "price": 110}
 	]},
 {"id": "DESCON_15", "name": "DESCON_15", "desRequests": [
-{"id": "1501", "name":"DESCON_15-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":152250, "quantity":221166, "portId":"IN", "storageId":"Lng-storage", "minSpread": 5},
+{"id": "1501", "name":"DESCON_15-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":0, "quantity":221166, "portId":"IN", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1502", "name":"DESCON_15-2", "from":"2024-10-01T00:00:00", "to":"2024-12-01T00:00:00", "minQuantity":212700, "quantity":284000, "portId":"IN", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1503", "name":"DESCON_15-3", "from":"2024-10-01T00:00:00", "to":"2025-01-01T00:00:00", "minQuantity":252700, "quantity":330000, "portId":"IN", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1504", "name":"DESCON_15-4", "from":"2024-10-01T00:00:00", "to":"2025-02-01T00:00:00", "minQuantity":305700, "quantity":460000, "portId":"IN", "storageId":"Lng-storage", "minSpread": 5},
@@ -257,7 +257,7 @@
 	{"fromDateTime": "2024-10-01T00:00:00", "price": 79}
 	]},
 {"id": "DESCON_16", "name": "DESCON_16", "desRequests": [
-{"id": "1601", "name":"DESCON_16-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":244566, "quantity":465833, "portId":"FR", "storageId":"Lng-storage", "minSpread": 5},
+{"id": "1601", "name":"DESCON_16-1", "from":"2024-10-01T00:00:00", "to":"2024-11-01T00:00:00", "minQuantity":0, "quantity":465833, "portId":"FR", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1602", "name":"DESCON_16-2", "from":"2024-10-01T00:00:00", "to":"2024-12-01T00:00:00", "minQuantity":492700, "quantity":544000, "portId":"FR", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1603", "name":"DESCON_16-3", "from":"2024-10-01T00:00:00", "to":"2025-01-01T00:00:00", "minQuantity":622700, "quantity":710000, "portId":"FR", "storageId":"Lng-storage", "minSpread": 5},
 {"id": "1604", "name":"DESCON_16-4", "from":"2024-10-01T00:00:00", "to":"2025-02-01T00:00:00", "minQuantity":965700, "quantity":1150000, "portId":"FR", "storageId":"Lng-storage", "minSpread": 5},
