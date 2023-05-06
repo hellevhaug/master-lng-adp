@@ -36,12 +36,20 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
     fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
     fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
     charter_vessel_lower_capacity, loading_to_time = read_global_data_RHH(group, filename)
+    
+    model = gp.Model()
+    print("hh")
+
+    model, x, z, w, g, s = init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_days, 
+                        total_feasible_arcs, loading_days, iteration_count, des_contract_ids, 
+                        des_spot_ids, loading_port_ids, production_quantities)
 
     while horizon_length * iteration_count <= len(loading_days): # retrieve this
+        
+        model = relax_horizon(model, prediction_horizon, horizon_length, iteration_count)
 
-        model = initialize_basic_model_RHH(horizon_length, prediction_horizon, \
-        frozen_variables, frozen_variables_values, iteration_count, \
-        last_inventory, total_feasible_arcs,fob_ids,fob_days,loading_port_ids,\
+        model = init_objective_and_constraints(model, x, z, w, g, s, horizon_length, prediction_horizon, \
+        iteration_count, last_inventory, fob_ids,fob_days,loading_port_ids,\
         loading_days,des_contract_ids,spot_port_ids,production_quantities,\
         fob_revenues,fob_demands,des_contract_revenues,\
         vessel_capacities,vessel_boil_off_rate,vessel_ids,all_days,\
@@ -54,9 +62,10 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
         fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
         fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
         charter_vessel_lower_capacity)
+        
         print("------------------------------------------------------")
         print(description) 
-        print("Horizon interval: period", horizon_length*iteration_count, "-", horizon_length*(iteration_count+1)-1)
+        print("Horizon interval: period", horizon_length*iteration_count+1, "-", horizon_length*(iteration_count+1)-1)
         print("Number of freezed variables: ", len(frozen_variables))
         print("Tot. loading days length: ", len(loading_days))
         print("Days frozen: ", horizon_length*iteration_count)
@@ -145,7 +154,13 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
     
             else:
                 print("Time limit reached, and no feasible solution found.")
-        
+            
+            if horizon_length*iteration_count >= len(loading_days):
+                print("All loading days have been used.")
+                break
+            
+            x, z, w, g, s = freezing_variables(x, z, w, g, s, frozen_variables, frozen_variables_values, iteration_count)
+
         iteration_count += 1
         model.update()
     

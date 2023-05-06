@@ -15,7 +15,7 @@ tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, cha
     # !!!NEW!!!
     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off)*des_contract_revenues[j,t+sailing_time_charter[i,j]] 
     for j in des_spot_ids for i in loading_port_ids for t in loading_days if (t+sailing_time_charter[i,j]) in unloading_days[j])
-    + gp.quicksum(tank_leftover_value[i]*s[i, stop_time] for i in loading_port_ids) +
+    + gp.quicksum(tank_leftover_value[i]*s[i, stop_time-1] for i in loading_port_ids) +
     gp.quicksum(vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*des_contract_revenues[j,t_]*x[v,i,t,j,t_]
     for j in des_contract_ids for v in vessel_ids for i in loading_port_ids for t in vessel_available_days[v] for t_ in unloading_days[j] # Left-hand sums
     if (v,i,t,j,t_) in x.keys()) + 
@@ -51,7 +51,7 @@ def init_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, 
     - gp.quicksum(g[i,t,j] for j in des_contract_ids)
     - gp.quicksum(fob_demands[f]*z[f,t] 
     for f in (fob_ids) if (f,t) in z.keys())
-    for i in loading_port_ids for t in loading_days[horizon_length*iteration_count+1:stop_time])
+    for i in loading_port_ids for t in loading_days[horizon_length*(iteration_count+1)+1:stop_time])
 
     return loading_inventory_constraints
 
