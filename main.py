@@ -144,7 +144,7 @@ Call whatever functions you'll like below here
 
 # An example for how to run the code 
 group = 'N-1L-A'
-filename = 'N-1L-16U-18F-23V-180D'
+filename = 'N-1L-16U-12F-23V-120D'
 group1 = 'A-2L-B'
 filename1 = 'A-2L-6U-20F-15V-120D'
 runtime = 60*60*4
