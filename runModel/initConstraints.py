@@ -83,7 +83,7 @@ def init_maintenance_constr(x, maintenance_vessel_ports, maintenance_vessels):
 # Initialize flow constraints
 def init_flow_constr(x, all_days, vessel_ids, port_ids):
 
-    flow_constraints = (x.sum(v,'*', [0]+all_days[:t],j,t)== x.sum(v,j,t,'*',all_days[t+1:]+[all_days[-1]+1]) 
+    flow_constraints = (x.sum(v,'*', [0]+all_days[:t],j,t) == x.sum(v,j,t,'*',all_days[t+1:]+[all_days[-1]+1]) 
     for v in vessel_ids for j in port_ids for t in all_days)
 
     return flow_constraints 
