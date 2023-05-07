@@ -115,6 +115,8 @@ def read_global_data_RHH(group, filename):
     fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
     charter_vessel_lower_capacity, loading_to_time
 
+
+
 def init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_days, 
                         total_feasible_arcs, loading_days, iteration_count, des_contract_ids, 
                         des_spot_ids, loading_port_ids, production_quantities):
@@ -152,61 +154,8 @@ def init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_
     model.update()
     return model, x, z, w, g, s
 
-
-'''
-def initialize_basic_model_RHH(horizon_length, prediction_horizon, \
-    frozen_variables, frozen_variables_values, iteration_count, \
-    last_inventory, total_feasible_arcs,fob_ids,fob_days,loading_port_ids,\
-    loading_days,des_contract_ids,spot_port_ids,production_quantities,\
-    fob_revenues,fob_demands,des_contract_revenues,\
-    vessel_capacities,vessel_boil_off_rate,vessel_ids,all_days,\
-    sailing_time_charter,unloading_days,charter_boil_off,\
-    tank_leftover_value,vessel_available_days,sailing_costs,\
-    charter_total_cost,des_spot_ids,initial_inventory,max_inventory,\
-    min_inventory,maintenance_vessel_ports,maintenance_vessels,port_ids,\
-    vessel_start_ports,partition_days,upper_partition_demand,\
-    des_contract_partitions,lower_partition_demand,days_between_delivery,\
-    fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
-    fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
-    charter_vessel_lower_capacity):
-'''
-
-
-    #######################  INITIALIZING GUROBI ########################
-   
-def freezing_variables(x, z, w, g, s, frozen_variables, frozen_variables_values, iteration_count):
-        # dette kunne vært en dobbel loop men github copilot wanted otherwize, og jeg gidder ikke bytte selvom jeg egt har brukt like lang tid på å skrive dette som det hadde tatt å endre det. Heihå. 
-        if iteration_count > 0:
-            frozen_variables_dict = {var_name: value for var_name, value in zip(frozen_variables, frozen_variables_values)}
-            for var in x:
-                if x[var].VarName in frozen_variables_dict:
-                    value = round(frozen_variables_dict[x[var].VarName])
-                    x[var].lb = value
-                    x[var].ub = value
-                    # print("post freeze: ", x[var], x[var].lb, x[var].ub)
-            for var in s:
-                if s[var].VarName in frozen_variables:
-                    # print("pre freeze: ", s[var])
-                    # print("freezing to: ", round(frozen_variables_values[frozen_variables.index(s[var].VarName,0)]))
-                    s[var].lb = round(frozen_variables_values[frozen_variables.index(s[var].VarName,0)])
-                    s[var].ub = round(frozen_variables_values[frozen_variables.index(s[var].VarName,0)])
-                    # print("post freeze: ", s[var], s[var].lb, s[var].ub)
-            for var in g:
-                if g[var].VarName in frozen_variables:
-                    #print("pre freeze: ", g[var])
-                    #print("freezing to: ", round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)]))
-                    g[var].lb = round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)])
-                    g[var].ub = round(frozen_variables_values[frozen_variables.index(g[var].VarName,0)])
-                    #print("pre freeze: ", g[var], g[var].lb, g[var].ub)
-            for var in z:
-                if z[var].VarName in frozen_variables:
-                    # print("pre freeze: ", z[var])
-                    # print("freezing to: ", round(frozen_variables_values[frozen_variables.index(z[var].VarName,0)]))
-                    z[var].lb = round(frozen_variables_values[frozen_variables.index(z[var].VarName,0)])
-                    z[var].ub = round(frozen_variables_values[frozen_variables.index(z[var].VarName,0)])
-                    # print("post freeze: ", z[var], z[var].lb, z[var].ub)
-        return x, z, w, g, s
     
+
 def relax_horizon(model, prediction_horizon, horizon_length, iteration_count):
 
     if prediction_horizon == "ALL": 
@@ -215,9 +164,18 @@ def relax_horizon(model, prediction_horizon, horizon_length, iteration_count):
             if var.varName[0] == 'x':
                 varName_str = var.varName
                 varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                # now looks like this: [v,FU,1]
                 if int(varName_list[2]) > horizon_length*(iteration_count+1):
                     var.setAttr("VType", GRB.CONTINUOUS)
+                elif int(varName_list[2]) > horizon_length*(iteration_count):
+                    var.setAttr("VType", GRB.BINARY)
+                    
+            elif var.varName[0] == 'z':
+                varName_str = var.varName
+                varName_list = varName_str.split('[')[1].split(']')[0].split(',')
+                if int(varName_list[1]) > horizon_length*(iteration_count+1):
+                    var.setAttr("VType", GRB.CONTINUOUS)
+                elif int(varName_list[1]) > horizon_length*(iteration_count):
+                    var.setAttr("VType", GRB.BINARY)
     else: 
         # Making variables float in the prediction horizon and deleting the rest: 
         for var in model.getVars(): 
@@ -238,6 +196,7 @@ def relax_horizon(model, prediction_horizon, horizon_length, iteration_count):
     model.update()
 
     return model
+
 
         
 def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, prediction_horizon, \
@@ -262,10 +221,11 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
     else: 
         stop_time = horizon_length*(iteration_count+1)+prediction_horizon if horizon_length*(iteration_count+1)+prediction_horizon < len(all_days) else len(all_days)
 
-    model.setObjective(init_objective(stop_time, x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days,
-    des_contract_revenues, vessel_capacities, vessel_boil_off_rate, vessel_ids, loading_port_ids, loading_days, 
-    spot_port_ids, all_days, sailing_time_charter, unloading_days, charter_boil_off, tank_leftover_value, 
-    vessel_available_days, des_contract_ids, sailing_costs, charter_total_cost, des_spot_ids),GRB.MAXIMIZE)
+    if iteration_count == 0:
+        model.setObjective(init_objective(stop_time, x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days,
+        des_contract_revenues, vessel_capacities, vessel_boil_off_rate, vessel_ids, loading_port_ids, loading_days, 
+        spot_port_ids, all_days, sailing_time_charter, unloading_days, charter_boil_off, tank_leftover_value, 
+        vessel_available_days, des_contract_ids, sailing_costs, charter_total_cost, des_spot_ids),GRB.MAXIMIZE)
 
 
     # Constraint 5.2
@@ -335,7 +295,122 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
     des_spot_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
 
     model.update()
+
     return model # This line must be moved to activate the extensions
+
+
+
+def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count):
+    print("Freezing variables...")
+    # Freeze the variables that start in the current horizon: 
+    for var in model.getVars():
+        var_name = var.varName
+
+        # x format: "x[AD-7,DESCON_1,28,ART_START,63]": 1.0, ...
+        if var_name[0] == 'x':
+            varName_list = var_name.split('[')[1].split(']')[0].split(',')
+            key_parts = var_name[2:-1].split(',')
+            tuple_key = (key_parts[0], key_parts[1], int(key_parts[2]), key_parts[3], int(key_parts[4]))
+            # now looks like this: ['AD-7', 'DESCON_1', '28', 'ART_START', '63']
+            # freezing eveything before the current horizon including the current horizon
+            if 0 <= int(varName_list[2]) < horizon_length*(iteration_count+1):
+                var.lb = var.X
+                var.ub = var.X
+                x[tuple_key].lb = var.X
+                x[tuple_key].ub = var.X
+            # making the variables in the next horizon binary:
+            elif horizon_length*(iteration_count+1) <= int(varName_list[2]) < horizon_length*(iteration_count+2):
+                var.vtype = GRB.BINARY
+                x[tuple_key].vtype = GRB.BINARY
+            # making the variables in the next prediction horizon continous ("ALL"):
+            elif horizon_length*(iteration_count+2) <= int(varName_list[2]):
+                var.vtype = GRB.CONTINUOUS
+                x[tuple_key].vtype = GRB.CONTINUOUS
+            '''
+            else:
+                model.remove(var)
+                del x[var]
+            '''
+                    
+        if var_name[0]=='s':
+            varName_list = var_name.split('[')[1].split(']')[0].split(',')
+            key_parts = var_name[2:-1].split(',')
+            tuple_key = (key_parts[0], int(key_parts[1]))
+            # now looks like this: [FU,1]
+            if 0 <= int(varName_list[1]) < horizon_length*(iteration_count+1):
+                var.lb = var.X
+                var.ub = var.X
+                s[tuple_key].lb = var.X
+                s[tuple_key].ub = var.X
+            # making the variables in the next horizon binary:
+            '''
+            elif horizon_length*(iteration_count+1) <= int(varName_list[1]) < horizon_length*(iteration_count+2):
+                s[tuple_key].X = 0
+                var.vtype = GRB.BINARY
+                s[tuple_key].vtype = GRB.BINARY
+            # making the variables in the next prediction horizon continous ("ALL"):
+            elif horizon_length*(iteration_count+2) <= int(varName_list[1]):
+                var.vtype = GRB.CONTINUOUS
+                s[tuple_key].vtype = GRB.CONTINUOUS
+            
+            else:
+                model.remove(var)
+                del s[var]
+            '''
+
+        if var_name[0]=='g':
+            varName_list = var_name.split('[')[1].split(']')[0].split(',')
+            key_parts = var_name[2:-1].split(',')
+            tuple_key = (key_parts[0], int(key_parts[1]), key_parts[2])
+            # now looks like this: [FU,56,DESCON_1]
+            if 0 <= int(varName_list[1]) < horizon_length*(iteration_count+1):
+                var.lb = var.X
+                var.ub = var.X
+                g[tuple_key].lb = var.X
+                g[tuple_key].ub = var.X
+            # making the variables in the next horizon binary:
+            '''
+            elif horizon_length*(iteration_count+1) <= int(varName_list[1]) < horizon_length*(iteration_count+2):
+                g[tuple_key].X = 0
+                var.vtype = GRB.BINARY
+                g[tuple_key].vtype = GRB.BINARY
+            # making the variables in the next prediction horizon continous ("ALL"):
+            elif horizon_length*(iteration_count+2) <= int(varName_list[1]):
+                var.vtype = GRB.CONTINUOUS
+                g[tuple_key].vtype = GRB.CONTINUOUS
+            
+            else:
+                model.remove(var)
+                del g[var]
+            '''
+
+        if var_name[0]=='z':
+            varName_list = var_name.split('[')[1].split(']')[0].split(',')
+            key_parts = var_name[2:-1].split(',')
+            tuple_key = (key_parts[0], int(key_parts[1]))
+            # now looks like this: [1001,6]
+            if 0 <= int(varName_list[1]) < horizon_length*(iteration_count+1):
+                var.lb = var.X
+                var.ub = var.X
+                z[tuple_key].lb = var.X
+                z[tuple_key].ub = var.X
+            # making the variables in the next horizon binary:
+            elif horizon_length*(iteration_count+1) <= int(varName_list[1]) < horizon_length*(iteration_count+2):
+                var.vtype = GRB.BINARY
+                z[tuple_key].vtype = GRB.BINARY
+            # making the variables in the next prediction horizon continous ("ALL"):
+            elif horizon_length*(iteration_count+2) <= int(varName_list[1]):
+                var.vtype = GRB.CONTINUOUS
+                z[tuple_key].vtype = GRB.CONTINUOUS
+            '''
+            else:
+                model.remove(var)
+                del z[var]
+            '''
+
+    model.update()
+
+    return model, x, z, w, g, s
 
 
 ### Dummy model?

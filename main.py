@@ -161,9 +161,9 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-60D'
-filename1 = 'N-1L-5U-21F-18V-60D-c'
-runtime = 30 # seconds
+group1 = 'N-1L-120D'
+filename1 = 'N-1L-7U-30F-23V-120D-b'
+runtime = 600 # seconds
 gap_limit = 0.005
 modelType = BASIC_MODEL
 spotGroup = 'spotTests'

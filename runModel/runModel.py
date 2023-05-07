@@ -38,15 +38,13 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
     charter_vessel_lower_capacity, loading_to_time = read_global_data_RHH(group, filename)
     
     model = gp.Model()
-    print("hh")
 
-    model, x, z, w, g, s = init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_days, 
-                        total_feasible_arcs, loading_days, iteration_count, des_contract_ids, 
-                        des_spot_ids, loading_port_ids, production_quantities)
+    model, x, z, w, g, s = init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_days, total_feasible_arcs, loading_days, iteration_count, des_contract_ids, des_spot_ids, loading_port_ids, production_quantities)
+    
+    model = relax_horizon(model, prediction_horizon, horizon_length, iteration_count)
 
+    #OK til hit
     while horizon_length * iteration_count <= len(loading_days): # retrieve this
-        
-        model = relax_horizon(model, prediction_horizon, horizon_length, iteration_count)
 
         model = init_objective_and_constraints(model, x, z, w, g, s, horizon_length, prediction_horizon, \
         iteration_count, last_inventory, fob_ids,fob_days,loading_port_ids,\
@@ -62,14 +60,37 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
         fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
         fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
         charter_vessel_lower_capacity)
+
+        print("Constraints in total: ", len(model.getConstrs()))
+        #print("model objective: ", model.getObjective())
+        print("x variables in x: ", len(x))
+        print("tot variables in model: ", len(model.getVars()))
+        frozen = []
+        binary = []
+        continuous = []
+        for var in x.values():
+            if var.ub == var.lb: 
+                frozen.append(var)
+            else: 
+                if var.vtype == GRB.BINARY:
+                    binary.append(var)
+                elif var.vtype == GRB.CONTINUOUS:
+                    continuous.append(var)
+        print("- Froxen x variables: ", len(frozen))
+        print("- Binary x variables: ", len(binary))
+        print("- Continuous x variables: ", len(continuous))
+        print("z variables: ", len(z))
+        print("w variables: ", len(w))
+        print("g variables: ", len(g))
+        print("s variables: ", len(s))  
         
-        print("------------------------------------------------------")
+        print("----------------------------------------------------------------")
         print(description) 
-        print("Horizon interval: period", horizon_length*iteration_count+1, "-", horizon_length*(iteration_count+1)-1)
-        print("Number of freezed variables: ", len(frozen_variables))
+        print("Horizon interval: period", horizon_length*iteration_count+1, "-", horizon_length*(iteration_count+1))
+        #print("Number of freezed variables: ", len(frozen_variables))
         print("Tot. loading days length: ", len(loading_days))
         print("Days frozen: ", horizon_length*iteration_count)
-        print("------------------------------------------------------")
+        print("----------------------------------------------------------------")
         model.setParam('TimeLimit', time_limit)
         model.setParam('MIPGap', gap_limit)
         model.setParam('LogFile', f'logFiles/{group}/{filename}-basic.log')
@@ -99,73 +120,19 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
             print("----------------------------Optimization status:", model.Status)
             print("----------------------------Unexpected status. Check the Gurobi documentation for more information.")
             break
-
-        if horizon_length*(iteration_count) <= len(loading_days):
-            if model.SolCount > 0:
-                
-                # Freeze the variables that start in the current horizon: 
-                for var in model.getVars():
-
-                    # x format: "x[AD-7,DESCON_1,28,ART_START,63]": 1.0, ...
-                    if var.varName[0]=='x':
-                        varName_str = var.varName
-                        varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                        # now looks like this: ['AD-7', 'DESCON_1', '28', 'ART_START', '63']
-                        #if horizon_length*iteration_count <= int(varName_list[2]) < horizon_length*(iteration_count+1):
-                        if 0 <= int(varName_list[2]) < horizon_length*(iteration_count+1):
-                            frozen_variables.append(var.varName)
-                            frozen_variables_values.append(var.X)
-                            #print("FREEZING: ", var.varName)
-                # s format: {"s[FU,1]": 90000.0,
-                    if var.varName[0]=='s':
-                        varName_str = var.varName
-                        varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                        # now looks like this: [FU,1]
-                        #if horizon_length*iteration_count <= int(varName_list[1]) < horizon_length*(iteration_count+1):
-                        if 0 <= int(varName_list[1]) < horizon_length*(iteration_count+1):
-                            # frozen_variables['s'].append(var)
-                            frozen_variables.append(var.varName)
-                            frozen_variables_values.append(var.X)
-                            #print("FREEZING: ", var.varName)
-                        if int(varName_list[1]) == horizon_length*(iteration_count+1)-1:
-                            last_inventory[varName_list[0]] = var.X
-                # g format: {"g[FU,56,DESCON_1]": 142289.22952803085,
-                    if var.varName[0]=='g':
-                        varName_str = var.varName  
-                        varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                        # now looks like this: [FU,56,DESCON_1]
-                        #if horizon_length*iteration_count <= int(varName_list[1]) < horizon_length*(iteration_count+1):
-                        if 0 <= int(varName_list[1]) < horizon_length*(iteration_count+1):
-                            #frozen_variables['g'].append(var)
-                            frozen_variables.append(var.varName)
-                            frozen_variables_values.append(var.X)
-                            #print("FREEZING: ", var.varName, "to: ", var.X)
-                # z format: {"z[1001,6]": 1.0,
-                    if var.varName[0]=='z':
-                        varName_str = var.varName
-                        varName_list = varName_str.split('[')[1].split(']')[0].split(',')
-                        # now looks like this: [1001,6]
-                        #if horizon_length*iteration_count <= int(varName_list[1]) < horizon_length*(iteration_count+1):
-                        if 0 <= int(varName_list[1]) < horizon_length*(iteration_count+1):
-                            #frozen_variables['z'].append(var)
-                            frozen_variables.append(var.varName)
-                            frozen_variables_values.append(var.X)
-                            #print("FREEZING: ", var.varName)
-    
-            else:
-                print("Time limit reached, and no feasible solution found.")
-            
-            if horizon_length*iteration_count >= len(loading_days):
-                print("All loading days have been used.")
-                break
-            
-            x, z, w, g, s = freezing_variables(x, z, w, g, s, frozen_variables, frozen_variables_values, iteration_count)
+        
+        if horizon_length*(iteration_count+1) <= len(loading_days):
+            model, x, z, w, g, s = freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count)
+            model.update()
+        
+        constraints = model.getConstrs()
+        # Remove each constraint from the model
+        for constraint in constraints:
+            model.remove(constraint)
 
         iteration_count += 1
-        model.update()
-    
-    #model.write(f'{filename}_basic.lp')
 
+        
     return model
 
 
