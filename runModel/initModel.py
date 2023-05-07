@@ -2,6 +2,7 @@ import gurobipy as gp
 from gurobipy import GRB
 import itertools
 import time
+from datetime import datetime
 
 from readData.readOtherData import *
 from readData.readContractData import *
@@ -28,6 +29,7 @@ def initialize_basic_model(group, filename):
 
     # Planning horizion
     loading_from_time, loading_to_time, loading_days = read_planning_horizion(data)
+
 
     ## Initialize lists for locations and ports
     location_ids, location_names, location_types, location_ports, port_types, port_locations = initialize_location_sets() 
@@ -113,20 +115,46 @@ def initialize_basic_model(group, filename):
     arc_speeds, arc_waiting_times, arc_sailing_times, sailing_costs, total_feasible_arcs = init_arc_sets()
     fuel_price, charter_boil_off, tank_leftover_value, allowed_waiting = set_external_data(data)
 
-
     # Setting operational times for vessel-port-combinations
     operational_times = {(v,i,j): set_operational_time(v,i,j, maintenance_ids, maintenance_durations) 
     for v,i,j in list(itertools.product(vessel_ids, port_ids, port_ids))}
 
-    print("\n--- Starting to generate arcs in: %.1f seconds ---" % (time.time() - start_time))
+    generate_arcs = GENERATE_ARCS
+    write_arcs = WRITE_ARCS
+    if generate_arcs:
+        print("\n--- Starting to generate arcs in: %.1f seconds ---" % (time.time() - start_time))
 
-    vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
-    maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
-    des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
-    fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
-    vessel_ballast_speed_profile, BASIC_MODEL, des_loading_ports) 
-    for vessel in vessel_ids}
+        vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
+        maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
+        des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+        fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
+        vessel_ballast_speed_profile, BASIC_MODEL, des_loading_ports) 
+        for vessel in vessel_ids}
+
+        if write_arcs:
+            path = f'arcs/{group}/basic/{filename}-arcs.json'
+            try:
+                with open(path,'x') as init_arc_json:
+                    pass
+            except FileExistsError:
+                open(path, 'w').close()
+            with open(path, "a") as f:
+                arc_dict = {}
+                now = datetime.now()
+                arc_dict['timeWritten'] = now.strftime("%Y-%m-%d %H:%M:%S")
+                arc_dict['arcs'] = total_feasible_arcs
+                arc_dict['sailingCosts'] = [{'key': (v,i,t,j,t_), 'value': cost} for (v,i,t,j,t_), cost in sailing_costs.items()]
+                json.dump(arc_dict, f, indent=3)
     
+    else:
+        try:
+            arc_file = open(f'arcs/{group}/basic/{filename}-arcs.json')
+            arc_data = json.load(arc_file)
+            total_feasible_arcs = [tuple(x) for x in arc_data['arcs']]
+            sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
+        except FileNotFoundError:
+            raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
+
     print("\n--- Initalizing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
     #######################  INITIALIZING GUROBI ########################
@@ -337,14 +365,42 @@ def initialize_variable_production_model(group, filename):
     operational_times = {(v,i,j): set_operational_time(v,i,j, maintenance_ids, maintenance_durations) 
     for v,i,j in list(itertools.product(vessel_ids, port_ids, port_ids))}
 
-    print("\n--- Generating arcs in: %.1f seconds ---" % (time.time() - start_time))
+    generate_arcs = GENERATE_ARCS
+    write_arcs = WRITE_ARCS
+    if generate_arcs:
+        print("\n--- Generating arcs in: %.1f seconds ---" % (time.time() - start_time))
 
-    vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
-    maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
-    des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
-    fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
-    vessel_ballast_speed_profile, VARIABLE_PRODUCTION_MODEL, des_loading_ports) 
-    for vessel in vessel_ids}
+        vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
+        maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
+        des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+        fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
+        vessel_ballast_speed_profile, VARIABLE_PRODUCTION_MODEL, des_loading_ports) 
+        for vessel in vessel_ids}
+
+        if write_arcs:
+            path = f'arcs/{group}/basic/{filename}-arcs.json'
+            try:
+                with open(path,'x') as init_arc_json:
+                    pass
+            except FileExistsError:
+                open(path, 'w').close()
+            with open(path, "a") as f:
+                arc_dict = {}
+                now = datetime.now()
+                arc_dict['timeWritten'] = now.strftime("%Y-%m-%d %H:%M:%S")
+                arc_dict['arcs'] = total_feasible_arcs
+                arc_dict['sailingCosts'] = [{'key': (v,i,t,j,t_), 'value': cost} for (v,i,t,j,t_), cost in sailing_costs.items()]
+                json.dump(arc_dict, f, indent=1)
+    
+    else:
+        try:
+            arc_file = open(f'arcs/{group}/basic/{filename}-arcs.json')
+            arc_data = json.load(arc_file)
+            total_feasible_arcs = [tuple(x) for x in arc_data['arcs']]
+            sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
+        except FileNotFoundError:
+            raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
+
 
     print("\n--- Initializing constraints in: %.1f seconds ---" % (time.time() - start_time))    
 
@@ -556,14 +612,41 @@ def initialize_charter_out_model(group, filename):
     operational_times = {(v,i,j): set_operational_time(v,i,j, maintenance_ids, maintenance_durations) 
     for v,i,j in list(itertools.product(vessel_ids, port_ids, port_ids))}
 
-    print("\n--- Generating arcs in: %.1f seconds ---" % (time.time() - start_time))
+    generate_arcs = GENERATE_ARCS
+    write_arcs = WRITE_ARCS
+    if generate_arcs:
+        print("\n--- Generating arcs in: %.1f seconds ---" % (time.time() - start_time))
 
-    vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
-    maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
-    des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
-    fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
-    vessel_ballast_speed_profile, CHARTER_OUT_MODEL, des_loading_ports) 
-    for vessel in vessel_ids}
+        vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
+        maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
+        des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+        fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
+        vessel_ballast_speed_profile, CHARTER_OUT_MODEL, des_loading_ports) 
+        for vessel in vessel_ids}
+
+        if write_arcs:
+            path = f'arcs/{group}/charter/{filename}-arcs.json'
+            try:
+                with open(path,'x') as init_arc_json:
+                    pass
+            except FileExistsError:
+                open(path, 'w').close()
+            with open(path, "a") as f:
+                arc_dict = {}
+                now = datetime.now()
+                arc_dict['timeWritten'] = now.strftime("%Y-%m-%d %H:%M:%S")
+                arc_dict['arcs'] = total_feasible_arcs
+                arc_dict['sailingCosts'] = [{'key': (v,i,t,j,t_), 'value': cost} for (v,i,t,j,t_), cost in sailing_costs.items()]
+                json.dump(arc_dict, f, indent=1)
+    
+    else:
+        try:
+            arc_file = open(f'arcs/{group}/charter/{filename}-arcs.json')
+            arc_data = json.load(arc_file)
+            total_feasible_arcs = [tuple(x) for x in arc_data['arcs']]
+            sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
+        except FileNotFoundError:
+            raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
 
     print("\n--- Initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
@@ -786,14 +869,41 @@ def initialize_combined_model(group, filename):
     operational_times = {(v,i,j): set_operational_time(v,i,j, maintenance_ids, maintenance_durations) 
     for v,i,j in list(itertools.product(vessel_ids, port_ids, port_ids))}
 
-    print("\n--- Starting to generate arcs in: %.1f seconds ---" % (time.time() - start_time))
+    generate_arcs = GENERATE_ARCS
+    write_arcs = WRITE_ARCS
+    if generate_arcs:
+        print("\n--- Starting to generate arcs in: %.1f seconds ---" % (time.time() - start_time))
 
-    vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
-    maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
-    des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
-    fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
-    vessel_ballast_speed_profile, CHARTER_OUT_MODEL, des_loading_ports) 
-    for vessel in vessel_ids}
+        vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
+        maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
+        des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+        fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
+        vessel_ballast_speed_profile, CHARTER_OUT_MODEL, des_loading_ports) 
+        for vessel in vessel_ids}
+
+        if write_arcs:
+            path = f'arcs/{group}/charter/{filename}-arcs.json'
+            try:
+                with open(path,'x') as init_arc_json:
+                    pass
+            except FileExistsError:
+                open(path, 'w').close()
+            with open(path, "w") as f:
+                arc_dict = {}
+                now = datetime.now()
+                arc_dict['timeWritten'] = now.strftime("%Y-%m-%d %H:%M:%S")
+                arc_dict['arcs'] = total_feasible_arcs
+                arc_dict['sailingCosts'] = [{'key': (v,i,t,j,t_), 'value': cost} for (v,i,t,j,t_), cost in sailing_costs.items()]
+                json.dump(arc_dict, f, indent=1)
+    
+    else:
+        try:
+            arc_file = open(f'arcs/{group}/charter/{filename}-arcs.json')
+            arc_data = json.load(arc_file)
+            total_feasible_arcs = [tuple(x) for x in arc_data['arcs']]
+            sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
+        except FileNotFoundError:
+            raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
 
     print("\n--- Initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
