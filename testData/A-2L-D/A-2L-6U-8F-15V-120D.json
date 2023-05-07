@@ -1,0 +1,1927 @@
+{
+"charterVessels": [
+		{
+			"fromDateTime": "2024-04-01T00:00:00",
+			"id": "charter",
+			"name": "Charter in",
+			"loadingRate": 11999,
+			"contractAcceptance":[
+				{"contractId":"DESCON_1"},
+				{"contractId":"DESCON_2"},
+				{"contractId":"DESCON_3"},
+				{"contractId":"DESCON_4"},
+				{"contractId":"DESCON_5"},
+				{"contractId":"DESCON_6"}],
+			"portAcceptance":[
+				{"portId":"FU"},
+				{"portId":"DI"},
+				{"portId":"BE"},
+				{"portId":"CN"},
+				{"portId":"ES"},
+				{"portId":"IN"},
+				{"portId":"JP"},
+				{"portId":"KR"},
+				{"portId":"SG"}],
+			"quantity": 145000,
+			"speedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 17.5,
+				"options": [
+				{
+					"fuelConsumption": 0,
+					"speed": 17.5
+				}
+				]
+			},
+			"toDateTime": "2025-02-01T00:00:00",
+			"charterRates": [
+				{
+					"fromDateTime": "2024-04-01T00:00:00",
+					"rate": 60000
+				},
+				{
+					"fromDateTime": "2024-06-15T00:00:00",
+					"rate": 80000
+				}
+			]
+}],
+"contracts": [
+{"id": "DESCON_1", "name": "DESCON_1", "desRequests": [
+{"id": "1001",  "name":"DESCON_1-1",  "from": "2024-04-01T00:00:00", "to": "2024-05-01T00:00:00",  "minQuantity":58000, "quantity":248000, "storageId": "DI-storage", "portId": "JP"},
+{"id": "1002",  "name":"DESCON_1-2",  "from": "2024-04-01T00:00:00", "to": "2024-06-01T00:00:00",  "minQuantity":306000, "quantity":496000, "storageId": "DI-storage", "portId": "JP"},
+{"id": "1003",  "name":"DESCON_1-3",  "from": "2024-04-01T00:00:00", "to": "2024-07-01T00:00:00",  "minQuantity":454000, "quantity":644000, "storageId": "DI-storage", "portId": "JP"},
+{"id": "1004",  "name":"DESCON_1-4",  "from": "2024-04-01T00:00:00", "to": "2024-08-10T00:00:00",  "minQuantity":752000, "quantity":992000, "storageId": "DI-storage", "portId": "JP"}
+
+],
+"salesPrices": [
+	{"fromDateTime": "2024-04-01T00:00:00", "price": 115}
+	]},
+{"id": "DESCON_2", "name": "DESCON_2", "desRequests": [
+{"id": "2001",  "name":"DESCON_2-1",  "from": "2024-04-01T00:00:00", "to": "2024-05-01T00:00:00",  "minQuantity":60000, "quantity":250000, "storageId": "DI-storage", "portId": "JP"},
+{"id": "2002",  "name":"DESCON_2-2",  "from": "2024-04-01T00:00:00", "to": "2024-06-01T00:00:00",  "minQuantity":310000, "quantity":500000, "storageId": "DI-storage", "portId": "JP"},
+{"id": "2003",  "name":"DESCON_2-3",  "from": "2024-04-01T00:00:00", "to": "2024-07-01T00:00:00",  "minQuantity":660000, "quantity":750000, "storageId": "DI-storage", "portId": "JP"},
+{"id": "2004",  "name":"DESCON_2-4",  "from": "2024-04-01T00:00:00", "to": "2024-08-10T00:00:00",  "minQuantity":810000, "quantity":1000000, "storageId": "DI-storage", "portId": "JP"}
+],
+"salesPrices": [
+	{"fromDateTime": "2024-04-01T00:00:00", "price": 140}
+	]},
+{"id": "DESCON_3", "name": "DESCON_3", "desRequests": [
+{"id": "3001",  "name":"DESCON_3-1",  "from": "2024-04-01T00:00:00", "to": "2024-05-01T00:00:00",  "minQuantity":190000, "quantity":330000, "storageId": "DI-storage", "portId": "ES"},
+{"id": "3002",  "name":"DESCON_3-2",  "from": "2024-04-01T00:00:00", "to": "2024-06-01T00:00:00",  "minQuantity":370000, "quantity":560000, "storageId": "DI-storage", "portId": "ES"},
+{"id": "3003",  "name":"DESCON_3-3",  "from": "2024-04-01T00:00:00", "to": "2024-07-01T00:00:00",  "minQuantity":700000, "quantity":820000, "storageId": "DI-storage", "portId": "ES"},
+{"id": "3004",  "name":"DESCON_3-4",  "from": "2024-04-01T00:00:00", "to": "2024-08-10T00:00:00",  "minQuantity":1030000, "quantity":1220000, "storageId": "DI-storage", "portId": "ES"}
+
+],
+"salesPrices": [
+	{"fromDateTime": "2023-10-01T00:00:00", "price": 75}
+	]},
+{"id": "DESCON_4", "name": "DESCON_4", "desRequests": [
+{"id": "4001",  "name":"DESCON_4-1",  "from": "2024-04-01T00:00:00", "to": "2024-05-01T00:00:00",  "minQuantity":80000, "quantity":270000, "storageId": "FU-storage", "portId": "CN"},
+{"id": "4002",  "name":"DESCON_4-2",  "from": "2024-04-01T00:00:00", "to": "2024-06-01T00:00:00",  "minQuantity":350000, "quantity":540000, "storageId": "FU-storage", "portId": "CN"},
+{"id": "4003",  "name":"DESCON_4-3",  "from": "2024-04-01T00:00:00", "to": "2024-07-01T00:00:00",  "minQuantity":620000, "quantity":810000, "storageId": "FU-storage", "portId": "CN"},
+{"id": "4004",  "name":"DESCON_4-4",  "from": "2024-04-01T00:00:00", "to": "2024-08-10T00:00:00",  "minQuantity":890000, "quantity":1080000, "storageId": "FU-storage", "portId": "CN"}
+],
+"salesPrices": [
+	{"fromDateTime": "2023-10-01T00:00:00", "price": 100}
+	]},
+{"id": "DESCON_5", "name": "DESCON_5", "desRequests": [
+{"id": "5001",  "name":"DESCON_5-1",  "from": "2024-04-01T00:00:00", "to": "2024-05-01T00:00:00",  "minQuantity":218000, "quantity":408000, "storageId": "FU-storage", "portId": "IN"},
+{"id": "5002",  "name":"DESCON_5-2",  "from": "2024-04-01T00:00:00", "to": "2024-06-01T00:00:00",  "minQuantity":626000, "quantity":816000, "storageId": "FU-storage", "portId": "IN"},
+{"id": "5003",  "name":"DESCON_5-3",  "from": "2024-04-01T00:00:00", "to": "2024-07-01T00:00:00",  "minQuantity":1034000, "quantity":1224000, "storageId": "FU-storage", "portId": "IN"},
+{"id": "5004",  "name":"DESCON_5-4",  "from": "2024-04-01T00:00:00", "to": "2024-08-10T00:00:00",  "minQuantity":1442000, "quantity":1632000, "storageId": "FU-storage", "portId": "IN"}
+],
+"salesPrices": [
+	{"fromDateTime": "2023-10-01T00:00:00", "price": 70}
+	]},
+{"id": "DESCON_6", "name": "DESCON_6", "desRequests": [
+{"id": "6001",  "name":"DESCON_6-1",  "from": "2024-04-01T00:00:00", "to": "2024-05-01T00:00:00",  "minQuantity":491000, "quantity":681000, "storageId": "FU-storage", "portId": "KR"},
+{"id": "6002",  "name":"DESCON_6-2",  "from": "2024-04-01T00:00:00", "to": "2024-06-01T00:00:00",  "minQuantity":1172000, "quantity":1362000, "storageId": "FU-storage", "portId": "KR"},
+{"id": "6003",  "name":"DESCON_6-3",  "from": "2024-04-01T00:00:00", "to": "2024-07-01T00:00:00",  "minQuantity":1853000, "quantity":2043000, "storageId": "FU-storage", "portId": "KR"},
+{"id": "6004",  "name":"DESCON_6-4",  "from": "2024-04-01T00:00:00", "to": "2024-08-10T00:00:00",  "minQuantity":2534000, "quantity":2724000, "storageId": "FU-storage", "portId": "KR"}
+],
+"salesPrices": [
+	{"fromDateTime": "2024-01-01T00:00:00", "price": 130}
+	]},
+{"id": "FOBCON_2", "name": "FOBCON_2", "fobRequests": [
+{"id": "2101",  "name":"FOBCON_2-1",  "from": "2024-04-01T00:00:00", "to": "2024-05-01T00:00:00",  "minQuantity":136000, "quantity":136000, "storageId": "FU-storage",  "cooldownHours":0, "cooldownQuantity": 0, "purgeQuantity": 0},
+{"id": "2102",  "name":"FOBCON_2-2",  "from": "2024-05-01T00:00:00", "to": "2024-06-01T00:00:00",  "minQuantity":146000, "quantity":146000, "storageId": "FU-storage",  "cooldownHours":0, "cooldownQuantity": 0, "purgeQuantity": 0},
+{"id": "2103",  "name":"FOBCON_2-3",  "from": "2024-06-01T00:00:00", "to": "2024-07-01T00:00:00",  "minQuantity":146000, "quantity":146000, "storageId": "FU-storage",  "cooldownHours":0, "cooldownQuantity": 0, "purgeQuantity": 0},
+{"id": "2104",  "name":"FOBCON_2-4",  "from": "2024-07-01T00:00:00", "to": "2024-08-01T00:00:00",  "minQuantity":156000, "quantity":156000, "storageId": "FU-storage",  "cooldownHours":0, "cooldownQuantity": 0, "purgeQuantity": 0}
+],
+"salesPrices": [
+	{"fromDateTime": "2024-04-01T00:00:00", "price": 95}
+	]},
+{"id": "FOBCON_1", "name": "FOBCON_1", "fobRequests": [
+{"id": "1101",  "name":"FOBCON_1-1",  "from": "2024-04-01T00:00:00", "to": "2024-05-01T00:00:00",  "minQuantity":155000, "quantity":155000, "storageId": "DI-storage",  "cooldownHours":0, "cooldownQuantity": 0, "purgeQuantity": 0},
+{"id": "1102",  "name":"FOBCON_1-2",  "from": "2024-05-01T00:00:00", "to": "2024-06-01T00:00:00",  "minQuantity":150000, "quantity":150000, "storageId": "DI-storage",  "cooldownHours":0, "cooldownQuantity": 0, "purgeQuantity": 0},
+{"id": "1103",  "name":"FOBCON_1-3",  "from": "2024-06-01T00:00:00", "to": "2024-07-01T00:00:00",  "minQuantity":145000, "quantity":145000, "storageId": "DI-storage",  "cooldownHours":0, "cooldownQuantity": 0, "purgeQuantity": 0},
+{"id": "1104",  "name":"FOBCON_1-4",  "from": "2024-07-01T00:00:00", "to": "2024-08-01T00:00:00",  "minQuantity":145000, "quantity":145000, "storageId": "DI-storage",  "cooldownHours":0, "cooldownQuantity": 0, "purgeQuantity": 0}
+],
+"salesPrices": [
+	{"fromDateTime": "2024-04-01T00:00:00", "price": 120}
+	]}
+],
+"spotDesRequests" : [
+{"id": "9801",  "name":"DESSPOT-1",  "fromDateTime": "2024-05-01T00:00:00", "toDateTime": "2024-05-15T00:00:00", "minQuantity":130000, "quantity":155000, "storageId": "DI-storage", "portId": "IN", "salesPrices": [ {"fromDateTime":"2024-04-01T00:00:00", "price": 150}]},
+{"id": "9802",  "name":"DESSPOT-2",  "fromDateTime": "2024-06-01T00:00:00", "toDateTime": "2024-06-15T00:00:00", "minQuantity":135000, "quantity":160000, "storageId": "FU-storage", "portId": "IN", "salesPrices": [ {"fromDateTime":"2024-04-01T00:00:00", "price": 140}]},
+{"id": "9803",  "name":"DESSPOT-3",  "fromDateTime": "2024-07-01T00:00:00", "toDateTime": "2024-07-15T00:00:00", "minQuantity":135000, "quantity":160000, "storageId": "DI-storage", "portId": "BE", "salesPrices": [ {"fromDateTime":"2024-04-01T00:00:00", "price": 200}]}
+],
+"spotFobRequests" : [
+{"id": "9901",  "name":"FOBSPOT-1",  "fromDateTime": "2024-04-01T00:00:00", "toDateTime": "2024-04-10T00:00:00", "minQuantity":130000, "quantity":130000, "storageId": "FU-storage", "salesPrices": [ {"fromDateTime":"2024-01-01T00:00:00", "price": 135}]},
+{"id": "9902",  "name":"FOBSPOT-2",  "fromDateTime": "2024-05-01T00:00:00", "toDateTime": "2024-05-10T00:00:00", "minQuantity":165000, "quantity":165000, "storageId": "FU-storage", "salesPrices": [ {"fromDateTime":"2024-01-01T00:00:00", "price": 110}]},
+{"id": "9903",  "name":"FOBSPOT-3",  "fromDateTime": "2024-06-01T00:00:00", "toDateTime": "2024-06-10T00:00:00", "minQuantity":135000, "quantity":135000, "storageId": "FU-storage", "salesPrices": [ {"fromDateTime":"2024-01-01T00:00:00", "price": 100}]},
+{"id": "9904",  "name":"FOBSPOT-4",  "fromDateTime": "2024-06-01T00:00:00", "toDateTime": "2024-06-10T00:00:00", "minQuantity":145000, "quantity":145000, "storageId": "FU-storage", "salesPrices": [ {"fromDateTime":"2024-01-01T00:00:00", "price": 125}]},
+{"id": "9905",  "name":"FOBSPOT-5",  "fromDateTime": "2024-07-01T00:00:00", "toDateTime": "2024-07-10T00:00:00", "minQuantity":165000, "quantity":165000, "storageId": "FU-storage", "salesPrices": [ {"fromDateTime":"2024-01-01T00:00:00", "price": 135}]},
+{"id": "9911",  "name":"FOBSPOT-11",  "fromDateTime": "2024-06-01T00:00:00", "toDateTime": "2024-06-10T00:00:00", "minQuantity":133000, "quantity":133000, "storageId": "DI-storage", "salesPrices": [ {"fromDateTime":"2024-01-01T00:00:00", "price": 110}]}
+],
+
+"forecast": {
+		"fromDateTime": "2024-04-01T00:00:00",
+		"toDateTime": "2024-08-01T00:00:00"
+	},		
+"network": {
+"legDistances" : [
+{"id": "dist_1", "name":"", "fromNode": "FU", "toNode": "BE", "distance": 6560},
+{"id": "dist_2", "name":"", "fromNode": "FU", "toNode": "CN", "distance": 6655},
+{"id": "dist_3", "name":"", "fromNode": "FU", "toNode": "ES", "distance": 5260},
+{"id": "dist_4", "name":"", "fromNode": "FU", "toNode": "IN", "distance": 2850},
+{"id": "dist_5", "name":"", "fromNode": "FU", "toNode": "JP", "distance": 6880},
+{"id": "dist_6", "name":"", "fromNode": "FU", "toNode": "KR", "distance": 6450},
+{"id": "dist_7", "name":"", "fromNode": "FU", "toNode": "SG", "distance": 3890},
+{"id": "dist_8", "name":"", "fromNode": "DI", "toNode": "BE", "distance": 6210},
+{"id": "dist_9", "name":"", "fromNode": "DI", "toNode": "CN", "distance": 6305},
+{"id": "dist_10", "name":"", "fromNode": "DI", "toNode": "ES", "distance": 4910},
+{"id": "dist_11", "name":"", "fromNode": "DI", "toNode": "IN", "distance": 2500},
+{"id": "dist_12", "name":"", "fromNode": "DI", "toNode": "JP", "distance": 6530},
+{"id": "dist_13", "name":"", "fromNode": "DI", "toNode": "KR", "distance": 6100},
+{"id": "dist_14", "name":"", "fromNode": "DI", "toNode": "SG", "distance": 3540},
+{"id": "dist_15", "name":"", "fromNode": "BE", "toNode": "FU", "distance": 6560},
+{"id": "dist_16", "name":"", "fromNode": "CN", "toNode": "FU", "distance": 6655},
+{"id": "dist_17", "name":"", "fromNode": "ES", "toNode": "FU", "distance": 5260},
+{"id": "dist_18", "name":"", "fromNode": "IN", "toNode": "FU", "distance": 2850},
+{"id": "dist_19", "name":"", "fromNode": "JP", "toNode": "FU", "distance": 6880},
+{"id": "dist_20", "name":"", "fromNode": "KR", "toNode": "FU", "distance": 6450},
+{"id": "dist_21", "name":"", "fromNode": "SG", "toNode": "FU", "distance": 3890},
+{"id": "dist_22", "name":"", "fromNode": "BE", "toNode": "DI", "distance": 6210},
+{"id": "dist_23", "name":"", "fromNode": "CN", "toNode": "DI", "distance": 6305},
+{"id": "dist_24", "name":"", "fromNode": "ES", "toNode": "DI", "distance": 4910},
+{"id": "dist_25", "name":"", "fromNode": "IN", "toNode": "DI", "distance": 2500},
+{"id": "dist_26", "name":"", "fromNode": "JP", "toNode": "DI", "distance": 6530},
+{"id": "dist_27", "name":"", "fromNode": "KR", "toNode": "DI", "distance": 6100},
+{"id": "dist_28", "name":"", "fromNode": "SG", "toNode": "DI", "distance": 3540},
+{"id": "dist_29", "name":"", "fromNode": "BE", "toNode": "SG", "distance": 8222},
+{"id": "dist_30", "name":"", "fromNode": "CN", "toNode": "SG", "distance": 2822},
+{"id": "dist_31", "name":"", "fromNode": "ES", "toNode": "SG", "distance": 6680},
+{"id": "dist_32", "name":"", "fromNode": "IN", "toNode": "SG", "distance": 2435},
+{"id": "dist_33", "name":"", "fromNode": "JP", "toNode": "SG", "distance": 2896},
+{"id": "dist_34", "name":"", "fromNode": "KR", "toNode": "SG", "distance": 2552}],
+"ports": [
+{"id": "BE", "name": "Belgium", "pilotIn": 8, "pilotOut": 8 , "terminal": { "unloadRate":12000}},
+{"id": "CN", "name": "China", "pilotIn": 8, "pilotOut": 8 , "terminal": { "unloadRate":12000}},
+{"id": "ES", "name": "Spain", "pilotIn": 8, "pilotOut": 8 , "terminal": { "unloadRate":12000}},
+{"id": "IN", "name": "India", "pilotIn": 8, "pilotOut": 8 , "terminal": { "unloadRate":12000}},
+{"id": "JP", "name": "Japan", "pilotIn": 8, "pilotOut": 8 , "terminal": { "unloadRate":12000}},
+{"id": "KR", "name": "Korea", "pilotIn": 8, "pilotOut": 8 , "terminal": { "unloadRate":12000}},
+{"id": "SG", "name": "Singapore", "pilotIn": 0, "pilotOut": 0 , "terminal": { "unloadRate":12000}},
+{"export": {
+					"berths": [
+						{
+							"id": "FU-2",
+							"name": "Jetty 2"
+						},
+						{
+							"id": "FU-1",
+							"name": "Jetty 1"
+						}
+					],
+					"priority": "FIFO",
+					"storages": [
+						{
+							"allowProductionCurtailment": false,
+							"id": "FU-storage",
+							"inventoryTarget": 0,
+							"defaultLoadingQuantity":150000,
+							"maxLimit": 300000,
+							"maxSafeLimit": 300000,
+							"minLimit": 0,
+							"minSafeLimit": 50000,
+							"name": "FU Storage",
+							"production": [
+								{"datetime": "2024-04-01T00:00:00",	"rate": 56000}	
+							],
+							"tankLevel": [
+								{
+									"datetime": "2024-04-01T00:00:00",
+									"level": 50000
+								}
+							],							
+							"compatibleBerths":[
+							{
+								"berthId": "FU-1",
+								"loadRate": 12000,
+								"connection": 5,
+								"disconnection": 3
+							},
+							{
+								"berthId": "FU-2",
+								"loadRate": 12000,
+								"connection": 5,
+								"disconnection": 3
+							}
+							]
+						}
+					]
+				},
+				"id": "FU",
+				"name": "Fujairah",
+				"pilotIn": 2.5,
+				"pilotOut": 2.5
+			},
+{"export": {
+			"berths": [
+				{"id": "DI-1", "name": "DI berth 1"	}],
+			"priority": "FIFO",
+			"storages": [
+						{
+							"allowProductionCurtailment": false,
+							"id": "DI-storage",
+							"inventoryTarget": 0,
+							"defaultLoadingQuantity":150000,
+							"maxLimit": 250000,
+							"maxSafeLimit": 250000,
+							"minLimit": 0,
+							"minSafeLimit": 30000,
+							"name": "DI Storage",
+							"production": [
+								{"datetime": "2024-04-01T00:00:00",	"rate": 34000}	
+							],
+							"tankLevel": [
+								{
+									"datetime": "2024-04-01T00:00:00",
+									"level": 100000
+								}
+							],							
+							"compatibleBerths":[
+							{
+								"berthId": "DI-1",
+								"loadRate": 12000,
+								"connection": 5,
+								"disconnection": 3
+							}
+							]
+						}
+					]
+				},
+			"id": "DI",
+			"name": "Das Island",
+			"pilotIn": 2.5,
+			"pilotOut": 2.5
+			}
+		]
+	},
+"products": [
+		{
+			"id": "Lng",
+			"name": "LNG"
+		},
+		{
+			"id": "HFO",
+			"name": "HFO",
+			"prices": [
+			{"fromDateTime": "2024-04-01T00:00:00", "price": 350}
+			]
+		}
+	],
+"vessels": [
+{"id": "AD-1", "name":"AL HAMRA", "from":"2024-03-29T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":137000, "location":"ES",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 17,
+				"options": [
+					{
+						"fuelConsumption": 66.3,
+						"speed": 10
+					},
+					{
+						"fuelConsumption": 73.8,
+						"speed": 11
+					},
+					{
+						"fuelConsumption": 82.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 91,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 101.7,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.4,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.2,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 139.1,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 155.2,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 173.3,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 192.6,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 57.8,
+						"speed": 10
+					},
+					{
+						"fuelConsumption": 64.2,
+						"speed": 11
+					},
+					{
+						"fuelConsumption": 72.8,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 80.3,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 89.9,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 99.5,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 111.3,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 125.2,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 139.1,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 156,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 175.5,
+						"speed": 20
+					}
+				]
+},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"KW"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]},
+{"id": "AD-2", "name":"GASHA", "from":"2024-03-22T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":137000, "location":"ES",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 17,
+				"options": [
+					{
+						"fuelConsumption": 66.3,
+						"speed": 10
+					},
+					{
+						"fuelConsumption": 73.8,
+						"speed": 11
+					},
+					{
+						"fuelConsumption": 82.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 91,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 101.7,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.4,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.2,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 139.1,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 155.2,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 173.3,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 192.6,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 57.8,
+						"speed": 10
+					},
+					{
+						"fuelConsumption": 64.2,
+						"speed": 11
+					},
+					{
+						"fuelConsumption": 72.8,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 80.3,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 89.9,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 99.5,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 111.3,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 125.2,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 139.1,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 156,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 175.5,
+						"speed": 20
+					}
+				]
+},
+"maintenances" : [
+{ 	"duration" : 60,
+	"from" : "2024-05-01T00:00:00",
+	"to" : "2024-05-05T00:00:00",
+	"location" : "SG"
+}
+],
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-3", "name":"ISH", "from":"2024-03-20T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":137500, "location":"IN",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 17,
+				"options": [
+					{
+						"fuelConsumption": 66.3,
+						"speed": 10
+					},
+					{
+						"fuelConsumption": 73.8,
+						"speed": 11
+					},
+					{
+						"fuelConsumption": 82.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 91,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 101.7,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.4,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.2,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 139.1,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 155.2,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 173.3,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 192.6,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 57.8,
+						"speed": 10
+					},
+					{
+						"fuelConsumption": 64.2,
+						"speed": 11
+					},
+					{
+						"fuelConsumption": 72.8,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 80.3,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 89.9,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 99.5,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 111.3,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 125.2,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 139.1,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 156,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 175.5,
+						"speed": 20
+					}
+				]
+},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-4", "name":"MRAWEH", "from":"2024-03-22T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":137000, "location":"SG",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 75.26,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 86.92,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 99.64,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.36,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.08,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 137.8,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 151.58,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 166.42,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 182.32,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 71.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 81.9,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 95.55,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 107.1,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 119.7,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 132.3,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 144.9,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 159.6,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 174.3,
+						"speed": 20
+					}
+				]
+			},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-5", "name":"MUBARAZ", "from":"2024-03-20T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":136000, "location":"IN",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 75.26,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 86.92,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 99.64,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.36,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.08,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 137.8,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 151.58,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 166.42,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 182.32,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 71.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 81.9,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 95.55,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 107.1,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 119.7,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 132.3,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 144.9,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 159.6,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 174.3,
+						"speed": 20
+					}
+				]
+			},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-6", "name":"SHAHAMAH", "from":"2024-04-01T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":137500, "location":"ES",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 75.26,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 86.92,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 99.64,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.36,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.08,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 137.8,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 151.58,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 166.42,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 182.32,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 71.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 81.9,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 95.55,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 107.1,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 119.7,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 132.3,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 144.9,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 159.6,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 174.3,
+						"speed": 20
+					}
+				]
+			},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-7", "name":"UMM AL ASHTAN", "from":"2024-04-02T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":137000, "location":"KR",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 75.26,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 86.92,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 99.64,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.36,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.08,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 137.8,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 151.58,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 166.42,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 182.32,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 71.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 81.9,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 95.55,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 107.1,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 119.7,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 132.3,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 144.9,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 159.6,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 174.3,
+						"speed": 20
+					}
+				]
+			},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-8", "name":"AD-8", "from":"2024-04-15T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":165000, "location":"KR",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 75.26,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 86.92,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 99.64,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.36,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.08,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 137.8,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 151.58,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 166.42,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 182.32,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 71.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 81.9,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 95.55,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 107.1,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 119.7,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 132.3,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 144.9,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 159.6,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 174.3,
+						"speed": 20
+					}
+				]
+			},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-9", "name":"AD-9", "from":"2024-04-20T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":168000, "location":"JP",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 75.26,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 86.92,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 99.64,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.36,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.08,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 137.8,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 151.58,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 166.42,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 182.32,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 71.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 81.9,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 95.55,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 107.1,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 119.7,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 132.3,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 144.9,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 159.6,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 174.3,
+						"speed": 20
+					}
+				]
+			},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-10", "name":"AD-10", "from":"2024-04-22T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":168000, "location":"BE",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 75.26,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 86.92,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 99.64,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.36,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.08,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 137.8,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 151.58,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 166.42,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 182.32,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 71.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 81.9,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 95.55,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 107.1,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 119.7,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 132.3,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 144.9,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 159.6,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 174.3,
+						"speed": 20
+					}
+				]
+			},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-11", "name":"AD-11", "from":"2024-04-22T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":168000, "location":"IN",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 75.26,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 86.92,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 99.64,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.36,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.08,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 137.8,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 151.58,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 166.42,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 182.32,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 71.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 81.9,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 95.55,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 107.1,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 119.7,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 132.3,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 144.9,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 159.6,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 174.3,
+						"speed": 20
+					}
+				]
+			},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-12", "name":"AD-12", "from":"2024-04-25T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":156000, "location":"IN",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 75.26,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 86.92,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 99.64,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.36,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.08,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 137.8,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 151.58,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 166.42,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 182.32,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 71.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 81.9,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 95.55,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 107.1,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 119.7,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 132.3,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 144.9,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 159.6,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 174.3,
+						"speed": 20
+					}
+				]
+			},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-13", "name":"AD-13", "from":"2024-05-01T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":168000, "location":"BE",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 75.26,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 86.92,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 99.64,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.36,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.08,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 137.8,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 151.58,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 166.42,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 182.32,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 71.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 81.9,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 95.55,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 107.1,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 119.7,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 132.3,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 144.9,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 159.6,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 174.3,
+						"speed": 20
+					}
+				]
+			},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-14", "name":"AD-14", "from":"2024-05-04T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":168000, "location":"ES",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 75.26,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 86.92,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 99.64,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.36,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.08,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 137.8,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 151.58,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 166.42,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 182.32,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 71.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 81.9,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 95.55,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 107.1,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 119.7,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 132.3,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 144.9,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 159.6,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 174.3,
+						"speed": 20
+					}
+				]
+			},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+},
+{"id": "AD-15", "name":"AD-15", "from":"2024-05-10T00:00:00", "to":"2040-01-30T00:00:00", "loadRate":12000, "capacity":170000, "location":"IN",
+"ladenSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 75.26,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 86.92,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 99.64,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 112.36,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 125.08,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 137.8,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 151.58,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 166.42,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 182.32,
+						"speed": 20
+					}
+				]
+},
+"ballastSpeedProfile": {
+				"fuelProduct": "HFO",
+				"naturalBoilOffFOE": 75,
+				"defaultSpeed": 16,
+				"options": [
+					{
+						"fuelConsumption": 71.4,
+						"speed": 12
+					},
+					{
+						"fuelConsumption": 81.9,
+						"speed": 13
+					},
+					{
+						"fuelConsumption": 95.55,
+						"speed": 14
+					},
+					{
+						"fuelConsumption": 107.1,
+						"speed": 15
+					},
+					{
+						"fuelConsumption": 119.7,
+						"speed": 16
+					},
+					{
+						"fuelConsumption": 132.3,
+						"speed": 17
+					},
+					{
+						"fuelConsumption": 144.9,
+						"speed": 18
+					},
+					{
+						"fuelConsumption": 159.6,
+						"speed": 19
+					},
+					{
+						"fuelConsumption": 174.3,
+						"speed": 20
+					}
+				]
+			},
+"portAcceptance":[
+{"portId":"FU"},
+{"portId":"DI"},
+{"portId":"BE"},
+{"portId":"CN"},
+{"portId":"ES"},
+{"portId":"IN"},
+{"portId":"JP"},
+{"portId":"KR"},
+{"portId":"SG"}],
+"contractAcceptance":[
+{"contractId":"DESCON_1"},
+{"contractId":"DESCON_2"},
+{"contractId":"DESCON_3"},
+{"contractId":"DESCON_4"},
+{"contractId":"DESCON_5"},
+{"contractId":"DESCON_6"}]
+}
+]}
