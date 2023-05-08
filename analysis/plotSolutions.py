@@ -170,10 +170,13 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
     distances = set_distances(data)
 
     ## Initialize spot stuffz
-    spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
-    des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
-    loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
-    fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+    try: 
+        spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
+        des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
+        loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
+        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+    except:
+        pass
     #ays_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initialize fake fob stuffz + set fob_operational_times

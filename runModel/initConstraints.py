@@ -51,7 +51,7 @@ def init_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, 
     - gp.quicksum(g[i,t,j] for j in des_contract_ids)
     - gp.quicksum(fob_demands[f]*z[f,t] 
     for f in (fob_ids) if (f,t) in z.keys())
-    for i in loading_port_ids for t in loading_days[horizon_length*(iteration_count+1)+1:stop_time])
+    for i in loading_port_ids for t in loading_days[horizon_length*(iteration_count)+1:stop_time])
 
     return loading_inventory_constraints
 

@@ -170,7 +170,7 @@ spotGroup = 'spotTests'
 spotFilename='N-1L-8U-9F-23V-30D'
 
 RHH = "Y" # "Y" to run RHH algorithm
-horizon_length = 30 # days
+horizon_length = 60 # days
 prediction_horizon = 'ALL' # days "ALL" for entire period after horizon
 
 run_one_instance(group1, filename1, runtime, modelType, RHH, horizon_length, prediction_horizon)

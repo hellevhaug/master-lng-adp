@@ -58,8 +58,7 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
         fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
         charter_vessel_lower_capacity)
 
-    #OK til hit
-    while horizon_length * iteration_count <= len(loading_days): # retrieve this
+    while horizon_length * iteration_count <= len(loading_days): 
 
         print("Constraints in total: ", len(model.getConstrs()))
         #print("model objective: ", model.getObjective())

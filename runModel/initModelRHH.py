@@ -314,17 +314,17 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
             # now looks like this: ['AD-7', 'DESCON_1', '28', 'ART_START', '63']
             # freezing eveything before the current horizon including the current horizon
             if 0 <= int(varName_list[2]) < horizon_length*(iteration_count+1):
-                var.lb = var.X
-                var.ub = var.X
+                #var.lb = var.X
+                #var.ub = var.X
                 x[tuple_key].lb = var.X
                 x[tuple_key].ub = var.X
             # making the variables in the next horizon binary:
             elif horizon_length*(iteration_count+1) <= int(varName_list[2]) < horizon_length*(iteration_count+2):
-                var.vtype = GRB.BINARY
+                #var.vtype = GRB.BINARY
                 x[tuple_key].vtype = GRB.BINARY
             # making the variables in the next prediction horizon continous ("ALL"):
             elif horizon_length*(iteration_count+2) <= int(varName_list[2]):
-                var.vtype = GRB.CONTINUOUS
+                #var.vtype = GRB.CONTINUOUS
                 x[tuple_key].vtype = GRB.CONTINUOUS
             '''
             else:
@@ -338,8 +338,8 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
             tuple_key = (key_parts[0], int(key_parts[1]))
             # now looks like this: [FU,1]
             if 0 <= int(varName_list[1]) < horizon_length*(iteration_count+1):
-                var.lb = var.X
-                var.ub = var.X
+                #var.lb = var.X
+                #var.ub = var.X
                 s[tuple_key].lb = var.X
                 s[tuple_key].ub = var.X
             # making the variables in the next horizon binary:
@@ -364,8 +364,8 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
             tuple_key = (key_parts[0], int(key_parts[1]), key_parts[2])
             # now looks like this: [FU,56,DESCON_1]
             if 0 <= int(varName_list[1]) < horizon_length*(iteration_count+1):
-                var.lb = var.X
-                var.ub = var.X
+                #var.lb = var.X
+                #var.ub = var.X
                 g[tuple_key].lb = var.X
                 g[tuple_key].ub = var.X
             # making the variables in the next horizon binary:
@@ -390,17 +390,17 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
             tuple_key = (key_parts[0], int(key_parts[1]))
             # now looks like this: [1001,6]
             if 0 <= int(varName_list[1]) < horizon_length*(iteration_count+1):
-                var.lb = var.X
-                var.ub = var.X
+                #var.lb = var.X
+                #var.ub = var.X
                 z[tuple_key].lb = var.X
                 z[tuple_key].ub = var.X
             # making the variables in the next horizon binary:
             elif horizon_length*(iteration_count+1) <= int(varName_list[1]) < horizon_length*(iteration_count+2):
-                var.vtype = GRB.BINARY
+                #var.vtype = GRB.BINARY
                 z[tuple_key].vtype = GRB.BINARY
             # making the variables in the next prediction horizon continous ("ALL"):
             elif horizon_length*(iteration_count+2) <= int(varName_list[1]):
-                var.vtype = GRB.CONTINUOUS
+                #var.vtype = GRB.CONTINUOUS
                 z[tuple_key].vtype = GRB.CONTINUOUS
             '''
             else:
