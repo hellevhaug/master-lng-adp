@@ -236,7 +236,7 @@ def initialize_basic_model(group, filename):
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids), name='berth_constraint')
 
 
     # Constraint 5.13 
@@ -486,7 +486,7 @@ def initialize_variable_production_model(group, filename):
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids), name='berth_constraint')
 
 
     # Constraint 5.13 
@@ -733,7 +733,7 @@ def initialize_charter_out_model(group, filename):
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids), name='berth_constraint')
 
 
     # Constraint 5.13 
@@ -994,7 +994,7 @@ def initialize_combined_model(group, filename):
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids), name='berth_constraint')
 
 
     # Constraint 5.13 
