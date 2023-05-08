@@ -161,9 +161,9 @@ def init_spread_delivery_constraints(x, w, vessel_ids, loading_port_ids, vessel_
 
     
 # Initialize fob max contracts constraints
-def init_fob_max_contracts_constr(z, fob_days, fob_contract_ids):
+def init_fob_max_contracts_constr(z, fob_days, fob_contract_ids, horizon_length, iteration_count, prediction_horizon):
 
-    fob_max_contracts_constraints = (z.sum(f,fob_days[f])==1 for f in fob_contract_ids)
+    fob_max_contracts_constraints = (z.sum(f,fob_days[f])==1 for f in fob_contract_ids if interval_start <= fob_days[f] <= interval_end)
 
     return fob_max_contracts_constraints
 

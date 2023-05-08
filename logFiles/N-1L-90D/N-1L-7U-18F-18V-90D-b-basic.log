@@ -604,3 +604,84 @@ Solution count 10: 8.01002e+08 8.00997e+08 8.00997e+08 ... 7.82096e+08
 
 Optimal solution found (tolerance 5.00e-03)
 Best objective 8.010018228854e+08, best bound 8.049945153199e+08, gap 0.4985%
+
+Gurobi 9.5.1 (win64) logging started Mon May  8 11:31:29 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 21884 rows, 144134 columns and 586961 nonzeros
+Model fingerprint: 0x65115043
+Variable types: 113123 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 13066 rows and 0 columns
+Presolve time: 0.03s
+
+Explored 0 nodes (0 simplex iterations) in 0.08 seconds (0.02 work units)
+Thread count was 1 (of 16 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.07 seconds (0.02 work units)
+
+Gurobi 9.5.1 (win64) logging started Mon May  8 14:06:33 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 21884 rows, 141215 columns and 577113 nonzeros
+Model fingerprint: 0x00d57e18
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 13105 rows and 0 columns
+Presolve time: 0.04s
+
+Explored 0 nodes (0 simplex iterations) in 0.13 seconds (0.02 work units)
+Thread count was 1 (of 16 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.15 seconds (0.02 work units)
+
+Gurobi 9.5.1 (win64) logging started Mon May  8 14:09:46 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 21884 rows, 141215 columns and 577113 nonzeros
+Model fingerprint: 0x38e8e85d
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 13105 rows and 0 columns
+Presolve time: 0.03s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds (0.02 work units)
+Thread count was 1 (of 16 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.07 seconds (0.02 work units)

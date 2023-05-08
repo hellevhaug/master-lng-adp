@@ -122,11 +122,13 @@ def init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_
                         des_spot_ids, loading_port_ids, production_quantities):
     
     # Initializing variables
+
+    total_feasible_arcs_for_x_generation = total_feasible_arcs
     
     if prediction_horizon != "ALL":
-        total_feasible_arcs = [(v, i, t, j, t_) for (v, i, t, j, t_) in total_feasible_arcs if int(t) <= horizon_length*(iteration_count+1)+prediction_horizon]
+        total_feasible_arcs_for_x_generation = [(v, i, t, j, t_) for (v, i, t, j, t_) in total_feasible_arcs if int(t) < horizon_length*(iteration_count+1)+prediction_horizon]
     
-    x = model.addVars(total_feasible_arcs, vtype='B', name='x')
+    x = model.addVars(total_feasible_arcs_for_x_generation, vtype='B', name='x')
 
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     
@@ -275,7 +277,7 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
 
     # Constraint 5.10
-    model.addConstrs(init_fob_max_contracts_constr(z, fob_days, fob_contract_ids), name='fob_max_contracts')
+    model.addConstrs(init_fob_max_contracts_constr(z, fob_days, fob_contract_ids, horizon_length, iteration_count, prediction_horizon), name='fob_max_contracts')
 
 
     # Constraint 5.11
@@ -300,7 +302,7 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
 
 
-def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count):
+def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon):
     print("Freezing variables...")
     # Freeze the variables that start in the current horizon: 
     for var in model.getVars():
@@ -323,7 +325,7 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
                 #var.vtype = GRB.BINARY
                 x[tuple_key].vtype = GRB.BINARY
             # making the variables in the next prediction horizon continous ("ALL"):
-            elif horizon_length*(iteration_count+2) <= int(varName_list[2]):
+            elif horizon_length*(iteration_count+2) <= int(varName_list[2]) < horizon_length*(iteration_count+2)+prediction_horizon:
                 #var.vtype = GRB.CONTINUOUS
                 x[tuple_key].vtype = GRB.CONTINUOUS
             '''
@@ -412,6 +414,53 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
 
     return model, x, z, w, g, s
 
+
+
+def add_variables_for_next_prediction_horizon(model, x, z, w, g, s, prediction_horizon, horizon_length, fob_ids, fob_days, 
+                        total_feasible_arcs, loading_days, iteration_count, des_contract_ids, 
+                        des_spot_ids, loading_port_ids, production_quantities):
+    
+    # Initializing variables
+
+    total_feasible_arcs_for_x_generation = total_feasible_arcs
+
+    total_feasible_arcs_for_x_generation = [(v, i, t, j, t_) for (v, i, t, j, t_) in total_feasible_arcs if horizon_length*(iteration_count+1)+prediction_horizon <= int(t) < horizon_length*(iteration_count+2)+prediction_horizon]
+    
+    new_x_vars = model.addVars(total_feasible_arcs_for_x_generation, vtype = GRB.CONTINUOUS, name = 'new_x')
+
+    x.update(new_x_vars)
+    #x = model.addVars(total_feasible_arcs_for_x_generation, vtype='B', name='x')
+    fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f] if horizon_length*(iteration_count+1)+prediction_horizon <= t < horizon_length*(iteration_count+2)+prediction_horizon] # Each fob contract has a specific loading node 
+
+    new_z_vars = model.addVars(fob_dimensions, vtype ='C', name='new_z')
+
+    z.update(new_z_vars)
+
+    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days if horizon_length*(iteration_count+1)+prediction_horizon <= t < horizon_length*(iteration_count+2)+prediction_horizon for j in (des_contract_ids + des_spot_ids)]
+    
+    new_w_vars = model.addVars(charter_dimensions, vtype ='C', name='new_w')
+
+    w.update(new_w_vars)
+
+    new_g_vars = model.addVars(charter_dimensions, vtype='C', name='new_g')
+
+    g.update(new_g_vars)
+
+    production_quantities = {(i,t): value for (i,t), value in production_quantities.items() if horizon_length*(iteration_count+1)+prediction_horizon <= t < horizon_length*(iteration_count+2)+prediction_horizon}
+
+    new_s_vars = model.addVars(production_quantities, vtype='C', name='new_s')
+
+    s.update(new_s_vars)
+
+    model.update()
+
+    return model, x, z, w, g, s
+
+
+
+
+
+################# HELLE #########################
 
 ### Dummy model?
 def initialize_model_dummy(group, filename):

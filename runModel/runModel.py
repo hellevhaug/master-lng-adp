@@ -121,8 +121,11 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
             break
         
         if horizon_length*(iteration_count+1) <= len(loading_days):
-            model, x, z, w, g, s = freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count)
+            model, x, z, w, g, s = freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon)
             model.update()
+
+            if prediction_horizon != "ALL": 
+                model, x, z, w, g, s = add_variables_for_next_prediction_horizon(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon, loading_days, des_contract_ids, des_spot_ids, loading_port_ids, production_quantities)
         '''
         constraints = model.getConstrs()
         # Remove each constraint from the model
