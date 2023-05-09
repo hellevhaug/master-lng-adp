@@ -12,9 +12,10 @@ from readData.readSpotData import *
 from supportFiles.constants import *
 from runModel.initConstraints import *
 from runModel.initArcs import *
+from runModel.constructionHeuristic import *
 
 ### Basic model
-def initialize_basic_model(group, filename):
+def initialize_basic_model(group, filename, heuristic):
 
     start_time = time.time()
     print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
@@ -68,6 +69,7 @@ def initialize_basic_model(group, filename):
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
         if len(fob_spot_ids+des_spot_ids)!=len(set(fob_spot_ids+des_spot_ids)):
             raise ValueError('There are duplicates in spot data')
+        set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids)
     except KeyError:
         print('This dataset does not have spot')
     except:
@@ -167,12 +169,14 @@ def initialize_basic_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids) if t+sailing_time_charter[i,j] in unloading_days[j]]
+    charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days  if t+sailing_time_charter[i,j] in unloading_days[j]]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
 
     s = model.addVars(production_quantities, vtype='C', name='s')
+
+    model.update() 
 
     # Initializing constraints
 
@@ -236,7 +240,7 @@ def initialize_basic_model(group, filename):
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids, fob_loading_ports), name='berth_constraint')
 
 
     # Constraint 5.13 
@@ -245,6 +249,25 @@ def initialize_basic_model(group, filename):
 
     model.addConstrs(init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
     des_spot_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
+
+    if heuristic:
+        x1, z1, s1, w1, g1 = find_initial_solution(x, z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+        des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+        production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+        fob_loading_ports, maintenance_vessels, fob_spot_art_ports)
+
+        for (v,i,t,j,t_) in x.keys():
+            x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
+        
+        for (i,t,j) in g.keys():
+            g[i,t,j].VarHintVal = g1[i,t,j]
+            w[i,t,j].VarHintVal = w1[i,t,j]
+        
+        for (f,t) in z.keys():
+            z[f,t].VarHintVal = z1[f,t]
+
+        for (i,t) in s.keys():
+            s[i,t].VarHintVal = s1[i,t]
 
     print("\n--- Done initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
@@ -317,6 +340,7 @@ def initialize_variable_production_model(group, filename):
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
+        set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids)
     except KeyError:
         print('This dataset does not have spot ')
     except:
@@ -414,7 +438,7 @@ def initialize_variable_production_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids) if t+sailing_time_charter[i,j] in unloading_days[j]]
+    charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days  if t+sailing_time_charter[i,j] in unloading_days[j]]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -486,7 +510,7 @@ def initialize_variable_production_model(group, filename):
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids, fob_loading_ports), name='berth_constraint')
 
 
     # Constraint 5.13 
@@ -561,6 +585,7 @@ def initialize_charter_out_model(group, filename):
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
+        set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids)
     except KeyError:
         print('This dataset does not have spot ')
     except:
@@ -661,7 +686,7 @@ def initialize_charter_out_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)  if t+sailing_time_charter[i,j] in unloading_days[j]]
+    charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days  if t+sailing_time_charter[i,j] in unloading_days[j]]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -733,7 +758,7 @@ def initialize_charter_out_model(group, filename):
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids, fob_loading_ports), name='berth_constraint')
 
 
     # Constraint 5.13 
@@ -818,6 +843,7 @@ def initialize_combined_model(group, filename):
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
+        set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids)
     except KeyError:
         print('This dataset does not have spot ')
     except:
@@ -918,7 +944,7 @@ def initialize_combined_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)  if t+sailing_time_charter[i,j] in unloading_days[j]]
+    charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days  if t+sailing_time_charter[i,j] in unloading_days[j]]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -994,7 +1020,7 @@ def initialize_combined_model(group, filename):
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids, fob_loading_ports), name='berth_constraint')
 
 
     # Constraint 5.13 

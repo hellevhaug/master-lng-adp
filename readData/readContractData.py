@@ -206,4 +206,7 @@ def convert_loading_ports(des_loading_ports):
         else:
             raise ValueError('This is not a valid loading port')
 
-    
+
+def set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids):
+    for des_spot_id in des_loading_ports:
+        des_loading_ports[des_spot_id] = loading_port_ids
