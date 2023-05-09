@@ -181,13 +181,13 @@ def init_fob_max_order_constr(z, fob_days, fob_spot_ids, fob_spot_art_ports):
 
 # Initialize berth constraints
 def init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, fob_operational_times,
-    number_of_berths, loading_port_ids, des_spot_ids):
+    number_of_berths, loading_port_ids, des_spot_ids, fob_loading_ports):
 
     berth_constraints = (gp.quicksum(x[v,i,t,j,tau] for v in vessel_ids for i in port_ids for t in loading_days 
     for tau in range(t_,t_+operational_times[v,i,j]+1) if (v,i,t,j,tau) in x.keys())
     + gp.quicksum(w[j,t_,j_] for j_ in (des_contract_ids+des_spot_ids) if (j,t_,j_) in w.keys())
-    + gp.quicksum(z[f_v,j,f_tau] for f_v in fob_ids 
-    for f_tau in range(t_,t_+fob_operational_times[f_v,j]) if (f_v,j,f_tau) in x.keys())
+    + gp.quicksum(z[f_v,f_tau] for f_v in fob_ids 
+    for f_tau in range(t_,t_+fob_operational_times[f_v,j]) if (f_v,f_tau) in z.keys() and j in fob_loading_ports[f_v])
     <= number_of_berths[j] for j in loading_port_ids for t_ in loading_days)
 
     return berth_constraints
