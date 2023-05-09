@@ -56,7 +56,7 @@ def run_combined_model(group, filename, time_limit, description):
 
 # Function for running model with possibility to both vary production and charter out 
 def run_basic_model_heuristic(group, filename, time_limit, description):
-    print(f'\n You are now running file {filename}, in group {group}')
+    print(f'\n You are now running file {filename}, in group {group}, heuristicly')
     model = initialize_basic_model(group, filename, True)
     print(description)
     model.setParam('TimeLimit', time_limit)

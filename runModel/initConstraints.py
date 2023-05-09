@@ -106,7 +106,7 @@ def init_upper_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vess
     upper_demand_constraints = (gp.quicksum(vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_]
     for v in vessel_ids for i in port_ids for t in loading_days for t_ in partition_days[p] # Left-hand sums
     if (v,i,t,j,t_) in x.keys()) +
-     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off) 
+    gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off) 
     for i in loading_port_ids for t in loading_days
     if t+sailing_time_charter[i,j] in partition_days[p] and (i,t,j) in g.keys()
     ) # Only if the arc is feasible
