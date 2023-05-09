@@ -143,17 +143,17 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group = 'A-2L-A'
-filename = 'A-2L-6U-8F-15V-120D'
+group = 'A-2L-D'
+filename = 'A-2L-6U-15F-15V-240D'
 #group1 = 'A-2L-D'
 #filename1 = 'A-2L-6U-8F-15V-120D'
 runtime = 60*60*3
 modelType = BASIC_MODEL
 
-#run_one_instance(group1, filename1, runtime, modelType)
+run_one_instance(group, filename, runtime, modelType)
 #test_init_model(group, filename, modelType)
 #run_all_model_types(group, filename, runtime)
 #run_all_model_types_for_group(group1, runtime)
-run_group(group, runtime, modelType)
+#run_group(group, runtime, modelType)
 #run_all_files(runtime, modelType)
 #run_all_files_all_model_types(runtime)
