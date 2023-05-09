@@ -3,7 +3,7 @@ from runModel.initModel import *
 
 # Function for running basic model
 def run_basic_model(group, filename, time_limit, description):
-    print(f'\n You are now running file {filename}, in group {group}')
+    print(f'\n You are now running file {filename}, in group {group} with basic model')
     model = initialize_basic_model(group, filename)
     print(description)
     model.setParam('TimeLimit', time_limit)
@@ -16,7 +16,7 @@ def run_basic_model(group, filename, time_limit, description):
 
 # Function for running model with variable production
 def run_variable_production_model(group, filename, time_limit, description):
-    print(f'\n You are now running file {filename}, in group {group}')
+    print(f'\n You are now running file {filename}, in group {group} with variable production')
     model = initialize_variable_production_model(group, filename)
     print(description)
     model.setParam('TimeLimit', time_limit)
@@ -30,7 +30,7 @@ def run_variable_production_model(group, filename, time_limit, description):
 
 # Function for running model with possibility to charter out 
 def run_charter_out_model(group, filename, time_limit, description):
-    print(f'\n You are now running file {filename}, in group {group}')
+    print(f'\n You are now running file {filename}, in group {group} with charter out')
     model = initialize_charter_out_model(group, filename)
     print(description)
     model.setParam('TimeLimit', time_limit)
@@ -43,7 +43,7 @@ def run_charter_out_model(group, filename, time_limit, description):
 
 # Function for running model with possibility to both vary production and charter out 
 def run_combined_model(group, filename, time_limit, description):
-    print(f'\n You are now running file {filename}, in group {group}')
+    print(f'\n You are now running file {filename}, in group {group} with combined model')
     model = initialize_combined_model(group, filename)
     print(description)
     model.setParam('TimeLimit', time_limit)
