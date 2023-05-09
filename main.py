@@ -55,14 +55,6 @@ def run_one_instance(group, filename, runtime, modelType):
         write_vars_to_file(group, filename, model, 'Model with combined extensions')
     else:
         raise ValueError('Uknown model type for running')
-    
-
-# Function for running a specific instance
-def run_one_instance_heuristic(group, filename, runtime, modelType):
-    if modelType=='basic':
-        model = run_basic_model_heuristic(group, filename, runtime, f'Running file: {filename}')
-        write_vars_to_file(group, filename, model, 'Basic model with minimum spread, heuristic')
-        return model
 
 
 # Oppdatering: Denne funker! Runs all model types one one instance
@@ -155,8 +147,6 @@ group = 'N-1L-B'
 filename = 'N-1L-13U-10F-23V-120D'
 group1 = 'A-2L-C'
 filename1 = 'A-2L-6U-8F-15V-120D'
-constructionGroup = 'N-1L-45D'
-constructionFile = 'N-1L-6U-13F-18V-45D-a'
 runtime = 60*60*3
 modelType = BASIC_MODEL
 
@@ -168,5 +158,3 @@ run_group(group, runtime, modelType)
 #run_all_files(runtime, modelType)
 #run_all_files_all_model_types(runtime)
 
-#run_one_instance(constructionGroup, constructionFile, runtime, modelType)
-run_one_instance_heuristic(group1, filename1, runtime, modelType)
