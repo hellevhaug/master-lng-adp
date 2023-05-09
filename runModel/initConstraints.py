@@ -81,10 +81,10 @@ def init_maintenance_constr(x, maintenance_vessel_ports, maintenance_vessels):
 
 
 # Initialize flow constraints
-def init_flow_constr(x, all_days, vessel_ids, port_ids):
+def init_flow_constr(x, all_days, vessel_ids, port_ids, stop_time):
 
     flow_constraints = (x.sum(v,'*', [0]+all_days[:t],j,t) == x.sum(v,j,t,'*',all_days[t+1:]+[all_days[-1]+1]) 
-    for v in vessel_ids for j in port_ids for t in all_days)
+    for v in vessel_ids for j in port_ids for t in all_days[1:stop_time-1])
 
     return flow_constraints 
 
@@ -104,10 +104,10 @@ def init_upper_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off
     des_contract_partitions):
 
     upper_demand_constraints = (gp.quicksum(vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_]
-    for v in vessel_ids for i in port_ids for t in loading_days for t_ in partition_days[p] # Left-hand sums
+    for v in vessel_ids for i in port_ids for t in loading_days for t_ in partition_days[p] if partition_days[p][-1] <= stop_time # Left-hand sums
     if (v,i,t,j,t_) in x.keys()) +
     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off) 
-    for i in loading_port_ids for t in loading_days if t+sailing_time_charter[i,j] if t <= stop_time in partition_days[p]) # Only if the arc is feasible
+    for i in loading_port_ids for t in loading_days if t+sailing_time_charter[i,j] if t <= stop_time in partition_days[p] if partition_days[p][-1] <= stop_time) # Only if the arc is feasible
     <=upper_partition_demand[j,p] #
     for j in (des_contract_ids+des_spot_ids) for p in des_contract_partitions[j])
 
@@ -121,10 +121,10 @@ def init_lower_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off
 
     lower_demand_constraints = (
     lower_partition_demand[j,p]<=(gp.quicksum(vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_]
-    for v in vessel_ids for i in port_ids for t in loading_days for t_ in partition_days[p] # Left-hand sums
+    for v in vessel_ids for i in port_ids for t in loading_days for t_ in partition_days[p] if partition_days[p][-1] <= stop_time # Left-hand sums
     if (v,i,t,j,t_) in x.keys())
     + gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off) for i in loading_port_ids for t in loading_days if t <= stop_time
-    if t+sailing_time_charter[i,j] in partition_days[p])) # Only if the arc is feasible
+    if t+sailing_time_charter[i,j] in partition_days[p] if partition_days[p][-1] <= stop_time)) # Only if the arc is feasible
     for j in (des_contract_ids+des_spot_ids) for p in des_contract_partitions[j])
 
     return lower_demand_constraints
@@ -163,7 +163,7 @@ def init_spread_delivery_constraints(x, w, vessel_ids, loading_port_ids, vessel_
 # Initialize fob max contracts constraints
 def init_fob_max_contracts_constr(z, fob_days, fob_contract_ids, horizon_length, iteration_count, prediction_horizon):
 
-    fob_max_contracts_constraints = (z.sum(f,fob_days[f])==1 for f in fob_contract_ids if interval_start <= fob_days[f] <= interval_end)
+    fob_max_contracts_constraints = (z.sum(f,fob_days[f])==1 for f in fob_contract_ids if fob_days[f][-1] <= horizon_length*(iteration_count)+prediction_horizon)
 
     return fob_max_contracts_constraints
 

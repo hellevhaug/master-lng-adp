@@ -685,3 +685,1071 @@ Best objective -, best bound -, gap -
 
 IIS computed: 1 constraints, 0 bounds
 IIS runtime: 0.07 seconds (0.02 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 02:15:08 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 21871 rows, 141215 columns and 576921 nonzeros
+Model fingerprint: 0x228e17c1
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 13364 rows and 107263 columns
+Presolve time: 0.06s
+
+Explored 0 nodes (0 simplex iterations) in 0.17 seconds (0.13 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 13364 rows and 107263 columns
+Presolve time: 0.05s
+
+Explored 0 nodes (0 simplex iterations) in 0.17 seconds (0.13 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Computing Irreducible Inconsistent Subsystem (IIS)...
+
+           Constraints          |            Bounds           |  Runtime
+      Min       Max     Guess   |   Min       Max     Guess   |
+--------------------------------------------------------------------------
+        0      8766         -         0    219928         -           0s
+        2         2         2         0         0         0           3s
+
+IIS computed: 2 constraints, 0 bounds
+IIS runtime: 2.66 seconds (1.30 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 02:42:35 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 21871 rows, 141215 columns and 576921 nonzeros
+Model fingerprint: 0x10cff748
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 13364 rows and 107263 columns
+Presolve time: 0.05s
+
+Explored 0 nodes (0 simplex iterations) in 0.15 seconds (0.13 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 13364 rows and 107263 columns
+Presolve time: 0.04s
+
+Explored 0 nodes (0 simplex iterations) in 0.17 seconds (0.13 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Computing Irreducible Inconsistent Subsystem (IIS)...
+
+           Constraints          |            Bounds           |  Runtime
+      Min       Max     Guess   |   Min       Max     Guess   |
+--------------------------------------------------------------------------
+        0      8766         -         0    219928         -           0s
+        2         2         2         0         0         0           3s
+
+IIS computed: 2 constraints, 0 bounds
+IIS runtime: 2.69 seconds (1.30 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 02:47:46 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 21871 rows, 141215 columns and 576921 nonzeros
+Model fingerprint: 0x09809276
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 13364 rows and 107263 columns
+Presolve time: 0.06s
+
+Explored 0 nodes (0 simplex iterations) in 0.18 seconds (0.13 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 13364 rows and 107263 columns
+Presolve time: 0.08s
+
+Explored 0 nodes (0 simplex iterations) in 0.24 seconds (0.13 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Computing Irreducible Inconsistent Subsystem (IIS)...
+
+           Constraints          |            Bounds           |  Runtime
+      Min       Max     Guess   |   Min       Max     Guess   |
+--------------------------------------------------------------------------
+        0      8766         -         0    219928         -           0s
+        2         2         2         0         0         0           2s
+
+IIS computed: 2 constraints, 0 bounds
+IIS runtime: 1.90 seconds (0.64 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 02:49:36 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 21871 rows, 141215 columns and 576921 nonzeros
+Model fingerprint: 0x327279cf
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 13364 rows and 107263 columns
+Presolve time: 0.05s
+
+Explored 0 nodes (0 simplex iterations) in 0.14 seconds (0.13 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 13364 rows and 107263 columns
+Presolve time: 0.04s
+
+Explored 0 nodes (0 simplex iterations) in 0.16 seconds (0.13 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Computing Irreducible Inconsistent Subsystem (IIS)...
+
+           Constraints          |            Bounds           |  Runtime
+      Min       Max     Guess   |   Min       Max     Guess   |
+--------------------------------------------------------------------------
+        0      8766         -         0    219928         -           0s
+        2         2         2         0         0         0           1s
+
+IIS computed: 2 constraints, 0 bounds
+IIS runtime: 1.32 seconds (0.64 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 02:55:53 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 22417 rows, 173010 columns and 764964 nonzeros
+Model fingerprint: 0xfe542280
+Variable types: 141789 continuous, 31221 integer (31221 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 12936 rows and 40623 columns
+Presolve time: 0.09s
+
+Explored 0 nodes (0 simplex iterations) in 0.26 seconds (0.17 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 12936 rows and 40623 columns
+Presolve time: 0.06s
+
+Explored 0 nodes (0 simplex iterations) in 0.26 seconds (0.17 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Computing Irreducible Inconsistent Subsystem (IIS)...
+
+           Constraints          |            Bounds           |  Runtime
+      Min       Max     Guess   |   Min       Max     Guess   |
+--------------------------------------------------------------------------
+        0      9752         -         0    282858         -           0s
+        2         2         2         0         0         0           1s
+
+IIS computed: 2 constraints, 0 bounds
+IIS runtime: 1.16 seconds (0.41 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 03:17:56 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 22474 rows, 173447 columns and 772844 nonzeros
+Model fingerprint: 0x51b6398d
+Variable types: 142205 continuous, 31242 integer (31242 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 13711 rows and 45146 columns
+Presolve time: 1.71s
+Presolved: 8763 rows, 128301 columns, 695811 nonzeros
+Variable types: 102707 continuous, 25594 integer (25594 binary)
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Ordering time: 0.06s
+
+Barrier statistics:
+ AA' NZ     : 4.549e+05
+ Factor NZ  : 8.384e+05 (roughly 60 MB of memory)
+ Factor Ops : 1.919e+08 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -1.98040202e+15  2.22681305e+13  7.98e+08 6.27e+05  1.14e+11     3s
+   1  -7.37698420e+14  2.10072399e+13  2.99e+08 3.52e+05  4.33e+10     3s
+   2  -2.50276983e+14  2.06140523e+13  1.02e+08 5.49e+04  1.52e+10     3s
+   3  -2.42128794e+13  1.96920525e+13  9.87e+06 3.80e+03  1.54e+09     4s
+   4  -3.11691253e+12  1.37406083e+13  1.27e+06 3.10e+01  2.34e+08     4s
+   5  -4.69537000e+11  2.48820708e+12  1.91e+05 2.10e-09  3.59e+07     4s
+   6  -5.56894504e+10  3.38698680e+11  2.28e+04 1.63e-09  4.47e+06     4s
+   7  -1.55645357e+10  1.60871762e+11  6.60e+03 1.40e-09  1.47e+06     4s
+   8  -5.53292081e+09  1.03673040e+11  2.54e+03 1.31e-09  6.83e+05     4s
+   9  -3.77404137e+09  4.50110956e+10  1.83e+03 1.34e-09  3.21e+05     4s
+  10  -2.52841954e+09  2.95234808e+10  1.33e+03 1.11e-09  2.06e+05     4s
+  11   2.72394703e+07  1.13063495e+10  3.08e+02 1.60e-09  5.74e+04     5s
+  12   5.66791768e+08  3.80663271e+09  9.59e+01 3.07e-09  1.61e+04     5s
+  13   7.03017922e+08  2.80676000e+09  4.18e+01 4.18e-09  9.86e+03     5s
+  14   7.20886461e+08  2.36072872e+09  3.44e+01 5.10e-09  7.91e+03     5s
+  15   7.37254960e+08  1.74028592e+09  2.70e+01 7.45e-09  5.33e+03     5s
+  16   7.57931438e+08  1.47690196e+09  1.71e+01 7.29e-09  3.88e+03     5s
+  17   7.81448480e+08  1.31171580e+09  9.87e+00 7.06e-09  2.68e+03     6s
+  18   7.86923059e+08  1.17415667e+09  7.81e+00 5.65e-09  1.93e+03     6s
+  19   8.05799660e+08  1.02363216e+09  1.56e+00 4.55e-09  9.06e+02     6s
+  20   8.10900746e+08  8.94674567e+08  3.81e-01 3.94e-09  3.31e+02     6s
+  21   8.15474100e+08  8.63434510e+08  4.29e-02 1.64e-09  1.86e+02     6s
+  22   8.18189646e+08  8.50735750e+08  1.38e-02 1.59e-09  1.26e+02     6s
+  23   8.19229119e+08  8.43926798e+08  1.05e-02 1.93e-09  9.55e+01     6s
+  24   8.20495116e+08  8.39207495e+08  8.18e-03 2.84e-09  7.23e+01     6s
+  25   8.20976629e+08  8.36316460e+08  7.36e-03 2.36e-09  5.93e+01     7s
+  26   8.21590444e+08  8.35146720e+08  6.57e-03 1.94e-09  5.24e+01     7s
+  27   8.22538939e+08  8.33630280e+08  5.23e-03 2.75e-09  4.29e+01     7s
+  28   8.23718784e+08  8.31540224e+08  3.88e-03 3.07e-09  3.02e+01     7s
+  29   8.25253926e+08  8.30852175e+08  2.37e-03 2.84e-09  2.16e+01     7s
+  30   8.26156762e+08  8.29948688e+08  1.58e-03 3.47e-09  1.47e+01     7s
+  31   8.27036582e+08  8.29464606e+08  9.47e-04 3.35e-09  9.38e+00     7s
+  32   8.27423849e+08  8.29138097e+08  6.86e-04 4.45e-09  6.63e+00     7s
+  33   8.27616012e+08  8.28933650e+08  5.55e-04 4.52e-09  5.09e+00     8s
+  34   8.27814431e+08  8.28773126e+08  4.28e-04 4.53e-09  3.71e+00     8s
+  35   8.28058144e+08  8.28598746e+08  2.71e-04 5.36e-09  2.09e+00     8s
+  36   8.28357096e+08  8.28516824e+08  7.70e-05 5.36e-09  6.18e-01     8s
+  37   8.28425362e+08  8.28499057e+08  3.58e-05 4.85e-09  2.85e-01     8s
+  38   8.28461336e+08  8.28488944e+08  1.45e-05 6.35e-09  1.07e-01     8s
+  39   8.28484821e+08  8.28486285e+08  6.92e-07 5.63e-09  5.66e-03     8s
+  40   8.28486052e+08  8.28486063e+08  5.39e-08 7.87e-09  4.31e-05     8s
+  41   8.28486053e+08  8.28486054e+08  3.41e-09 6.70e-09  6.93e-07     9s
+  42   8.28486053e+08  8.28486053e+08  4.61e-11 4.84e-09  6.93e-10     9s
+
+Barrier solved model in 42 iterations and 8.83 seconds (7.98 work units)
+Optimal objective 8.28486053e+08
+
+
+Root crossover log...
+
+    3777 DPushes remaining with DInf 0.0000000e+00                 9s
+       0 DPushes remaining with DInf 0.0000000e+00                 9s
+
+     444 PPushes remaining with PInf 0.0000000e+00                 9s
+       0 PPushes remaining with PInf 0.0000000e+00                 9s
+
+  Push phase complete: Pinf 0.0000000e+00, Dinf 7.6386890e-08      9s
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+    4191    8.2848605e+08   0.000000e+00   0.000000e+00      9s
+Concurrent spin time: 0.22s
+
+Solved with barrier
+    4191    8.2848605e+08   0.000000e+00   0.000000e+00      9s
+
+Root relaxation: objective 8.284861e+08, 4191 iterations, 6.95 seconds (4.70 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 8.2849e+08    0   41          - 8.2849e+08      -     -    9s
+H    0     0                    8.234928e+08 8.2849e+08  0.61%     -   13s
+     0     0 8.2848e+08    0   43 8.2349e+08 8.2848e+08  0.61%     -   14s
+H    0     0                    8.236445e+08 8.2848e+08  0.59%     -   16s
+     0     0 8.2848e+08    0   44 8.2364e+08 8.2848e+08  0.59%     -   17s
+H    0     0                    8.241381e+08 8.2848e+08  0.53%     -   18s
+     0     0 8.2848e+08    0   52 8.2414e+08 8.2848e+08  0.53%     -   19s
+H    0     0                    8.264093e+08 8.2848e+08  0.25%     -   23s
+
+Cutting planes:
+  Cover: 1
+  Implied bound: 1
+  MIR: 7
+  Flow cover: 8
+
+Explored 1 nodes (4395 simplex iterations) in 23.31 seconds (19.88 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 4: 8.26409e+08 8.24138e+08 8.23644e+08 8.23493e+08 
+
+Optimal solution found (tolerance 5.00e-03)
+Best objective 8.264093087498e+08, best bound 8.284826950493e+08, gap 0.2509%
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 03:22:43 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 14527 rows, 141215 columns and 476126 nonzeros
+Model fingerprint: 0x09059dea
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 10519 rows and 33862 columns
+Presolve time: 0.93s
+Presolved: 4008 rows, 107353 columns, 333696 nonzeros
+Variable types: 79427 continuous, 27926 integer (27926 binary)
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+Concurrent spin time: 0.00s
+
+Solved with dual simplex
+
+Root relaxation: infeasible, 6567 iterations, 1.15 seconds (0.96 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 infeasible    0               - infeasible      -     -    2s
+
+Explored 1 nodes (6567 simplex iterations) in 2.39 seconds (2.71 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 12103 rows and 49357 columns
+Presolve time: 0.79s
+Presolved: 2424 rows, 91858 columns, 300494 nonzeros
+Variable types: 64514 continuous, 27344 integer (27344 binary)
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+Concurrent spin time: 0.00s
+
+Solved with primal simplex
+
+Root relaxation: infeasible, 8089 iterations, 0.39 seconds (0.30 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 infeasible    0               - infeasible      -     -    1s
+
+Explored 1 nodes (8089 simplex iterations) in 1.54 seconds (1.80 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Computing Irreducible Inconsistent Subsystem (IIS)...
+
+           Constraints          |            Bounds           |  Runtime
+      Min       Max     Guess   |   Min       Max     Guess   |
+--------------------------------------------------------------------------
+        0      4506         -         0    219928         -           2s
+        0       518         -         0     66754         -           5s
+       10       518         -         0     66754         -          10s
+       25       518       518         0     66754         -          15s
+       37       516       516         0     66748         -          20s
+       71       513       371         0     66738         -          25s
+      114       509       401         0     66713         -          30s
+      114       509         -         0     66713         -          30s
+
+Non-minimal IIS computed: 509 constraints, 66713 bounds
+IIS runtime: 30.25 seconds (21.18 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 03:28:06 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 14311 rows, 141215 columns and 473623 nonzeros
+Model fingerprint: 0x9d220b26
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 10303 rows and 31638 columns
+Presolve time: 0.93s
+Presolved: 4008 rows, 109577 columns, 340594 nonzeros
+Variable types: 80957 continuous, 28620 integer (28620 binary)
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+Concurrent spin time: 0.09s
+
+Solved with dual simplex
+
+Root relaxation: infeasible, 6548 iterations, 1.14 seconds (1.01 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 infeasible    0               - infeasible      -     -    2s
+
+Explored 1 nodes (6548 simplex iterations) in 2.38 seconds (2.80 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 11887 rows and 47302 columns
+Presolve time: 0.77s
+Presolved: 2424 rows, 93913 columns, 306915 nonzeros
+Variable types: 65875 continuous, 28038 integer (28038 binary)
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+Concurrent spin time: 0.00s
+
+Solved with primal simplex
+
+Root relaxation: infeasible, 5732 iterations, 0.29 seconds (0.26 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 infeasible    0               - infeasible      -     -    1s
+
+Explored 1 nodes (5732 simplex iterations) in 1.41 seconds (1.79 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Computing Irreducible Inconsistent Subsystem (IIS)...
+
+           Constraints          |            Bounds           |  Runtime
+      Min       Max     Guess   |   Min       Max     Guess   |
+--------------------------------------------------------------------------
+        0      4364         -         0    219928         -           1s
+        0       246         -         0     65986         -           5s
+       23       246         -         0     65986         -          10s
+       40       245       245         0     65986         -          15s
+       91       241       201         0     65986         -          21s
+      128       238       205         0     65986         -          25s
+      167       234       207         0     65986         -          30s
+      167       234         -         0     65986         -          30s
+
+Non-minimal IIS computed: 234 constraints, 65986 bounds
+IIS runtime: 30.17 seconds (18.85 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 03:31:10 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 14311 rows, 141215 columns and 473623 nonzeros
+Model fingerprint: 0x3076aede
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 10303 rows and 31638 columns
+Presolve time: 0.87s
+Presolved: 4008 rows, 109577 columns, 340594 nonzeros
+Variable types: 80957 continuous, 28620 integer (28620 binary)
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+Concurrent spin time: 0.09s
+
+Solved with dual simplex
+
+Root relaxation: infeasible, 6548 iterations, 1.23 seconds (1.01 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 infeasible    0               - infeasible      -     -    2s
+
+Explored 1 nodes (6548 simplex iterations) in 2.41 seconds (2.80 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 11887 rows and 47302 columns
+Presolve time: 0.85s
+Presolved: 2424 rows, 93913 columns, 306915 nonzeros
+Variable types: 65875 continuous, 28038 integer (28038 binary)
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+Concurrent spin time: 0.00s
+
+Solved with primal simplex
+
+Root relaxation: infeasible, 5732 iterations, 0.31 seconds (0.26 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 infeasible    0               - infeasible      -     -    1s
+
+Explored 1 nodes (5732 simplex iterations) in 1.47 seconds (1.79 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Computing Irreducible Inconsistent Subsystem (IIS)...
+
+           Constraints          |            Bounds           |  Runtime
+      Min       Max     Guess   |   Min       Max     Guess   |
+--------------------------------------------------------------------------
+        0      4364         -         0    219928         -           1s
+        0       246         -         0     65986         -           5s
+       16       246         -         0     65986         -          10s
+       31       245       245         0     65986         -          15s
+       55       244       207         0     65986         -          20s
+      104       240       204         0     65986         -          26s
+      139       237       206         0     65986         -          30s
+      139       237         -         0     65986         -          30s
+
+Non-minimal IIS computed: 237 constraints, 65986 bounds
+IIS runtime: 30.03 seconds (16.47 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 03:45:12 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 14311 rows, 141215 columns and 408119 nonzeros
+Model fingerprint: 0x9e63f102
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 10301 rows and 48066 columns
+Presolve time: 0.68s
+Presolved: 4010 rows, 93149 columns, 303582 nonzeros
+Variable types: 72342 continuous, 20807 integer (20807 binary)
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+Concurrent spin time: 0.02s
+
+Solved with dual simplex
+
+Root relaxation: infeasible, 1241 iterations, 0.32 seconds (0.26 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 infeasible    0               - infeasible      -     -    1s
+
+Explored 1 nodes (1241 simplex iterations) in 1.32 seconds (1.44 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 11885 rows and 64736 columns
+Presolve time: 0.53s
+Presolved: 2426 rows, 76479 columns, 266952 nonzeros
+Variable types: 56326 continuous, 20153 integer (20153 binary)
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+Concurrent spin time: 0.00s
+
+Solved with primal simplex
+
+Root relaxation: infeasible, 8502 iterations, 0.27 seconds (0.24 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 infeasible    0               - infeasible      -     -    1s
+
+Explored 1 nodes (8502 simplex iterations) in 1.16 seconds (1.29 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Computing Irreducible Inconsistent Subsystem (IIS)...
+
+           Constraints          |            Bounds           |  Runtime
+      Min       Max     Guess   |   Min       Max     Guess   |
+--------------------------------------------------------------------------
+        0      4364         -         0    219928         -           1s
+        0       292         -         0     65984         -           6s
+        6       292         -         0     65984         -          10s
+       23       292         -         0     65984         -          15s
+       63       290       238         0     65984         -          21s
+       95       287       225         0     65984         -          26s
+      134       283       233         0     65984         -          30s
+      134       283         -         0     65984         -          30s
+
+Non-minimal IIS computed: 283 constraints, 65984 bounds
+IIS runtime: 30.33 seconds (20.64 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 03:52:23 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 14311 rows, 141215 columns and 473623 nonzeros
+Model fingerprint: 0x81c502c8
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 10303 rows and 31638 columns
+Presolve time: 0.88s
+Presolved: 4008 rows, 109577 columns, 340594 nonzeros
+Variable types: 80957 continuous, 28620 integer (28620 binary)
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+Concurrent spin time: 0.14s
+
+Solved with dual simplex
+
+Root relaxation: infeasible, 6548 iterations, 1.11 seconds (1.01 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 infeasible    0               - infeasible      -     -    2s
+
+Explored 1 nodes (6548 simplex iterations) in 2.29 seconds (2.80 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 11887 rows and 47302 columns
+Presolve time: 0.75s
+Presolved: 2424 rows, 93913 columns, 306915 nonzeros
+Variable types: 65875 continuous, 28038 integer (28038 binary)
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+Concurrent spin time: 0.00s
+
+Solved with primal simplex
+
+Root relaxation: infeasible, 5732 iterations, 0.30 seconds (0.26 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 infeasible    0               - infeasible      -     -    1s
+
+Explored 1 nodes (5732 simplex iterations) in 1.39 seconds (1.79 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Computing Irreducible Inconsistent Subsystem (IIS)...
+
+           Constraints          |            Bounds           |  Runtime
+      Min       Max     Guess   |   Min       Max     Guess   |
+--------------------------------------------------------------------------
+        0      4364         -         0    219928         -           1s
+        0       246         -         0     65986         -           5s
+       22       246         -         0     65986         -          10s
+       39       245       245         0     65986         -          15s
+       79       242       201         0     65986         -          20s
+      128       238       205         0     65986         -          25s
+      164       235       207         0     65986         -          30s
+      164       235         -         0     65986         -          30s
+
+Non-minimal IIS computed: 235 constraints, 65986 bounds
+IIS runtime: 30.24 seconds (18.59 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 03:55:59 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 14311 rows, 141215 columns and 287543 nonzeros
+Model fingerprint: 0x774dbef7
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 9289 rows and 0 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.04 seconds (0.01 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 9289 rows and 0 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds (0.01 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.07 seconds (0.01 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 19:08:20 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 14311 rows, 141215 columns and 287543 nonzeros
+Model fingerprint: 0x0da7ce53
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 9289 rows and 0 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds (0.01 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 9289 rows and 0 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.07 seconds (0.01 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.08 seconds (0.01 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 19:09:37 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 14311 rows, 141215 columns and 287543 nonzeros
+Model fingerprint: 0xd2cd4e5a
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 9289 rows and 0 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.03 seconds (0.01 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 9289 rows and 0 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds (0.01 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.07 seconds (0.01 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 19:10:14 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 14311 rows, 141215 columns and 287543 nonzeros
+Model fingerprint: 0x1c485d9b
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 9289 rows and 0 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.04 seconds (0.01 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 9289 rows and 0 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds (0.01 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.06 seconds (0.01 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 19:12:14 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 14280 rows, 141215 columns and 287543 nonzeros
+Model fingerprint: 0x5e9baca1
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 9289 rows and 0 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.05 seconds (0.01 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 9289 rows and 0 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds (0.01 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.07 seconds (0.01 work units)
+
+Gurobi 10.0.1 (win64) logging started Tue May  9 19:21:41 2023
+
+Set parameter LogFile to value "logFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+
+Optimize a model with 14280 rows, 141215 columns and 287543 nonzeros
+Model fingerprint: 0x77a6a910
+Variable types: 110204 continuous, 31011 integer (31011 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 9289 rows and 0 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.05 seconds (0.01 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 9289 rows and 0 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds (0.01 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.07 seconds (0.01 work units)

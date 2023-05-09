@@ -62,7 +62,10 @@ def get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vess
     arc_waiting_times, arc_sailing_times, sailing_costs, loading_port_ids, unloading_days, allowed_waiting, operational_times, fuel_price,
     vessel_laden_speed_profile, vessel_ballast_speed_profile):
     maintenance_arcs = []
+    #print("Vessel max speed: ", vessel_max_speed[vessel])
+    #print("Vessel min speed: ", vessel_min_speed[vessel])
     for unloading in vessel_port_acceptances[vessel]:
+        #print("Distance: ", distances[port_locations[unloading],port_locations[maintenance_vessel_ports[vessel]]])
         if des_contract_ids.__contains__(unloading):
             for t in range(vessel_available_days[vessel][0], maintenance_start_times[vessel]+1):
                 m_to_arc = (vessel, unloading, t, maintenance_vessel_ports[vessel], maintenance_start_times[vessel])
@@ -155,6 +158,7 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
     arc_waiting_times, arc_sailing_times, sailing_costs, loading_port_ids, unloading_days, allowed_waiting, operational_times, fuel_price,
     vessel_laden_speed_profile, vessel_ballast_speed_profile)
         feasible_arcs.extend(maintenance_arcs)
+        #print(maintenance_arcs)
     if modelType == 'charterOut':
         charter_out_arcs = get_charter_out_arcs(vessel, loading_days, sailing_costs, des_contract_ids, maintenance_ids,
                             loading_port_ids,vessel_available_days)

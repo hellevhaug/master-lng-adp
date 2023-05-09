@@ -43,7 +43,10 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
     
     model = relax_horizon(model, prediction_horizon, horizon_length, iteration_count)
 
-    model = init_objective_and_constraints(model, x, z, w, g, s, horizon_length, prediction_horizon, \
+
+    while horizon_length * iteration_count <= len(loading_days): 
+
+        model = init_objective_and_constraints(model, x, z, w, g, s, horizon_length, prediction_horizon, \
         iteration_count, last_inventory, fob_ids,fob_days,loading_port_ids,\
         loading_days,des_contract_ids,spot_port_ids,production_quantities,\
         fob_revenues,fob_demands,des_contract_revenues,\
@@ -57,8 +60,6 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
         fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
         fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
         charter_vessel_lower_capacity)
-
-    while horizon_length * iteration_count <= len(loading_days): 
 
         print("Constraints in total: ", len(model.getConstrs()))
         #print("model objective: ", model.getObjective())
@@ -126,12 +127,14 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
 
             if prediction_horizon != "ALL": 
                 model, x, z, w, g, s = add_variables_for_next_prediction_horizon(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon, loading_days, des_contract_ids, des_spot_ids, loading_port_ids, production_quantities)
-        '''
+        
         constraints = model.getConstrs()
         # Remove each constraint from the model
         for constraint in constraints:
             model.remove(constraint)
-        '''
+
+        model.update()
+        
         iteration_count += 1
 
         

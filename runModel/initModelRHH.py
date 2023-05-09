@@ -254,7 +254,7 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
 
     # Constraint 5.6
-    model.addConstrs(init_flow_constr(x, all_days, vessel_ids, port_ids), name='flow')
+    model.addConstrs(init_flow_constr(x, all_days, vessel_ids, port_ids, stop_time), name='flow')
 
 
     # Constraint 5.61

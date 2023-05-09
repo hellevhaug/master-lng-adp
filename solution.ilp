@@ -3,6 +3,6 @@
 Maximize
  
 Subject To
- fob_max_contracts[FOBCON_1-3]: = 1
+ lower_demand[DESCON_1,6532]: >= 1.42e+06
 Bounds
 End
