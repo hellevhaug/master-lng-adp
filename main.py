@@ -157,14 +157,14 @@ group1 = 'A-2L-C'
 filename1 = 'A-2L-6U-8F-15V-120D'
 constructionGroup = 'N-1L-45D'
 constructionFile = 'N-1L-6U-13F-18V-45D-a'
-runtime = 60*60*4
+runtime = 60*60*3
 modelType = BASIC_MODEL
 
 #run_one_instance(group1, filename1, runtime, modelType)
 #test_init_model(group, filename, modelType)
-#run_all_model_types(group1, filename1, runtime)
+#run_all_model_types(group, filename, runtime)
 #run_all_model_types_for_group(group1, runtime)
-#run_group(group, runtime, modelType)
+run_group(group, runtime, modelType)
 #run_all_files(runtime, modelType)
 #run_all_files_all_model_types(runtime)
 
