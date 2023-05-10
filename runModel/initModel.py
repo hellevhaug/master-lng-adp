@@ -250,11 +250,16 @@ def initialize_basic_model(group, filename, heuristic):
     model.addConstrs(init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
     des_spot_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
 
+    print("\n--- Done initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
+
     if heuristic:
+        print("\n--- Starting heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
         x1, z1, s1, w1, g1 = find_initial_solution(x, z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
         des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
         production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
         fob_loading_ports, maintenance_vessels, fob_spot_art_ports)
+
+        print("\n--- Finished heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
 
         for (v,i,t,j,t_) in x.keys():
             x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
@@ -268,8 +273,6 @@ def initialize_basic_model(group, filename, heuristic):
 
         for (i,t) in s.keys():
             s[i,t].VarHintVal = s1[i,t]
-
-    print("\n--- Done initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
     return model # This line must be moved to activate the extensions
 

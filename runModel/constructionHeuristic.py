@@ -65,6 +65,9 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
                         amount_picked_up[fob_contract_id] = fob_amount
                         fob_satisfied = True
                         break
+
+    print('(finished with FOB)')
+
     # Demand is not satisfied for all contracts yet
     demand_is_satisfied = False
 
@@ -97,8 +100,7 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
                                 #print(f'DES demand for {partition} updated, amount chartered: {amount_chartered[partition]}')
                                 demand_is_satisfied = check_if_demand_is_satisfied(amount_chartered, des_contract, lower_partition_demand)
 
-    for (loading_port, day), value in s.items():
-        print(loading_port, day, value)
+    print('(finished with DES)')
     
     for (loading_port, day), value in s.items():
         if value > max_inventory[loading_port]:
@@ -107,7 +109,9 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
                     z[fake_fob, day] = 1
                     update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
     
+    print('(finished with inventory')
     
+    """
     for (loading_port, day), value in s.items():
         print(loading_port, day, value)
     
@@ -118,6 +122,7 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
     for (f,t), value in z.items():
         if value != 0:
             print(f,t, value)
+    """
 
     return x, z, s, w, g
 
@@ -203,13 +208,11 @@ def check_feasible_fob_move(day, loading_days, s, fob_loading_port, fob_amount, 
     # inventory constraints, never below minimum inventory
     for t in range(day, loading_days[-1]+1):
         if s[fob_loading_port, t] - fob_amount < min_inventory[fob_loading_port]:
-            print(f'inventory problems with fob_contract {fob_contract_id}, tried day {day}')
             return False
     
     # berth constraints for the loading port, never more than number of berth g vars per day
     if (sum(value for (i,t,j), value in w.items() if i == fob_loading_port and t == day)+sum(value for (z,t), value
     in z.items() if t==day and fob_loading_port in fob_loading_ports[z])+1 > number_of_berths[fob_loading_port]):
-        print(f'berth problems with fob_contract {fob_contract_id}, tried day {day}')
         return False
     
     # constraints are not violated
