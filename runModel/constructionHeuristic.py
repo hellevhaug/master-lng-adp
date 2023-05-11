@@ -58,7 +58,8 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
         fob_loading_port = fob_loading_ports[fob_contract_id][0]
         count = 0
         while not fob_satisfied:
-            for day in loading_days:
+            fob_random_loading_days = generate_random_loading_days(loading_days)
+            for day in fob_random_loading_days:
                 if day in fob_days[fob_contract_id]:
                     fob_amount = fob_demands[fob_contract_id]
                     if check_feasible_fob_move(day, loading_days, s, fob_loading_port, fob_amount, min_inventory, w, z, 
