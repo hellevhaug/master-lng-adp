@@ -81,8 +81,8 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
             reset_g_vars(g_total_altered_vars, g, w)
             tot_count = 0
         # Does the contracts in random order
-        random_des_contracts= random.shuffle(des_contract_ids)
-        for des_contract in random_des_contracts:
+        random.shuffle(des_contract_ids)
+        for des_contract in des_contract_ids:
             des_loading_port = des_loading_ports[des_contract][0]
             amount_chartered = {partition:0 for partition in des_contract_partitions[des_contract]}
             # Demand is not satisfied for all partitions yet
