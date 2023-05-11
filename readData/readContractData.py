@@ -30,7 +30,7 @@ def read_all_contracts(data, port_types, port_locations, location_ports, loading
     fob_revenues = {}
     fob_demands = {}
     fob_days = {}
-    fob_loading_port = {}
+    fob_loading_ports = {}
 
     for contract in data['contracts']:
 
@@ -54,10 +54,10 @@ def read_all_contracts(data, port_types, port_locations, location_ports, loading
             if len(des_contract_partitions[contract['id']])!=len(set(des_contract_partitions[contract['id']])):
                 contract_id = contract['id']
                 raise ValueError(f'There is duplicates in long-term DES partitions for {contract_id}, fix data')
-            
+
         elif contract['id'][:3]=='FOB':
 
-            fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days = read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports)
+            fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_ports = read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports)
 
     if len(des_contract_ids)!=len(set(des_contract_ids)):
         raise ValueError('There is duplicates in long-term DES contracts, fix data')
@@ -69,13 +69,13 @@ def read_all_contracts(data, port_types, port_locations, location_ports, loading
     last_day = (last_day-loading_from_time).days + 1
     all_days = [i for i in range(1, last_day+1)]
 
-    return port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days
+    return port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_ports, unloading_days, last_unloading_day, all_days
 
 
 def read_des_contracts(contract, last_day, loading_from_time, partition_names, partition_days, upper_partition_demand, 
 lower_partition_demand, unloading_days, des_biggest_demand, des_biggest_partition, des_contract_revenues, 
 des_contract_partitions, earliest_unloading_day, last_unloading_day):
-    
+
     # Sets for unloading days sets per contract 
     earliest_partition_unloading_day = earliest_unloading_day
     last_partition_unloading_day = loading_from_time
@@ -103,11 +103,11 @@ des_contract_partitions, earliest_unloading_day, last_unloading_day):
         
         if partition_from_time < earliest_partition_unloading_day:
             earliest_partition_unloading_day = partition_from_time
-        
+
         partition_to_time = datetime.strptime(partition['to'].split('T')[0], '%Y-%m-%d') # End time of contract
         if partition_to_time>last_unloading_day:
             last_unloading_day = partition_to_time
-
+        
         if partition_to_time > last_partition_unloading_day:
             last_partition_unloading_day = partition_to_time
 
@@ -122,8 +122,8 @@ des_contract_partitions, earliest_unloading_day, last_unloading_day):
     if(last_unloading_day>last_day):
         last_day=last_unloading_day
     
-    unloading_days[contract['id']] = [i for i in range((earliest_unloading_day-loading_from_time).days + 1,
-    (earliest_unloading_day-loading_from_time).days + 2 + (last_unloading_day-earliest_unloading_day).days)]
+    unloading_days[contract['id']] = [i for i in range((earliest_partition_unloading_day-loading_from_time).days + 1,
+    (earliest_partition_unloading_day-loading_from_time).days + 2 + (last_partition_unloading_day-earliest_partition_unloading_day).days)]
     
     if len(contract['salesPrices'])==1:
         for t in unloading_days[contract['id']]:
@@ -203,9 +203,9 @@ def convert_loading_ports(des_loading_ports):
             des_loading_ports[contract] = ['FU']
         elif loading_port == LOADING_DI:
             des_loading_ports[contract] = ['DI']
-        
         else:
             raise ValueError('This is not a valid loading port')
+
 
 def set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids):
     for des_spot_id in des_spot_ids:

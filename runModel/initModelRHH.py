@@ -364,8 +364,13 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
 
     # Constraint 5.3
+
+    print(horizon_length, type(horizon_length))
+    print(iteration_count, type(iteration_count))
+    print(stop_time, type(stop_time))
+    start_time = (horizon_length*(iteration_count+1))
     model.addConstrs(init_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, horizon_length, iteration_count, fob_loading_ports, des_spot_ids), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids, horizon_length, iteration_count), name='inventory_control')
 
 
     # Constraint 5.4
