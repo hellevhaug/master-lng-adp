@@ -87,6 +87,14 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
                         amount_chartered = calculate_total_demand_delivered(des_contract, des_contract_partitions,
                                                     sailing_time_charter,partition_days, g)
                         update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
+                    if count > 200: 
+                        for (loading_port, day), value in s.items():
+                            print(loading_port, day, value)
+    
+                        for (i,t,j), value in g.items():
+                            if value != 0:
+                                print(i,t,j, value)
+                        raise ValueError('Partitions is wrong')
                     g_altered_vars = []
                     for day in loading_days:
                         if day+sailing_time_charter[des_loading_port, des_contract] in partition_days[partition]:
@@ -192,13 +200,14 @@ def check_feasible_charter_move(day, partition, des_contract, des_loading_port, 
     
     # minimum spread, assumes that there is one charter boat with one speed and therefore can look at t
     if sum(value for (i,t,j), value in w.items() if j == des_contract and t >= day and t <= day + minimum_spread) +1 > 1:
-        print('spread problems')
+        #print('spread problems')
         return False
     
     # never above upper demand for partition
     if amount_chartered[partition] + charter_amount*0.9 > upper_partition_demand[des_contract, partition]:
-        print('inventory problems')
-        return False
+        print(partition, amount_chartered[partition])
+        print('demand problems')
+        #return False
 
     else:
         return True
