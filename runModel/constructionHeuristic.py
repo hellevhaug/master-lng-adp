@@ -28,10 +28,13 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
 
     # Setting all arcs except the arcs indicating the vessel is not used to zero
     for (vessel, port1, day1, port2, day2), value in x.items():
-        if port1 == 'ART_PORT' and day1 == 0 and port2 == 'EXIT_PORT' and day2 == all_days[-1]+1:
-            x[vessel, port1, day1, port2, day2] = 1
+        if maintenance_vessels.__contains__(vessel):
+            pass
         else:
-            x[vessel, port1, day1, port2, day2] = 0
+            if port1 == 'ART_PORT' and day1 == 0 and port2 == 'EXIT_PORT' and day2 == all_days[-1]+1:
+                x[vessel, port1, day1, port2, day2] = 1
+            else:
+                x[vessel, port1, day1, port2, day2] = 0
     
     # Producing all the LNG and initializing all the storage 
     for (loading_port, day), value in s.items():
@@ -68,14 +71,13 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
 
     print('(finished with FOB)')
 
-    # Demand is not satisfied for all contracts yet
-    demand_is_satisfied = False
-
     # Starting setting g-variables t
-    while not demand_is_satisfied:
-        for des_contract in des_contract_ids:
-            des_loading_port = des_loading_ports[des_contract][0]
-            amount_chartered = {partition:0 for partition in des_contract_partitions[des_contract]}
+    for des_contract in des_contract_ids:
+        des_loading_port = des_loading_ports[des_contract][0]
+        amount_chartered = {partition:0 for partition in des_contract_partitions[des_contract]}
+        # Demand is not satisfied for all contracts yet
+        demand_is_satisfied = False
+        while not demand_is_satisfied:
             for partition in des_contract_partitions[des_contract]:
                 count = 0
                 while amount_chartered[partition] < lower_partition_demand[des_contract,partition]:
@@ -97,7 +99,8 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
                                 update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
                                 amount_chartered = calculate_total_demand_delivered(des_contract, des_contract_partitions,
                                                     sailing_time_charter,partition_days, g)
-                                #print(f'DES demand for {partition} updated, amount chartered: {amount_chartered[partition]}')
+                                print(f'DES demand for {partition} updated, amount chartered: {amount_chartered[partition]}')
+                                print(amount_chartered)
                                 demand_is_satisfied = check_if_demand_is_satisfied(amount_chartered, des_contract, lower_partition_demand)
 
     print('(finished with DES)')
@@ -178,23 +181,23 @@ def check_feasible_charter_move(day, partition, des_contract, des_loading_port, 
     # inventory constraints, never below minimum inventory
     for t in range(day, loading_days[-1]+1):
         if s[des_loading_port, t] - charter_amount < min_inventory[des_loading_port]:
-            # print('inventory problems')
+            #print('inventory problems')
             return False
     
     # berth constraints for the loading port, never more than number of berth g vars per day
     if (sum(value for (i,t,j), value in w.items() if i ==des_loading_port and t == day)+sum(value for (z,t), value
     in z.items() if des_loading_port in fob_loading_ports[z] and t == day)+1 > number_of_berths[des_loading_port]):
-        # print('berth problems')
+        #print('berth problems')
         return False
     
     # minimum spread, assumes that there is one charter boat with one speed and therefore can look at t
     if sum(value for (i,t,j), value in w.items() if j == des_contract and t >= day and t <= day + minimum_spread) +1 > 1:
-        # print('spread problems')
+        print('spread problems')
         return False
     
     # never above upper demand for partition
     if amount_chartered[partition] + charter_amount*0.9 > upper_partition_demand[des_contract, partition]:
-        # print('inventory problems')
+        print('inventory problems')
         return False
 
     else:

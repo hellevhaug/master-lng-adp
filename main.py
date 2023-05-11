@@ -151,8 +151,8 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group = 'N-1L-D'
-filename = 'N-1L-14U-14F-23V-120D'
+group = 'N-1L-B'
+filename = 'N-1L-13U-10F-23V-120D'
 group1 = 'A-2L-B'
 filename1 = 'A-2L-6U-20F-15V-120D'
 constructionGroup = 'N-1L-45D'
@@ -160,14 +160,14 @@ constructionFile = 'N-1L-6U-13F-18V-45D-a'
 runtime = 60*60*4
 modelType = BASIC_MODEL
 
-#run_one_instance(group1, filename1, runtime, modelType)
+#run_one_instance(group, filename1, runtime, modelType)
 #test_init_model(group, filename, modelType)
-#run_all_model_types(group1, filename1, runtime)
+run_all_model_types(group, filename, runtime)
 #run_all_model_types_for_group(group1, runtime)
 #run_group(group, runtime, modelType)
 #run_all_files(runtime, modelType)
 #run_all_files_all_model_types(runtime)
 
 #run_one_instance(constructionGroup, constructionFile,# runtime, modelType)
-#run_one_instance_heuristic(constructionGroup, constructionFile, runtime, modelType)
-run_one_instance_heuristic(group, filename, runtime, modelType)
+run_one_instance_heuristic(constructionGroup, constructionFile, runtime, modelType)
+#run_one_instance_heuristic(group, filename, runtime, modelType)
