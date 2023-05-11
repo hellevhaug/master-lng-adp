@@ -162,12 +162,12 @@ modelType = BASIC_MODEL
 
 #run_one_instance(group, filename1, runtime, modelType)
 #test_init_model(group, filename, modelType)
-run_all_model_types(group, filename, runtime)
+#run_all_model_types(group, filename, runtime)
 #run_all_model_types_for_group(group1, runtime)
 #run_group(group, runtime, modelType)
 #run_all_files(runtime, modelType)
 #run_all_files_all_model_types(runtime)
 
 #run_one_instance(constructionGroup, constructionFile,# runtime, modelType)
-run_one_instance_heuristic(constructionGroup, constructionFile, runtime, modelType)
-#run_one_instance_heuristic(group, filename, runtime, modelType)
+#run_one_instance_heuristic(constructionGroup, constructionFile, runtime, modelType)
+run_one_instance_heuristic(group, filename, runtime, modelType)
