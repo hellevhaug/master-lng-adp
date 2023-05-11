@@ -185,7 +185,7 @@ def read_des_loading_ports(data, hasLoadingPortDesData, loading_port_ids):
             for partition in contract['desRequests']:
                 if not contract['id'] in des_loading_ports:
                     if hasLoadingPortDesData == True:
-                        des_loading_ports[contract['id']] = [partition['storageId']]
+                        des_loading_ports[contract['id']] = partition['storageId']
                     elif hasLoadingPortDesData == False:
                         des_loading_ports[contract['id']] = loading_port_ids
                 else:
