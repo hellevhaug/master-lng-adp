@@ -73,13 +73,14 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
 
     # Demand is not satisfied for all contracts yet 
     all_demand_is_satisfied = False
+    tot_count = 0
     while not all_demand_is_satisfied:
-        tot_count = 0
+        if tot_count > 3:
+            reset_g_vars(g_total_altered_vars, g, w)
+            update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
+            tot_count = 0
         print(f'Iteration for all contracts number: {tot_count}')
         g_total_altered_vars = []
-        if tot_count > 10:
-            reset_g_vars(g_total_altered_vars, g, w)
-            tot_count = 0
         # Does the contracts in random order
         random.shuffle(des_contract_ids)
         for des_contract in des_contract_ids:
