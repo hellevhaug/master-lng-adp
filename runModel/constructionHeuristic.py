@@ -74,6 +74,10 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
     all_demand_is_satisfied = False
     while not all_demand_is_satisfied:
         count = 0
+        g_total_altered_vars = []
+        if count > 10:
+            reset_g_vars(g_total_altered_vars, g, w)
+            count = 0
         for des_contract in des_contract_ids:
             des_loading_port = des_loading_ports[des_contract][0]
             amount_chartered = {partition:0 for partition in des_contract_partitions[des_contract]}
@@ -85,13 +89,15 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
                     count += 1
                     if count > 1:
                         reset_g_vars(g_altered_vars, g, w)
+                        g_total_altered_vars = [i for i in g_total_altered_vars if i not in g_altered_vars]
                         amount_chartered = calculate_total_demand_delivered(des_contract, des_contract_partitions,
                                                     sailing_time_charter,partition_days, g)
                         update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
                         if count > 500: 
                             break
                     g_altered_vars = []
-                    for day in loading_days:
+                    random_loading_days = generate_random_loading_days(loading_days)
+                    for day in random_loading_days:
                         if day+sailing_time_charter[des_loading_port, des_contract] in partition_days[partition]:
                             charter_amount = random.randrange(lower_charter_amount, upper_charter_amount)
                             if check_feasible_charter_move(day, partition, des_contract, des_loading_port, charter_amount, min_inventory, s, w,
@@ -99,6 +105,7 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
                                 g[des_loading_port, day, des_contract] = charter_amount
                                 w[des_loading_port, day, des_contract] = 1
                                 g_altered_vars.append((des_loading_port, day, des_contract))
+                                g_total_altered_vars.append((des_loading_port, day, des_contract))
                                 update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
                                 amount_chartered = calculate_total_demand_delivered(des_contract, des_contract_partitions,
                                                     sailing_time_charter,partition_days, g)
@@ -237,6 +244,18 @@ def reset_g_vars(g_altered_vars, g, w):
     for (i,t,j) in g_altered_vars:
         g[i,t,j] = 0
         w[i,t,j] = 0
+
+
+def generate_random_loading_days(loading_days):
+
+    random_loading_days = []
+
+    while loading_days:
+        random_day = random.choice(loading_days)  # Randomly select a day
+        random_loading_days.append(random_day)  # Add the chosen day to the list of chosen days
+        loading_days.remove(random_day)
+    
+    return random_loading_days
 
 
 def set_initial_solution(model, solution):
