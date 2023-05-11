@@ -11,46 +11,44 @@ tank_leftover_value, vessel_available_days, des_contract_ids, sailing_costs, cha
     for f in fob_ids for t in fob_days[f] if t <= stop_time) + 
     gp.quicksum(des_contract_revenues[j,t_]*vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_] 
     for v in vessel_ids for i in loading_port_ids for t in loading_days for j in des_spot_ids for t_ in all_days 
-    if (v,i,t,j,t_) in x.keys()) + 
+    if (v,i,t,j,t_) in x.keys() and (j,t_) in des_contract_revenues.keys()) + #her har vi kun generert x som har t i hor+pred_hor, så ingen edits trengs
     # !!!NEW!!!
     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off)*des_contract_revenues[j,t+sailing_time_charter[i,j]] 
-    for j in des_spot_ids for i in loading_port_ids for t in loading_days if (t+sailing_time_charter[i,j]) in unloading_days[j])
+    for j in des_spot_ids for i in loading_port_ids for t in loading_days if (i,t,j) in g.keys())
     + gp.quicksum(tank_leftover_value[i]*s[i, stop_time] for i in loading_port_ids) +
     gp.quicksum(vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*des_contract_revenues[j,t_]*x[v,i,t,j,t_]
     for j in des_contract_ids for v in vessel_ids for i in loading_port_ids for t in vessel_available_days[v] for t_ in unloading_days[j] # Left-hand sums
     if (v,i,t,j,t_) in x.keys()) + 
     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off)*des_contract_revenues[j,t+sailing_time_charter[i,j]] 
-    for j in des_contract_ids for i in loading_port_ids for t in loading_days if (t+sailing_time_charter[i,j]) in unloading_days[j] if t <= stop_time) -
+    for j in des_contract_ids for i in loading_port_ids for t in loading_days if (i,t,j) in g.keys()) -
     gp.quicksum(sailing_costs[v,i,t,j,t_]*x[v,i,t,j,t_] for v,i,t,j,t_ in x.keys())-
-    gp.quicksum(charter_total_cost[i,t,j]*w[i,t,j] for i in loading_port_ids for t in loading_days if t <= stop_time for j in (des_contract_ids+des_spot_ids)))
+    gp.quicksum(charter_total_cost[i,t,j]*w[i,t,j] for i in loading_port_ids for t in loading_days for j in (des_contract_ids+des_spot_ids) if (i,t,j) in w.keys()))
 
     return objective
 
 
 # Initialize initial inventory constraints for loading ports 
 def init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory):
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports, des_spot_ids):
 
-    initial_loading_inventory_constraints = (s[i,t]==initial_inventory[i]+production_quantities[i,t]
-    -gp.quicksum(vessel_capacities[v]*x[v,i,t,j,t_] 
-    for v in vessel_ids for j in des_contract_ids for t_ in all_days if (v,i,t,j,t_) in x.keys())
-    - gp.quicksum(g[i,t,j] for j in des_contract_ids)
+    initial_loading_inventory_constraints = (s[i,t]==initial_inventory[i]+production_quantities[i,t]-gp.quicksum(vessel_capacities[v]*x[v,i,t,j,t_] 
+    for v in vessel_ids for j in (des_spot_ids+des_contract_ids) for t_ in all_days if (v,i,t,j,t_) in x.keys())
+    - gp.quicksum(g[i,t,j] for j in (des_spot_ids+des_contract_ids) if (i,t,j) in g.keys())
     - gp.quicksum(fob_demands[f]*z[f,t] 
-    for f in fob_ids if (f,t) in z.keys())
+    for f in fob_ids if (f,t) in z.keys() and i in fob_loading_ports[f])
     for i in loading_port_ids for t in loading_days[:1])
 
     return initial_loading_inventory_constraints
 
-
 # Initialize loading inventory constraints
 def init_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, horizon_length, iteration_count):
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids, horizon_length, iteration_count):
 
     loading_inventory_constraints = (s[i,t]==s[i,(t-1)]+production_quantities[i,t]-gp.quicksum(vessel_capacities[v]*x[v,i,t,j,t_] 
-    for v in vessel_ids for j in des_contract_ids for t_ in all_days if (v,i,t,j,t_) in x.keys())
-    - gp.quicksum(g[i,t,j] for j in des_contract_ids)
+    for v in vessel_ids for j in (des_spot_ids + des_contract_ids) for t_ in all_days if (v,i,t,j,t_) in x.keys())
+    - gp.quicksum(g[i,t,j] for j in (des_spot_ids + des_contract_ids))
     - gp.quicksum(fob_demands[f]*z[f,t] 
-    for f in (fob_ids) if (f,t) in z.keys())
+    for f in (fob_ids) if (f,t) in z.keys() and i in fob_loading_ports[f])
     for i in loading_port_ids for t in loading_days[horizon_length*(iteration_count)+1:stop_time])
 
     return loading_inventory_constraints
@@ -107,8 +105,10 @@ def init_upper_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off
     for v in vessel_ids for i in port_ids for t in loading_days for t_ in partition_days[p] if partition_days[p][-1] <= stop_time # Left-hand sums
     if (v,i,t,j,t_) in x.keys()) +
     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off) 
-    for i in loading_port_ids for t in loading_days if t+sailing_time_charter[i,j] if t <= stop_time in partition_days[p] if partition_days[p][-1] <= stop_time) # Only if the arc is feasible
-    <=upper_partition_demand[j,p] #
+    for i in loading_port_ids for t in loading_days 
+    if t+sailing_time_charter[i,j] in partition_days[p] if partition_days[p][-1] <= stop_time if (i,t,j) in g.keys()) #relakserer dersom partisjonen går utenfor hor+pred_hor
+    # only feasibl earcs
+    <= upper_partition_demand[j,p] 
     for j in (des_contract_ids+des_spot_ids) for p in des_contract_partitions[j])
 
     return upper_demand_constraints
@@ -124,7 +124,8 @@ def init_lower_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off
     for v in vessel_ids for i in port_ids for t in loading_days for t_ in partition_days[p] if partition_days[p][-1] <= stop_time # Left-hand sums
     if (v,i,t,j,t_) in x.keys())
     + gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off) for i in loading_port_ids for t in loading_days if t <= stop_time
-    if t+sailing_time_charter[i,j] in partition_days[p] if partition_days[p][-1] <= stop_time)) # Only if the arc is feasible
+    if t+sailing_time_charter[i,j] in partition_days[p] if partition_days[p][-1] <= stop_time if (i,t,j) in g.keys())) 
+    # Only if the arc is feasible
     for j in (des_contract_ids+des_spot_ids) for p in des_contract_partitions[j])
 
     return lower_demand_constraints
@@ -178,13 +179,13 @@ def init_fob_max_order_constr(z, fob_days, fob_spot_ids, fob_spot_art_ports):
 
 # Initialize berth constraints
 def init_berth_constr(stop_time, x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, fob_operational_times,
-    number_of_berths, loading_port_ids):
+    number_of_berths, loading_port_ids, des_spot_ids, fob_loading_ports):
 
     berth_constraints = (gp.quicksum(x[v,i,t,j,tau] for v in vessel_ids for i in port_ids for t in loading_days 
     for tau in range(t_,t_+operational_times[v,i,j]+1) if (v,i,t,j,tau) in x.keys())
-    + gp.quicksum(w[j,t_,j_] for j_ in des_contract_ids)
-    + gp.quicksum(z[f_v,j,f_tau] for f_v in fob_ids 
-    for f_tau in range(t_,t_+fob_operational_times[f_v,j]) if (f_v,j,f_tau) in x.keys())
+    + gp.quicksum(w[j,t_,j_] for j_ in (des_spot_ids + des_contract_ids) if (j,t_,j_) in w.keys())
+    + gp.quicksum(z[f_v,f_tau] for f_v in fob_ids 
+    for f_tau in range(t_,t_+fob_operational_times[f_v,j]) if (f_v,f_tau) in z.keys() and j in fob_loading_ports[f_v])
     <= number_of_berths[j] for j in loading_port_ids for t_ in loading_days if t_ <= stop_time)
 
     return berth_constraints
@@ -194,7 +195,7 @@ def init_berth_constr(stop_time, x, z, w, vessel_ids, port_ids, loading_days, op
 def init_charter_upper_capacity_constr(stop_time, g, w, charter_vessel_upper_capacity, loading_port_ids, loading_days, des_spot_ids, des_contract_ids):
 
     charter_upper_capacity_contraints = (g[i,t,j]<=(charter_vessel_upper_capacity)*w[i,t,j] for i in loading_port_ids for t in loading_days if t <= stop_time
-    for j in (des_spot_ids+des_contract_ids))
+    for j in (des_spot_ids+des_contract_ids) if (i,j,t) in g.keys())
 
     return charter_upper_capacity_contraints
 
@@ -203,10 +204,13 @@ def init_charter_upper_capacity_constr(stop_time, g, w, charter_vessel_upper_cap
 def init_charter_lower_capacity_constr(stop_time, g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, des_spot_ids, des_contract_ids):
 
     charter_lower_capacity_contraints = (charter_vessel_lower_capacity*w[i,t,j]<= g[i,t,j] for i in loading_port_ids for t in loading_days if t <= stop_time
-    for j in (des_spot_ids+des_contract_ids))
+    for j in (des_spot_ids+des_contract_ids) if (i,j,t) in g.keys())
 
     return charter_lower_capacity_contraints
 
+
+
+# CONT MERGE HERE--------------------vvvvvv
 
 ## Extension 1 - Variable production 
 

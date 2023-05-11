@@ -1,6 +1,8 @@
 import gurobipy as gp
 from gurobipy import GRB
 import itertools
+import time
+from datetime import datetime
 
 from readData.readOtherData import *
 from readData.readContractData import *
@@ -13,6 +15,9 @@ from runModel.initArcs import *
 
 ### Basic model
 def initialize_basic_model(group, filename, frozen_variables):
+    
+    start_time = time.time()
+    print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
 
     # Finding out if it is data from Nigeria or Abu Dabi
     loading_port_ids = set_loading_port_ids(filename)
@@ -36,6 +41,19 @@ def initialize_basic_model(group, filename, frozen_variables):
                        fake_fob_quantity)
     production_quantities = set_production_quantities(production_quantity, loading_days)
 
+
+    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_ports, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    vessels_has_loading_port_data = DES_HAS_LOADING_PORT
+    try:
+        des_loading_ports = read_des_loading_ports(data, vessels_has_loading_port_data, loading_port_ids)
+        convert_loading_ports(des_loading_ports)
+    except KeyError:
+        des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
+
+    print(f"Number of DES contracts: {len(des_contract_ids)}")
+    print(f"Number of FOB contracts: {len(fob_contract_ids)}")
+
+    '''
     ## Initialize lists for contracts
     port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
     try:
@@ -43,10 +61,30 @@ def initialize_basic_model(group, filename, frozen_variables):
         convert_des_loading_ports(des_loading_ports)
     except:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
+    '''
 
     ## Initalize distances 
     distances = set_distances(data)
 
+    ## Initialize spot stuffz
+    spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
+    # Not all datasets have spot 🙂
+    try:
+        des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
+        loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
+        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
+        if len(fob_spot_ids+des_spot_ids)!=len(set(fob_spot_ids+des_spot_ids)):
+            raise ValueError('There are duplicates in spot data')
+        set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids)
+    except KeyError:
+        print('This dataset does not have spot')
+    except:
+        print('Something went wrong!')
+        pass
+
+    days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
+    
+    '''
     ## Initialize spot stuffz
     spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
     # Not all datasets have spot :)
@@ -57,6 +95,7 @@ def initialize_basic_model(group, filename, frozen_variables):
     except:
         pass
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
+    '''
 
     ## Initialize fake fob stuffz + set fob_operational_times
     fob_spot_art_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity)

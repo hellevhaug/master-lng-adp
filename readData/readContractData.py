@@ -51,6 +51,10 @@ def read_all_contracts(data, port_types, port_locations, location_ports, loading
             lower_partition_demand, unloading_days, des_biggest_demand, des_biggest_partition, des_contract_revenues, 
             des_contract_partitions, earliest_unloading_day, last_unloading_day)
 
+            if len(des_contract_partitions[contract['id']])!=len(set(des_contract_partitions[contract['id']])):
+                contract_id = contract['id']
+                raise ValueError(f'There is duplicates in long-term DES partitions for {contract_id}, fix data')
+            
         elif contract['id'][:3]=='FOB':
 
             fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days = read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, fob_demands, fob_days, fob_revenues)
@@ -71,6 +75,10 @@ def read_all_contracts(data, port_types, port_locations, location_ports, loading
 def read_des_contracts(contract, last_day, loading_from_time, partition_names, partition_days, upper_partition_demand, 
 lower_partition_demand, unloading_days, des_biggest_demand, des_biggest_partition, des_contract_revenues, 
 des_contract_partitions, earliest_unloading_day, last_unloading_day):
+    
+    # Sets for unloading days sets per contract 
+    earliest_partition_unloading_day = earliest_unloading_day
+    last_partition_unloading_day = loading_from_time
     
     for partition in contract['desRequests']:
 
@@ -93,9 +101,16 @@ des_contract_partitions, earliest_unloading_day, last_unloading_day):
             id = partition['id']
             raise ValueError(f'There is a contract that starts after last unloading day ({id}), fix data')
         
+        if partition_from_time < earliest_partition_unloading_day:
+            earliest_partition_unloading_day = partition_from_time
+        
         partition_to_time = datetime.strptime(partition['to'].split('T')[0], '%Y-%m-%d') # End time of contract
         if partition_to_time>last_unloading_day:
             last_unloading_day = partition_to_time
+
+        if partition_to_time > last_partition_unloading_day:
+            last_partition_unloading_day = partition_to_time
+
         partition_start_time = (partition_from_time-loading_from_time).days
         partition_delta_time = (partition_to_time-partition_from_time).days
         if partition_start_time < 0:
@@ -179,7 +194,7 @@ def read_des_loading_ports(data, hasLoadingPortDesData, loading_port_ids):
     return des_loading_ports
 
 
-def convert_des_loading_ports(des_loading_ports):
+def convert_loading_ports(des_loading_ports):
 
     for contract,loading_port in des_loading_ports.items():
         if loading_port == LOADING_NGBON:
@@ -192,4 +207,6 @@ def convert_des_loading_ports(des_loading_ports):
         else:
             raise ValueError('This is not a valid loading port')
 
-    
+def set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids):
+    for des_spot_id in des_spot_ids:
+        des_loading_ports[des_spot_id] = loading_port_ids

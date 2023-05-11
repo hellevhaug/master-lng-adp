@@ -28,7 +28,7 @@ def read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, p
 
         # Demand
         upper_partition_demand[spot_des_contract['id'],spot_des_contract['id']] = spot_des_contract['quantity']
-        lower_partition_demand[spot_des_contract['id'],spot_des_contract['id']] = spot_des_contract['minQuantity']
+        lower_partition_demand[spot_des_contract['id'],spot_des_contract['id']] = 0
 
         # Time 
         last_unloading_day = loading_to_time
@@ -52,8 +52,7 @@ def read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, p
         partition_days[spot_des_contract['id']] = [
             i for i in range(partition_start_time+1,partition_start_time+partition_delta_time+1)]
         
-        unloading_days[spot_des_contract['id']] = [i for i in range((earliest_unloading_day-loading_from_time).days + 1,
-        (earliest_unloading_day-loading_from_time).days + 2 + (last_unloading_day-earliest_unloading_day).days)]
+        unloading_days[spot_des_contract['id']] = partition_days[spot_des_contract['id']]
 
         # Price
         if len(spot_des_contract['salesPrices'])==1:
@@ -72,7 +71,7 @@ def read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, p
 
 
 
-def read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time):
+def read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports):
 
     for spot_fob_contract in data['spotFobRequests']:
         fob_ids.append(spot_fob_contract['name'])
@@ -83,6 +82,7 @@ def read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, 
         partition_to_time = datetime.strptime(spot_fob_contract['toDateTime'].split('T')[0], '%Y-%m-%d') # End time of contract
         partition_start_time = (partition_from_time-loading_from_time).days
         partition_delta_time = (partition_to_time-partition_from_time).days
+        fob_loading_ports[spot_fob_contract['name']] = spot_fob_contract['storageId']
         if partition_start_time < 0:
             partition_start_time = 0
         fob_days[spot_fob_contract['name']] = [
@@ -102,4 +102,4 @@ def read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, 
                 for t in range(price_start_time+1, partition_start_time+partition_delta_time+2):
                     fob_revenues[spot_fob_contract['name'], t] = price['price']
 
-    return fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues
+    return fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports

@@ -1,6 +1,8 @@
 import gurobipy as gp
 from gurobipy import GRB
 import itertools
+import time
+from datetime import datetime
 
 from readData.readOtherData import *
 from readData.readContractData import *
@@ -14,6 +16,9 @@ from runModel.initArcs import *
 ### Basic model
 
 def read_global_data_RHH(group, filename):
+
+    start_time = time.time()
+    print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
 
     # Finding out if it is data from Nigeria or Abu Dabi
     loading_port_ids = set_loading_port_ids(filename)
@@ -38,16 +43,47 @@ def read_global_data_RHH(group, filename):
     production_quantities = set_production_quantities(production_quantity, loading_days)
 
     ## Initialize lists for contracts
+    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_ports, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    vessels_has_loading_port_data = DES_HAS_LOADING_PORT
+    try:
+        des_loading_ports = read_des_loading_ports(data, vessels_has_loading_port_data, loading_port_ids)
+        convert_loading_ports(des_loading_ports)
+    except KeyError:
+        des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
+
+    print(f"Number of DES contracts: {len(des_contract_ids)}")
+    print(f"Number of FOB contracts: {len(fob_contract_ids)}")
+
+    '''
     port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
     try:
         des_loading_ports = read_des_loading_ports(data, True, loading_port_ids)
         convert_des_loading_ports(des_loading_ports)
     except:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
+    '''
 
     ## Initalize distances 
     distances = set_distances(data)
 
+    ## Initialize spot stuffz
+    spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
+    # Not all datasets have spot 🙂
+    try:
+        des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
+        loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
+        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
+        if len(fob_spot_ids+des_spot_ids)!=len(set(fob_spot_ids+des_spot_ids)):
+            raise ValueError('There are duplicates in spot data')
+        set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids)
+    except KeyError:
+        print('This dataset does not have spot')
+    except:
+        print('Something went wrong!')
+        pass
+
+    days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
+    '''
     ## Initialize spot stuffz
     spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
     # Not all datasets have spot :)
@@ -58,10 +94,20 @@ def read_global_data_RHH(group, filename):
     except:
         pass
     days_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
+    '''
 
+    # Convert loading ports for FOB, both contracts and spot 
+    convert_loading_ports(fob_loading_ports)
+
+    ## Initialize fake fob stuffz + set fob_operational_times
+    fob_spot_art_ports, fob_loading_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity, fob_loading_ports)
+    fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
+
+    '''
     ## Initialize fake fob stuffz + set fob_operational_times
     fob_spot_art_ports = read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_days, port_types, fob_demands, fob_revenues, fake_fob_quantity)
     fob_operational_times = set_fob_operational_times(fob_ids, loading_port_ids)
+    '''
 
     ## Initialize lists for vessels
     vessel_ids, vessel_names, vessel_available_days, vessel_capacities = initialize_vessel_sets(data)
@@ -74,6 +120,11 @@ def read_global_data_RHH(group, filename):
                         vessel_port_acceptances, loading_port_ids, vessel_min_speed, vessel_max_speed, vessel_ballast_speed_profile, vessel_laden_speed_profile, 
                         vessel_boil_off_rate, vessel_available_days, loading_from_time, loading_to_time, maintenance_ids, maintenance_vessels, maintenance_vessel_ports, 
                         maintenance_start_times, maintenance_durations, last_unloading_day, des_contract_ids)
+
+    # Adding spot ports to vessel port acceptances, this should mabye not be here, we will see.
+    add_spot_to_vessel_acceptances(vessel_port_acceptances, des_spot_ids)
+
+    print(f"Number of vessels: {len(vessel_ids)}")
 
     # Now all ports is defined, should include DES-contracts, DES-spot, loading- and maintenance ports :')
     port_ids = [port_id for port_id in port_locations]
@@ -94,13 +145,56 @@ def read_global_data_RHH(group, filename):
     operational_times = {(v,i,j): set_operational_time(v,i,j, maintenance_ids, maintenance_durations) 
     for v,i,j in list(itertools.product(vessel_ids, port_ids, port_ids))}
 
+    generate_arcs = GENERATE_ARCS
+    write_arcs = WRITE_ARCS
+    if generate_arcs:
+        print("\n--- Starting to generate arcs in: %.1f seconds ---" % (time.time() - start_time))
+
+        vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
+        maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
+        des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+        fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
+        vessel_ballast_speed_profile, BASIC_MODEL, des_loading_ports) 
+        for vessel in vessel_ids}
+
+        if write_arcs:
+            path = f'arcs/{group}/basic/{filename}-arcs.json'
+            try:
+                with open(path,'x') as init_arc_json:
+                    pass
+            except FileExistsError:
+                open(path, 'w').close()
+            with open(path, "a") as f:
+                arc_dict = {}
+                now = datetime.now()
+                arc_dict['timeWritten'] = now.strftime("%Y-%m-%d %H:%M:%S")
+                arc_dict['arcs'] = total_feasible_arcs
+                arc_dict['sailingCosts'] = [{'key': (v,i,t,j,t_), 'value': cost} for (v,i,t,j,t_), cost in sailing_costs.items()]
+                json.dump(arc_dict, f, indent=3)
+    
+    else:
+        try:
+            arc_file = open(f'arcs/{group}/basic/{filename}-arcs.json')
+            arc_data = json.load(arc_file)
+            total_feasible_arcs = [tuple(x) for x in arc_data['arcs']]
+            sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
+        except FileNotFoundError:
+            raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
+
+    print("\n--- Initalizing constraints in: %.1f seconds ---" % (time.time() - start_time))
+
+
+    '''
     vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
     maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
     des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
     fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
     vessel_ballast_speed_profile, BASIC_MODEL, des_loading_ports) 
     for vessel in vessel_ids}
+    '''
 
+    print("\n--- Done reading data in: %.1f seconds ---" % (time.time() - start_time))
+    
     return total_feasible_arcs,fob_ids,fob_days,loading_port_ids,\
     loading_days,des_contract_ids,spot_port_ids,production_quantities,\
     fob_revenues,fob_demands,des_contract_revenues,\
@@ -119,9 +213,12 @@ def read_global_data_RHH(group, filename):
 
 def init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_days, 
                         total_feasible_arcs, loading_days, iteration_count, des_contract_ids, 
-                        des_spot_ids, loading_port_ids, production_quantities):
+                        des_spot_ids, loading_port_ids, production_quantities, des_loading_ports, sailing_time_charter, unloading_days):
     
     # Initializing variables
+
+    start_time = time.time()
+    print("\n--- Initializing variables in: %.1f seconds ---" % (time.time() - start_time))
 
     total_feasible_arcs_for_x_generation = total_feasible_arcs
     
@@ -137,10 +234,12 @@ def init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_
 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
+    #charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
+    charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days  if t+sailing_time_charter[i,j] in unloading_days[j]]
 
     if prediction_horizon != "ALL":
-        charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days if t <= horizon_length*(iteration_count+1)+prediction_horizon for j in (des_contract_ids + des_spot_ids)]
+        #charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days if t <= horizon_length*(iteration_count+1)+prediction_horizon for j in (des_contract_ids + des_spot_ids)]
+        charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days if (t+sailing_time_charter[i,j] in unloading_days[j] and t <= horizon_length*(iteration_count+1)+prediction_horizon)]
         #charter_dimensions = [(i,t,j) for (i,t,j) in charter_dimensions if t <= horizon_length*(iteration_count+1)+prediction_horizon]
     
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
@@ -153,12 +252,17 @@ def init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_
     s = model.addVars(production_quantities, vtype='C', name='s')
     #('NGBON', 6): <gurobi.Var *Awaiting Model Update*>,
 
+    print("\n--- Done initializing variables in: %.1f seconds ---" % (time.time() - start_time))
+
     model.update()
     return model, x, z, w, g, s
 
     
 
 def relax_horizon(model, prediction_horizon, horizon_length, iteration_count):
+
+    start_time = time.time()
+    print("\n--- Starting relaxing horizon in: %.1f seconds ---" % (time.time() - start_time))
 
     if prediction_horizon == "ALL": 
         # Making variables float in the rest of the horizon: 
@@ -196,6 +300,7 @@ def relax_horizon(model, prediction_horizon, horizon_length, iteration_count):
                     var.setAttr("VType", GRB.CONTINUOUS)
         
     model.update()
+    print("\n--- Done relaxing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
     return model
 
@@ -214,10 +319,12 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
     des_contract_partitions,lower_partition_demand,days_between_delivery,\
     fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
     fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
-    charter_vessel_lower_capacity):
+    charter_vessel_lower_capacity, fob_loading_ports):
 
     # Initializing constraints
-
+    start_time = time.time()
+    print("\n--- Starting to initialize constraints: %.1f seconds ---" % (time.time() - start_time))
+    
     if prediction_horizon == "ALL":
         stop_time = len(loading_days)
     else: 
@@ -234,13 +341,13 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
     if len(last_inventory) > 0: 
         initial_inventory = last_inventory
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, [horizon_length*iteration_count+1], initial_inventory),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, [horizon_length*iteration_count+1], initial_inventory, fob_loading_ports, des_spot_ids),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, horizon_length, iteration_count), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, horizon_length, iteration_count, fob_loading_ports, des_spot_ids), name='inventory_control')
 
 
     # Constraint 5.4
@@ -286,7 +393,7 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(stop_time, x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, fob_loading_ports, des_spot_ids), name='berth_constraint')
 
 
     # Constraint 5.13 
@@ -295,6 +402,9 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
     model.addConstrs(init_charter_lower_capacity_constr(stop_time, g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
     des_spot_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
+
+
+    print("\n--- Done initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
     model.update()
 
@@ -305,6 +415,10 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon):
     print("Freezing variables...")
     # Freeze the variables that start in the current horizon: 
+
+    start_time = time.time()
+    print("\n--- Starting to freeze variables and change type: %.1f seconds ---" % (time.time() - start_time))
+
     for var in model.getVars():
         var_name = var.varName
 
@@ -409,7 +523,7 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
                 model.remove(var)
                 del z[var]
             '''
-
+    print("\n--- Done freezing variables and change type in: %.1f seconds ---" % (time.time() - start_time))
     model.update()
 
     return model, x, z, w, g, s
