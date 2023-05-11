@@ -30,7 +30,7 @@ def run_variable_production_model(group, filename, time_limit, description):
 
 # Function for running model with possibility to charter out 
 def run_charter_out_model(group, filename, time_limit, description):
-    print(f'\n You are now running file {filename}, in group {group} with charter out')
+    print(f'\n You are now running file {filename}, in group {group} with charter out model')
     model = initialize_charter_out_model(group, filename)
     print(description)
     model.setParam('TimeLimit', time_limit)

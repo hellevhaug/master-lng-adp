@@ -106,7 +106,7 @@ def init_upper_demand_constr(x, g, vessel_capacities, vessel_boil_off_rate, vess
     upper_demand_constraints = (gp.quicksum(vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_]
     for v in vessel_ids for i in port_ids for t in loading_days for t_ in partition_days[p] # Left-hand sums
     if (v,i,t,j,t_) in x.keys()) +
-     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off) 
+    gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off) 
     for i in loading_port_ids for t in loading_days
     if t+sailing_time_charter[i,j] in partition_days[p] and (i,t,j) in g.keys()
     ) # Only if the arc is feasible
@@ -187,7 +187,7 @@ def init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_t
     for tau in range(t_,t_+operational_times[v,i,j]+1) if (v,i,t,j,tau) in x.keys())
     + gp.quicksum(w[j,t_,j_] for j_ in (des_contract_ids+des_spot_ids) if (j,t_,j_) in w.keys())
     + gp.quicksum(z[f_v,f_tau] for f_v in fob_ids 
-    for f_tau in range(t_,t_+fob_operational_times[f_v,j]) if (f_v,f_tau) in z.keys() and j in fob_loading_ports[f_v])
+    for f_tau in range(t_,t_+fob_operational_times[f_v,j]) if (f_v, f_tau) in z.keys() and j in fob_loading_ports[f_v])
     <= number_of_berths[j] for j in loading_port_ids for t_ in loading_days)
 
     return berth_constraints

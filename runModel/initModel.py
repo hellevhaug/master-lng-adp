@@ -175,6 +175,8 @@ def initialize_basic_model(group, filename):
 
     s = model.addVars(production_quantities, vtype='C', name='s')
 
+    model.update() 
+
     # Initializing constraints
 
     model.setObjective(init_objective(x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days,
