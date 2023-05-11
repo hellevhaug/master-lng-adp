@@ -35,11 +35,14 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
     des_contract_partitions,lower_partition_demand,days_between_delivery,\
     fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
     fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
-    charter_vessel_lower_capacity, loading_to_time = read_global_data_RHH(group, filename)
+    charter_vessel_lower_capacity, loading_to_time, des_loading_ports, fob_loading_ports = read_global_data_RHH(group, filename)
     
     model = gp.Model()
 
-    model, x, z, w, g, s = init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_days, total_feasible_arcs, loading_days, iteration_count, des_contract_ids, des_spot_ids, loading_port_ids, production_quantities)
+    model, x, z, w, g, s = init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_days, 
+                                               total_feasible_arcs, loading_days, iteration_count, des_contract_ids, 
+                                               des_spot_ids, loading_port_ids, production_quantities, 
+                                               des_loading_ports, sailing_time_charter, unloading_days)
     
     model = relax_horizon(model, prediction_horizon, horizon_length, iteration_count)
 
@@ -59,7 +62,7 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
         des_contract_partitions,lower_partition_demand,days_between_delivery,\
         fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
         fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
-        charter_vessel_lower_capacity)
+        charter_vessel_lower_capacity, fob_loading_ports)
 
         print("Constraints in total: ", len(model.getConstrs()))
         #print("model objective: ", model.getObjective())

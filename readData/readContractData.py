@@ -57,7 +57,7 @@ def read_all_contracts(data, port_types, port_locations, location_ports, loading
             
         elif contract['id'][:3]=='FOB':
 
-            fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days = read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, fob_demands, fob_days, fob_revenues)
+            fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days = read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports)
 
     if len(des_contract_ids)!=len(set(des_contract_ids)):
         raise ValueError('There is duplicates in long-term DES contracts, fix data')
@@ -140,13 +140,13 @@ des_contract_partitions, earliest_unloading_day, last_unloading_day):
     return partition_names, partition_days, contract, des_contract_partitions, des_contract_revenues, upper_partition_demand, \
     lower_partition_demand, des_biggest_partition, des_biggest_demand
 
-def read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, fob_demands, fob_days, fob_revenues):
+def read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports):
     for partition in contract['fobRequests']:
 
         fob_ids.append(partition['name'])
         fob_contract_ids.append(partition['name'])
         fob_demands[partition['name']] = partition['quantity']
-
+        fob_loading_ports[partition['name']] = partition['storageId']
         partition_from_time = datetime.strptime(partition['from'].split('T')[0], '%Y-%m-%d') # Start time of contract
         partition_to_time = datetime.strptime(partition['to'].split('T')[0], '%Y-%m-%d') # End time of contract
         partition_start_time = (partition_from_time-loading_from_time).days
@@ -170,7 +170,7 @@ def read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, f
                 for t in range(price_start_time+1, partition_start_time+partition_delta_time+2):
                     fob_revenues[partition['name'], t] = price['price']
 
-    return fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days
+    return fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_ports
 
 def set_minimum_days_between():
     return MINIMUM_DAYS_BETWEEN_DELIVERY
@@ -198,11 +198,11 @@ def convert_loading_ports(des_loading_ports):
 
     for contract,loading_port in des_loading_ports.items():
         if loading_port == LOADING_NGBON:
-            des_loading_ports[contract] = 'NGBON'
+            des_loading_ports[contract] = ['NGBON']
         elif loading_port == LOADING_FU:
-            des_loading_ports[contract] = 'FU'
+            des_loading_ports[contract] = ['FU']
         elif loading_port == LOADING_DI:
-            des_loading_ports[contract] = 'DI'
+            des_loading_ports[contract] = ['DI']
         
         else:
             raise ValueError('This is not a valid loading port')

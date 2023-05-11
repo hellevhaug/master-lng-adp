@@ -35,7 +35,7 @@ def init_initial_loading_inventory_constr(s, g, z, x, production_quantities, ves
     for v in vessel_ids for j in (des_spot_ids+des_contract_ids) for t_ in all_days if (v,i,t,j,t_) in x.keys())
     - gp.quicksum(g[i,t,j] for j in (des_spot_ids+des_contract_ids) if (i,t,j) in g.keys())
     - gp.quicksum(fob_demands[f]*z[f,t] 
-    for f in fob_ids if (f,t) in z.keys() and i in fob_loading_ports[f])
+    for f in fob_ids if ((f,t) in z.keys() and i in fob_loading_ports[f]))
     for i in loading_port_ids for t in loading_days[:1])
 
     return initial_loading_inventory_constraints
@@ -48,7 +48,7 @@ def init_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, 
     for v in vessel_ids for j in (des_spot_ids + des_contract_ids) for t_ in all_days if (v,i,t,j,t_) in x.keys())
     - gp.quicksum(g[i,t,j] for j in (des_spot_ids + des_contract_ids))
     - gp.quicksum(fob_demands[f]*z[f,t] 
-    for f in (fob_ids) if (f,t) in z.keys() and i in fob_loading_ports[f])
+    for f in fob_ids if (f,t) in z.keys() and i in fob_loading_ports[f])
     for i in loading_port_ids for t in loading_days[horizon_length*(iteration_count)+1:stop_time])
 
     return loading_inventory_constraints

@@ -207,13 +207,14 @@ def read_global_data_RHH(group, filename):
     des_contract_partitions,lower_partition_demand,days_between_delivery,\
     fob_contract_ids,fob_spot_ids,fob_spot_art_ports,operational_times,\
     fob_operational_times,number_of_berths,charter_vessel_upper_capacity,\
-    charter_vessel_lower_capacity, loading_to_time
+    charter_vessel_lower_capacity, loading_to_time, des_loading_ports, fob_loading_ports
 
 
 
 def init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_days, 
                         total_feasible_arcs, loading_days, iteration_count, des_contract_ids, 
-                        des_spot_ids, loading_port_ids, production_quantities, des_loading_ports, sailing_time_charter, unloading_days):
+                        des_spot_ids, loading_port_ids, production_quantities, 
+                        des_loading_ports, sailing_time_charter, unloading_days):
     
     # Initializing variables
 
@@ -235,11 +236,28 @@ def init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
     #charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
-    charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days  if t+sailing_time_charter[i,j] in unloading_days[j]]
+
+    charter_dimensions = []
+    '''
+    for j in (des_contract_ids + des_spot_ids):
+        for i in des_loading_ports[j]:
+            for t in loading_days:
+                print("t type: ", type(t))
+                print("type sailing_time_charter[i,j]: ", type(sailing_time_charter[i,j]))
+                print("type unloading_days[j]: ", type(unloading_days[j]))
+                print("type horizon_length: ", type(horizon_length))
+                print("type iteration_count: ", type(iteration_count))
+                print("type prediction_horizon: ", type(prediction_horizon))
+                print(prediction_horizon)
+                if (t+int(sailing_time_charter[i,j]) in unloading_days[j]) and (t <= horizon_length*(iteration_count+1)+prediction_horizon):
+                    charter_dimensions.append((i,t,j))
+    '''
+    charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days if (t+sailing_time_charter[i,j] in unloading_days[j])]
 
     if prediction_horizon != "ALL":
         #charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days if t <= horizon_length*(iteration_count+1)+prediction_horizon for j in (des_contract_ids + des_spot_ids)]
         charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days if (t+sailing_time_charter[i,j] in unloading_days[j] and t <= horizon_length*(iteration_count+1)+prediction_horizon)]
+        #charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days if (t <= horizon_length*(iteration_count+1)+prediction_horizon)] #SJEKK OM OK
         #charter_dimensions = [(i,t,j) for (i,t,j) in charter_dimensions if t <= horizon_length*(iteration_count+1)+prediction_horizon]
     
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
@@ -619,7 +637,7 @@ def initialize_variable_production_model(group, filename):
     port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
     try:
         des_loading_ports = read_des_loading_ports(data, True, loading_port_ids)
-        convert_des_loading_ports(des_loading_ports)
+        convert_loading_ports(des_loading_ports)
     except:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
 
