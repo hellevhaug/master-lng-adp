@@ -305,7 +305,7 @@ def relax_horizon(model, prediction_horizon, horizon_length, iteration_count):
     model.update()
     print("\n--- Done relaxing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
-    return model
+    return model #might not be necessary
 
 
         
