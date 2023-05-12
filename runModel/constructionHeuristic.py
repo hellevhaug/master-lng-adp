@@ -17,8 +17,8 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
     # g : charter continuous
     # s : inventory for loading ports 
 
-    upper_charter_amount = 170000
-    lower_charter_amount = 125000
+    upper_charter_amount = 130000
+    lower_charter_amount = 175000
 
     x = x1.copy()
     z = z1.copy()
@@ -58,7 +58,8 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
         fob_loading_port = fob_loading_ports[fob_contract_id][0]
         count = 0
         while not fob_satisfied:
-            fob_random_loading_days = generate_random_loading_days(loading_days)
+            fob_random_loading_days = [i for i in loading_days if i in fob_days[fob_contract_id]]
+            fob_random_loading_days = generate_random_loading_days(fob_random_loading_days)
             for day in fob_random_loading_days:
                 if day in fob_days[fob_contract_id]:
                     fob_amount = fob_demands[fob_contract_id]
@@ -71,6 +72,9 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
                         break
 
     print('(finished with FOB)')
+    for (f,t), value in z.items():
+        if value != 0:
+            print(f,t, value)
 
     # Demand is not satisfied for all contracts yet 
     all_demand_is_satisfied = False
@@ -80,7 +84,7 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
             reset_g_vars(g_total_altered_vars, g, w)
             update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
             tot_count = 0
-        print(f'Iteration for all contracts number: {tot_count}')
+        #print(f'Iteration for all contracts number: {tot_count}')
         g_total_altered_vars = []
         # Does the contracts in random order
         random.shuffle(des_contract_ids)
@@ -111,7 +115,8 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
                         while random_count < 5:
                             charter_amount = random.randrange(lower_charter_amount, upper_charter_amount)
                             if check_feasible_charter_move(day, partition, des_contract, des_loading_port, charter_amount, min_inventory, s, w,
-                            number_of_berths, minimum_spread, amount_chartered, upper_partition_demand, loading_days, fob_loading_ports, z):
+                            number_of_berths, minimum_spread, amount_chartered, upper_partition_demand, loading_days, fob_loading_ports, z,
+                            partition_days, sailing_time_charter):
                                 g[des_loading_port, day, des_contract] = charter_amount
                                 w[des_loading_port, day, des_contract] = 1
                                 g_altered_vars.append((des_loading_port, day, des_contract))
@@ -130,7 +135,7 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
                             else: 
                                 random_count += 1
 
-
+    
 
 
     print('(finished with DES)')
@@ -142,7 +147,7 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
                     z[fake_fob, day] = 1
     
     print('(finished with inventory')
-    
+    """
     """
     for (loading_port, day), value in s.items():
         print(loading_port, day, value)
@@ -154,7 +159,6 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
     for (f,t), value in z.items():
         if value != 0:
             print(f,t, value)
-    """
 
     return x, z, s, w, g
 
@@ -168,7 +172,6 @@ def calculate_total_demand_delivered(des_contract, des_contract_partitions, sail
             if j == des_contract:
                 if t+sailing_time_charter[i,j] in partition_days[partition]:
                     amount_chartered[partition] += value*0.85   
-
     return amount_chartered
 
 
@@ -196,37 +199,48 @@ def update_inventory(s, all_days, initial_inventory, production_quantities, des_
 # Checks if all partitions is satisfied 
 def check_if_demand_is_satisfied(amount_chartered, des_contract, lower_partition_demand):
     
-    for partition, value in amount_chartered.items():
+    for partition, value in amount_chartered[des_contract].items():
         if value < lower_partition_demand[des_contract,partition]:
             return False
     #print(f'Finishing finding demand for partition: {partition}, with {amount_chartered[partition]}')
+    #print(partition, value, lower_partition_demand)
     return True
 
 
 # Checks if new charter variable is feasible
 def check_feasible_charter_move(day, partition, des_contract, des_loading_port, charter_amount, min_inventory, s, w,
-    number_of_berths, minimum_spread, amount_chartered, upper_partition_demand, loading_days, fob_loading_ports, z):
+    number_of_berths, minimum_spread, amount_chartered, upper_partition_demand, loading_days, fob_loading_ports, z,
+    partition_days, sailing_time_charter):
+
+    if day+sailing_time_charter[des_loading_port,des_contract] not in partition_days[partition]:
+        print('should be within the partitions unloading days')
+        return False
 
     # inventory constraints, never below minimum inventory
     for t in range(day, loading_days[-1]+1):
         if s[des_loading_port, t] - charter_amount < min_inventory[des_loading_port]:
-            #print('inventory problems')
+            print('inventory problems')
             return False
     
     # berth constraints for the loading port, never more than number of berth g vars per day
     if (sum(value for (i,t,j), value in w.items() if i ==des_loading_port and t == day)+sum(value for (z,t), value
     in z.items() if des_loading_port in fob_loading_ports[z] and t == day)+1 > number_of_berths[des_loading_port]):
-        #print('berth problems')
+        print('berth problems')
         return False
     
     # minimum spread, assumes that there is one charter boat with one speed and therefore can look at t
     if sum(value for (i,t,j), value in w.items() if j == des_contract and t >= day and t <= day + minimum_spread) +1 > 1:
-        #print('spread problems')
+        print(sum(value for (i,t,j), value in w.items() if j == des_contract and t >= day and t <= day + minimum_spread) +1)
+        print('spread problems')
+        for (i,t,j), value in w.items():
+            if value != 0:
+                print(i,t,j, value)
         return False
     
     # never above upper demand for partition
-    if amount_chartered[partition] + charter_amount*0.9 > upper_partition_demand[des_contract, partition]:
-        return False
+    for ot_partition, value in amount_chartered[des_contract].items():
+        if amount_chartered[des_contract][ot_partition] + charter_amount*0.9 > upper_partition_demand[des_contract, ot_partition]:
+            return False
 
     else:
         return True
@@ -235,7 +249,7 @@ def check_feasible_charter_move(day, partition, des_contract, des_loading_port, 
 
 def check_feasible_fob_move(day, loading_days, s, fob_loading_port, fob_amount, min_inventory, w, z, 
     number_of_berths, fob_loading_ports, fob_contract_id):
-    
+
     # inventory constraints, never below minimum inventory
     for t in range(day, loading_days[-1]+1):
         if s[fob_loading_port, t] - fob_amount < min_inventory[fob_loading_port]:
