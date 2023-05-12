@@ -399,8 +399,8 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
 
     # Constraint 5.12
-    model.addConstrs(init_berth_constr(stop_time, x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids, fob_loading_ports, des_spot_ids), name='berth_constraint')
+    model.addConstrs(init_berth_constr(stop_time, x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, fob_operational_times,
+    number_of_berths, loading_port_ids, des_spot_ids, fob_loading_ports), name='berth_constraint')
 
 
     # Constraint 5.13 
