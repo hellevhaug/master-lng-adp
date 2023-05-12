@@ -46,7 +46,7 @@ def init_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, 
 
     loading_inventory_constraints = (s[i,t]==s[i,(t-1)]+production_quantities[i,t]-gp.quicksum(vessel_capacities[v]*x[v,i,t,j,t_] 
     for v in vessel_ids for j in (des_spot_ids + des_contract_ids) for t_ in all_days if (v,i,t,j,t_) in x.keys())
-    - gp.quicksum(g[i,t,j] for j in (des_spot_ids + des_contract_ids))
+    - gp.quicksum(g[i,t,j] for j in (des_spot_ids + des_contract_ids) if (i,t,j) in g.keys())
     - gp.quicksum(fob_demands[f]*z[f,t] 
     for f in fob_ids if (f,t) in z.keys() and i in fob_loading_ports[f])
     for i in loading_port_ids for t in loading_days[(horizon_length*(iteration_count+1)):stop_time])
@@ -82,9 +82,10 @@ def init_maintenance_constr(x, maintenance_vessel_ports, maintenance_vessels):
 def init_flow_constr(x, all_days, vessel_ids, port_ids, stop_time):
 
     flow_constraints = (x.sum(v,'*', [0]+all_days[:t],j,t) == x.sum(v,j,t,'*',all_days[t+1:]+[all_days[-1]+1]) 
-    for v in vessel_ids for j in port_ids for t in all_days[1:stop_time-1])
+    for v in vessel_ids for j in port_ids for t in all_days[0:stop_time])
 
     return flow_constraints 
+
 
 
 # Initialize artificial flow constraints
@@ -162,9 +163,9 @@ def init_spread_delivery_constraints(x, w, vessel_ids, loading_port_ids, vessel_
 
     
 # Initialize fob max contracts constraints
-def init_fob_max_contracts_constr(z, fob_days, fob_contract_ids, horizon_length, iteration_count, prediction_horizon):
+def init_fob_max_contracts_constr(z, fob_days, fob_contract_ids, stop_time):
 
-    fob_max_contracts_constraints = (z.sum(f,fob_days[f])==1 for f in fob_contract_ids if fob_days[f][-1] <= horizon_length*(iteration_count)+prediction_horizon)
+    fob_max_contracts_constraints = (z.sum(f,fob_days[f])==1 for f in fob_contract_ids if fob_days[f][-1] <= stop_time)
 
     return fob_max_contracts_constraints
 

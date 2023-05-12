@@ -181,7 +181,7 @@ def read_global_data_RHH(group, filename):
         except FileNotFoundError:
             raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
 
-    print("\n--- Initalizing constraints in: %.1f seconds ---" % (time.time() - start_time))
+    print("\n--- Done initalizing data in: %.1f seconds ---" % (time.time() - start_time))
 
 
     '''
@@ -238,27 +238,12 @@ def init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_
     #charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
 
     charter_dimensions = []
-    '''
-    for j in (des_contract_ids + des_spot_ids):
-        for i in des_loading_ports[j]:
-            for t in loading_days:
-                print("t type: ", type(t))
-                print("type sailing_time_charter[i,j]: ", type(sailing_time_charter[i,j]))
-                print("type unloading_days[j]: ", type(unloading_days[j]))
-                print("type horizon_length: ", type(horizon_length))
-                print("type iteration_count: ", type(iteration_count))
-                print("type prediction_horizon: ", type(prediction_horizon))
-                print(prediction_horizon)
-                if (t+int(sailing_time_charter[i,j]) in unloading_days[j]) and (t <= horizon_length*(iteration_count+1)+prediction_horizon):
-                    charter_dimensions.append((i,t,j))
-    '''
+
     charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days if (t+sailing_time_charter[i,j] in unloading_days[j])]
 
     if prediction_horizon != "ALL":
-        #charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days if t <= horizon_length*(iteration_count+1)+prediction_horizon for j in (des_contract_ids + des_spot_ids)]
         charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days if (t+sailing_time_charter[i,j] in unloading_days[j] and t <= horizon_length*(iteration_count+1)+prediction_horizon)]
-        #charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days if (t <= horizon_length*(iteration_count+1)+prediction_horizon)] #SJEKK OM OK
-        #charter_dimensions = [(i,t,j) for (i,t,j) in charter_dimensions if t <= horizon_length*(iteration_count+1)+prediction_horizon]
+
     
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
@@ -345,8 +330,10 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
     
     if prediction_horizon == "ALL":
         stop_time = len(loading_days)
+        all_days_stop_time = len(all_days)
     else: 
         stop_time = horizon_length*(iteration_count+1)+prediction_horizon if horizon_length*(iteration_count+1)+prediction_horizon < len(all_days) else len(all_days)
+        all_days_stop_time = horizon_length*(iteration_count+1)+prediction_horizon if horizon_length*(iteration_count+1)+prediction_horizon < len(all_days) else len(all_days)
 
     if iteration_count == 0:
         model.setObjective(init_objective(stop_time, x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days,
@@ -365,9 +352,6 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
     # Constraint 5.3
 
-    print(horizon_length, type(horizon_length))
-    print(iteration_count, type(iteration_count))
-    print(stop_time, type(stop_time))
     start_time = (horizon_length*(iteration_count+1))
     model.addConstrs(init_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
     des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids, horizon_length, iteration_count), name='inventory_control')
@@ -384,7 +368,7 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
 
     # Constraint 5.6
-    model.addConstrs(init_flow_constr(x, all_days, vessel_ids, port_ids, stop_time), name='flow')
+    model.addConstrs(init_flow_constr(x, all_days, vessel_ids, port_ids, all_days_stop_time), name='flow')
 
 
     # Constraint 5.61
@@ -407,7 +391,7 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
 
     # Constraint 5.10
-    model.addConstrs(init_fob_max_contracts_constr(z, fob_days, fob_contract_ids, horizon_length, iteration_count, prediction_horizon), name='fob_max_contracts')
+    model.addConstrs(init_fob_max_contracts_constr(z, fob_days, fob_contract_ids, stop_time), name='fob_max_contracts')
 
 
     # Constraint 5.11
@@ -804,6 +788,11 @@ def initialize_variable_production_model(group, filename):
 
 
     return model # This line must be moved to activate the extensions
+
+
+
+
+
 
 ### Extension 2 - Charter out vessels
 def initialize_charter_out_model(group, filename):
