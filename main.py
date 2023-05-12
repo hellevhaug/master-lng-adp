@@ -161,8 +161,8 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'N-1L-A'
-filename1 = 'N-1L-16U-12F-23V-120D'
+group1 = 'N-1L-B'
+filename1 = 'N-1L-13U-10F-23V-120D'
 runtime = 30 # seconds
 gap_limit = 0.005
 modelType = BASIC_MODEL
