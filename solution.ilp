@@ -3,6 +3,6 @@
 Maximize
  
 Subject To
- lower_demand[DESCON_1,0104]: >= 605700
+ lower_demand[DESCON_1,0104]: >= 315700
 Bounds
 End

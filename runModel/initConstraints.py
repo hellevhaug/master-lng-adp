@@ -98,16 +98,16 @@ def init_artificial_flow_constr(x, vessel_start_ports, vessel_available_days, al
 
 
 # Initialize upper demand constraints
-def init_upper_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days, partition_days, 
-    sailing_time_charter, charter_boil_off, loading_port_ids, upper_partition_demand, des_contract_ids, des_spot_ids,
+def init_upper_demand_constr(all_days_stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
+    partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, upper_partition_demand, des_contract_ids, des_spot_ids,
     des_contract_partitions):
 
     upper_demand_constraints = (gp.quicksum(vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_]
-    for v in vessel_ids for i in port_ids for t in loading_days for t_ in partition_days[p] if partition_days[p][-1] <= stop_time # Left-hand sums
+    for v in vessel_ids for i in port_ids for t in loading_days for t_ in partition_days[p] if partition_days[p][-1] <= all_days_stop_time # Left-hand sums
     if (v,i,t,j,t_) in x.keys()) +
     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off) 
     for i in loading_port_ids for t in loading_days 
-    if t+sailing_time_charter[i,j] in partition_days[p] if partition_days[p][-1] <= stop_time if (i,t,j) in g.keys()) #relakserer dersom partisjonen går utenfor hor+pred_hor
+    if t+sailing_time_charter[i,j] in partition_days[p] if partition_days[p][-1] <= all_days_stop_time if (i,t,j) in g.keys()) #relakserer dersom partisjonen går utenfor hor+pred_hor
     # only feasibl earcs
     <= upper_partition_demand[j,p] 
     for j in (des_contract_ids+des_spot_ids) for p in des_contract_partitions[j])
@@ -116,16 +116,16 @@ def init_upper_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off
 
 
 # Initialize lower demand constraints
-def init_lower_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days, partition_days, 
-    sailing_time_charter, charter_boil_off, loading_port_ids, lower_partition_demand, des_contract_ids, des_spot_ids,
+def init_lower_demand_constr(all_days_stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
+    partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, lower_partition_demand, des_contract_ids, des_spot_ids,
     des_contract_partitions):
 
     lower_demand_constraints = (
     lower_partition_demand[j,p]<=(gp.quicksum(vessel_capacities[v]*(1-(t_-t)*vessel_boil_off_rate[v])*x[v,i,t,j,t_]
-    for v in vessel_ids for i in port_ids for t in loading_days for t_ in partition_days[p] if partition_days[p][-1] <= stop_time # Left-hand sums
+    for v in vessel_ids for i in port_ids for t in loading_days for t_ in partition_days[p] if partition_days[p][-1] <= all_days_stop_time # Left-hand sums
     if (v,i,t,j,t_) in x.keys())
-    + gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off) for i in loading_port_ids for t in loading_days if t <= stop_time
-    if t+sailing_time_charter[i,j] in partition_days[p] if partition_days[p][-1] <= stop_time if (i,t,j) in g.keys())) 
+    + gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off) for i in loading_port_ids for t in loading_days if t <= all_days_stop_time
+    if t+sailing_time_charter[i,j] in partition_days[p] if partition_days[p][-1] <= all_days_stop_time if (i,t,j) in g.keys())) 
     # Only if the arc is feasible
     for j in (des_contract_ids+des_spot_ids) for p in des_contract_partitions[j])
 

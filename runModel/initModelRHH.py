@@ -333,7 +333,7 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
         all_days_stop_time = len(all_days)
     else: 
         stop_time = horizon_length*(iteration_count+1)+prediction_horizon if horizon_length*(iteration_count+1)+prediction_horizon < len(all_days) else len(all_days)
-        all_days_stop_time = horizon_length*(iteration_count+1)+prediction_horizon if horizon_length*(iteration_count+1)+prediction_horizon < len(all_days) else len(all_days)
+        all_days_stop_time = horizon_length*(iteration_count+1)+prediction_horizon+(all_days-loading_days) if horizon_length*(iteration_count+1)+prediction_horizon < len(all_days) else len(all_days)
 
     if iteration_count == 0:
         model.setObjective(init_objective(stop_time, x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days,
@@ -341,6 +341,7 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
         spot_port_ids, all_days, sailing_time_charter, unloading_days, charter_boil_off, tank_leftover_value, 
         vessel_available_days, des_contract_ids, sailing_costs, charter_total_cost, des_spot_ids),GRB.MAXIMIZE)
 
+    print("\n--- Objective done in: %.1f seconds ---" % (time.time() - start_time))
 
     # Constraint 5.2
     if len(last_inventory) > 0: 
@@ -349,59 +350,73 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
     vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, [horizon_length*iteration_count+1], initial_inventory, fob_loading_ports, des_spot_ids),
     name='initital_inventory_control')
 
+    print("\n--- 5.2 done in: %.1f seconds ---" % (time.time() - start_time))
+
 
     # Constraint 5.3
 
-    start_time = (horizon_length*(iteration_count+1))
+    #start_time = (horizon_length*(iteration_count+1))
+
     model.addConstrs(init_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
     des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids, horizon_length, iteration_count), name='inventory_control')
 
+    print("\n--- 5.3 done in: %.1f seconds ---" % (time.time() - start_time))
 
     # Constraint 5.4
     model.addConstrs(init_upper_inventory_constr(s, max_inventory),name='upper_inventory')
 
     model.addConstrs(init_lower_inventory_constr(s, min_inventory),name='lower_inventory')
 
+    print("\n--- 5.4 done in: %.1f seconds ---" % (time.time() - start_time))
 
     # Constraint 5.5
     model.addConstrs(init_maintenance_constr(x, maintenance_vessel_ports, maintenance_vessels), name='maintenance')
 
+    print("\n--- 5.5 done in: %.1f seconds ---" % (time.time() - start_time))
 
     # Constraint 5.6
     model.addConstrs(init_flow_constr(x, all_days, vessel_ids, port_ids, all_days_stop_time), name='flow')
 
+    print("\n--- 5.6 done in: %.1f seconds ---" % (time.time() - start_time))
 
     # Constraint 5.61
     model.addConstrs(init_artificial_flow_constr(x, vessel_start_ports, vessel_available_days, all_days, vessel_ids),
     name='artificial_node')
 
+    print("\n--- 5.61 done in: %.1f seconds ---" % (time.time() - start_time))
 
     # Constraint 5.8
-    model.addConstrs(init_upper_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
+    model.addConstrs(init_upper_demand_constr(all_days_stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
     partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, upper_partition_demand, des_contract_ids, des_spot_ids,
     des_contract_partitions), name='upper_demand')
 
-    model.addConstrs(init_lower_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
+    model.addConstrs(init_lower_demand_constr(all_days_stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
     partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, lower_partition_demand, des_contract_ids, des_spot_ids,
     des_contract_partitions), name='lower_demand')
+
+    print("\n--- 5.8 done in: %.1f seconds ---" % (time.time() - start_time))
 
     #Constraint 5.9 
     model.addConstrs(init_spread_delivery_constraints(x, w, vessel_ids, loading_port_ids, vessel_available_days, des_contract_ids, unloading_days,
     days_between_delivery, des_spot_ids, sailing_time_charter), name='spread_delivery')
 
+    print("\n--- 5.9 done in: %.1f seconds ---" % (time.time() - start_time))
 
     # Constraint 5.10
     model.addConstrs(init_fob_max_contracts_constr(z, fob_days, fob_contract_ids, stop_time), name='fob_max_contracts')
 
+    print("\n--- 5.10 done in: %.1f seconds ---" % (time.time() - start_time))
 
     # Constraint 5.11
     model.addConstrs(init_fob_max_order_constr(z, fob_days, fob_spot_ids, fob_spot_art_ports), name='fob_order')
 
+    print("\n--- 5.11 done in: %.1f seconds ---" % (time.time() - start_time))
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(stop_time, x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, fob_operational_times,
     number_of_berths, loading_port_ids, des_spot_ids, fob_loading_ports), name='berth_constraint')
 
+    print("\n--- 5.12 done in: %.1f seconds ---" % (time.time() - start_time))
 
     # Constraint 5.13 
     model.addConstrs(init_charter_upper_capacity_constr(stop_time, g, w, charter_vessel_upper_capacity, loading_port_ids, loading_days, 
@@ -410,6 +425,7 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
     model.addConstrs(init_charter_lower_capacity_constr(stop_time, g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
     des_spot_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
 
+    print("\n--- 5.13 done in: %.1f seconds ---" % (time.time() - start_time))
 
     print("\n--- Done initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
@@ -447,6 +463,10 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
                 x[tuple_key].vtype = GRB.BINARY
             # making the variables in the next prediction horizon continous ("ALL"):
             elif horizon_length*(iteration_count+2) <= int(varName_list[2]) < horizon_length*(iteration_count+2)+prediction_horizon:
+                print("interation_count type: ", type(iteration_count))
+                print("horizon_length type: ", type(horizon_length))
+                print("prediction_horizon type: ", type(prediction_horizon))
+                print("varName_list[2] type: ", type(varName_list[2]))
                 #var.vtype = GRB.CONTINUOUS
                 x[tuple_key].vtype = GRB.CONTINUOUS
             '''

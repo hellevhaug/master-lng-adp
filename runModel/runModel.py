@@ -91,6 +91,7 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
         print("Horizon interval: period", horizon_length*iteration_count+1, "-", horizon_length*(iteration_count+1))
         #print("Number of freezed variables: ", len(frozen_variables))
         print("Tot. loading days length: ", len(loading_days))
+        print("Tot. all days length: ", len(all_days))
         print("Days frozen: ", horizon_length*iteration_count)
         print("----------------------------------------------------------------")
         model.setParam('TimeLimit', time_limit)

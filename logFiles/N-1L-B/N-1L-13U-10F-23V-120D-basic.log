@@ -527,3 +527,309 @@ Solution count 10: 1.69575e+09 1.69573e+09 1.69572e+09 ... 1.69556e+09
 
 Time limit reached
 Best objective 1.695745499464e+09, best bound 1.700814007291e+09, gap 0.2989%
+
+Gurobi 9.5.1 (win64) logging started Fri May 12 18:42:20 2023
+
+Set parameter LogFile to value "logFiles/N-1L-B/N-1L-13U-10F-23V-120D-basic.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 59393 rows, 863792 columns and 4092219 nonzeros
+Model fingerprint: 0x980ee36a
+Variable types: 732338 continuous, 131454 integer (131454 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 24238 rows and 0 columns
+Presolve time: 0.12s
+
+Explored 0 nodes (0 simplex iterations) in 0.30 seconds (0.12 work units)
+Thread count was 1 (of 16 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.39 seconds (0.12 work units)
+
+Gurobi 9.5.1 (win64) logging started Fri May 12 19:53:38 2023
+
+Set parameter LogFile to value "logFiles/N-1L-B/N-1L-13U-10F-23V-120D-basic.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 59393 rows, 863792 columns and 4092219 nonzeros
+Model fingerprint: 0x27820659
+Variable types: 732338 continuous, 131454 integer (131454 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 24238 rows and 0 columns
+Presolve time: 0.12s
+
+Explored 0 nodes (0 simplex iterations) in 0.33 seconds (0.12 work units)
+Thread count was 1 (of 16 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.43 seconds (0.12 work units)
+
+Gurobi 9.5.1 (win64) logging started Fri May 12 20:14:35 2023
+
+Set parameter LogFile to value "logFiles/N-1L-B/N-1L-13U-10F-23V-120D-basic.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 59393 rows, 863792 columns and 4092219 nonzeros
+Model fingerprint: 0x27820659
+Variable types: 732338 continuous, 131454 integer (131454 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 24238 rows and 0 columns
+Presolve time: 0.11s
+
+Explored 0 nodes (0 simplex iterations) in 0.29 seconds (0.12 work units)
+Thread count was 1 (of 16 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.45 seconds (0.12 work units)
+
+Gurobi 9.5.1 (win64) logging started Fri May 12 20:47:44 2023
+
+Set parameter LogFile to value "logFiles/N-1L-B/N-1L-13U-10F-23V-120D-basic.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 59393 rows, 863792 columns and 4092219 nonzeros
+Model fingerprint: 0x27820659
+Variable types: 732338 continuous, 131454 integer (131454 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 24238 rows and 0 columns
+Presolve time: 0.10s
+
+Explored 0 nodes (0 simplex iterations) in 0.27 seconds (0.12 work units)
+Thread count was 1 (of 16 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.42 seconds (0.12 work units)
+
+Gurobi 9.5.1 (win64) logging started Fri May 12 20:58:10 2023
+
+Set parameter LogFile to value "logFiles/N-1L-B/N-1L-13U-10F-23V-120D-basic.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 59312 rows, 863632 columns and 4696213 nonzeros
+Model fingerprint: 0x618bd0e8
+Variable types: 732258 continuous, 131374 integer (131374 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 24229 rows and 0 columns
+Presolve time: 0.11s
+
+Explored 0 nodes (0 simplex iterations) in 0.32 seconds (0.13 work units)
+Thread count was 1 (of 16 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.44 seconds (0.13 work units)
+
+Gurobi 9.5.1 (win64) logging started Fri May 12 21:07:38 2023
+
+Set parameter LogFile to value "logFiles/N-1L-B/N-1L-13U-10F-23V-120D-basic.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 59276 rows, 863560 columns and 4986451 nonzeros
+Model fingerprint: 0x3a08a978
+Variable types: 732222 continuous, 131338 integer (131338 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 25804 rows and 73451 columns (presolve time = 5s) ...
+Presolve removed 25804 rows and 73451 columns (presolve time = 11s) ...
+Presolve removed 25813 rows and 73955 columns (presolve time = 16s) ...
+Presolve removed 25754 rows and 73940 columns
+Presolve time: 17.59s
+Presolved: 33522 rows, 789620 columns, 3436922 nonzeros
+Variable types: 681857 continuous, 107763 integer (107763 binary)
+Found heuristic solution: objective 2.027114e+09
+Found heuristic solution: objective 2.030648e+09
+
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Ordering time: 0.90s
+
+Barrier statistics:
+ AA' NZ     : 2.100e+06
+ Factor NZ  : 6.288e+06 (roughly 400 MB of memory)
+ Factor Ops : 7.378e+09 (less than 1 second per iteration)
+ Threads    : 6
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -1.11538653e+16  1.49252249e+13  6.70e+08 1.60e+06  2.99e+11    29s
+   1  -9.27380730e+15  2.55624208e+13  5.57e+08 2.00e+06  2.56e+11    30s
+
+Barrier performed 1 iterations in 30.06 seconds (40.53 work units)
+Time limit reached
+
+
+
+Root relaxation: time limit, 8915 iterations, 6.52 seconds (2.50 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0          -    0      2.0306e+09 6.9575e+12      -     -   30s
+
+Explored 1 nodes (8915 simplex iterations) in 30.42 seconds (38.19 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 2: 2.03065e+09 2.02711e+09 
+
+Time limit reached
+Best objective 2.030647603454e+09, best bound 6.957464276894e+12, gap 342522.9280%
+
+Gurobi 9.5.1 (win64) logging started Fri May 12 21:22:17 2023
+
+Set parameter LogFile to value "logFiles/N-1L-B/N-1L-13U-10F-23V-120D-basic.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 59393 rows, 863792 columns and 4092219 nonzeros
+Model fingerprint: 0x27820659
+Variable types: 732338 continuous, 131454 integer (131454 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 24238 rows and 0 columns
+Presolve time: 0.10s
+
+Explored 0 nodes (0 simplex iterations) in 0.29 seconds (0.12 work units)
+Thread count was 1 (of 16 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.45 seconds (0.12 work units)
+
+Gurobi 9.5.1 (win64) logging started Fri May 12 21:31:30 2023
+
+Set parameter LogFile to value "logFiles/N-1L-B/N-1L-13U-10F-23V-120D-basic.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 59393 rows, 863792 columns and 4092219 nonzeros
+Model fingerprint: 0x27820659
+Variable types: 732338 continuous, 131454 integer (131454 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 24238 rows and 0 columns
+Presolve time: 0.10s
+
+Explored 0 nodes (0 simplex iterations) in 0.29 seconds (0.12 work units)
+Thread count was 1 (of 16 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.40 seconds (0.12 work units)
+
+Gurobi 9.5.1 (win64) logging started Fri May 12 22:01:28 2023
+
+Set parameter LogFile to value "logFiles/N-1L-B/N-1L-13U-10F-23V-120D-basic.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 59276 rows, 863560 columns and 4986451 nonzeros
+Model fingerprint: 0x22708e6e
+Variable types: 732222 continuous, 131338 integer (131338 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 25804 rows and 73451 columns (presolve time = 5s) ...
+Presolve removed 25804 rows and 73451 columns (presolve time = 10s) ...
+Presolve removed 25813 rows and 73955 columns (presolve time = 15s) ...
+Presolve removed 25754 rows and 73940 columns
+Presolve time: 16.94s
+Presolved: 33522 rows, 789620 columns, 3436922 nonzeros
+Variable types: 681857 continuous, 107763 integer (107763 binary)
+Found heuristic solution: objective 2.027114e+09
+Found heuristic solution: objective 2.030648e+09
+
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Ordering time: 1.30s
+
+Barrier statistics:
+ AA' NZ     : 2.100e+06
+ Factor NZ  : 6.288e+06 (roughly 400 MB of memory)
+ Factor Ops : 7.378e+09 (less than 1 second per iteration)
+ Threads    : 6
+
+Barrier performed 0 iterations in 30.01 seconds (40.21 work units)
+Time limit reached
+
+
+
+Root relaxation: time limit, 8669 iterations, 6.36 seconds (2.47 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0          -    0      2.0306e+09 6.9575e+12      -     -   30s
+
+Explored 1 nodes (8669 simplex iterations) in 30.26 seconds (38.15 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 2: 2.03065e+09 2.02711e+09 
+
+Time limit reached
+Best objective 2.030647603454e+09, best bound 6.957464276894e+12, gap 342522.9280%
