@@ -344,21 +344,23 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
     print("\n--- Objective done in: %.1f seconds ---" % (time.time() - start_time))
 
     # Constraint 5.2
-    if len(last_inventory) > 0: 
-        initial_inventory = last_inventory
-    model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, [horizon_length*iteration_count+1], initial_inventory, fob_loading_ports, des_spot_ids),
-    name='initital_inventory_control')
+    # if len(last_inventory) > 0: 
+    #    initial_inventory = last_inventory
+    
+    start_inventory_constraint_time = (horizon_length*(iteration_count))+1 
+
+    if iteration_count == 0: 
+
+        model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
+        vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, [start_inventory_constraint_time], initial_inventory, fob_loading_ports, des_spot_ids),
+        name='initital_inventory_control')
 
     print("\n--- 5.2 done in: %.1f seconds ---" % (time.time() - start_time))
 
-
     # Constraint 5.3
-
-    #start_time = (horizon_length*(iteration_count+1))
-
-    model.addConstrs(init_loading_inventory_constr(stop_time, s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids, horizon_length, iteration_count), name='inventory_control')
+    model.addConstrs(init_loading_inventory_constr(start_inventory_constraint_time, stop_time, s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, 
+    des_spot_ids, horizon_length, iteration_count), name='inventory_control')
 
     print("\n--- 5.3 done in: %.1f seconds ---" % (time.time() - start_time))
 
@@ -435,12 +437,17 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
 
 
-def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon):
+def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon, all_days):
     print("Freezing variables...")
     # Freeze the variables that start in the current horizon: 
 
     start_time = time.time()
     print("\n--- Starting to freeze variables and change type: %.1f seconds ---" % (time.time() - start_time))
+
+    if prediction_horizon != "ALL":
+        horizon_stop_time = horizon_length*(iteration_count+2)+prediction_horizon
+    else:
+        horizon_stop_time = len(all_days)
 
     for var in model.getVars():
         var_name = var.varName
@@ -462,11 +469,11 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
                 #var.vtype = GRB.BINARY
                 x[tuple_key].vtype = GRB.BINARY
             # making the variables in the next prediction horizon continous ("ALL"):
-            elif horizon_length*(iteration_count+2) <= int(varName_list[2]) < horizon_length*(iteration_count+2)+prediction_horizon:
-                print("interation_count type: ", type(iteration_count))
-                print("horizon_length type: ", type(horizon_length))
-                print("prediction_horizon type: ", type(prediction_horizon))
-                print("varName_list[2] type: ", type(varName_list[2]))
+            elif horizon_length*(iteration_count+2) <= int(varName_list[2]) < horizon_stop_time:
+                #print("interation_count type: ", type(iteration_count))
+                #print("horizon_length type: ", type(horizon_length))
+                #print("prediction_horizon type: ", type(prediction_horizon))
+                #print("varName_list[2] type: ", type(varName_list[2]))
                 #var.vtype = GRB.CONTINUOUS
                 x[tuple_key].vtype = GRB.CONTINUOUS
             '''
@@ -542,7 +549,7 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
                 #var.vtype = GRB.BINARY
                 z[tuple_key].vtype = GRB.BINARY
             # making the variables in the next prediction horizon continous ("ALL"):
-            elif horizon_length*(iteration_count+2) <= int(varName_list[1]):
+            elif horizon_length*(iteration_count+2) <= int(varName_list[1]) < horizon_stop_time:
                 #var.vtype = GRB.CONTINUOUS
                 z[tuple_key].vtype = GRB.CONTINUOUS
             '''

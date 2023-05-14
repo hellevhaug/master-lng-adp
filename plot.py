@@ -22,9 +22,9 @@ File for plotting different stuffz
 
 
 ## Example of how to plot a gant chart ##
-group1 = 'N-1L-90D'
-datafile1 = 'N-1L-7U-18F-18V-90D-b'
-logFile1 = f'jsonFiles/N-1L-90D/N-1L-7U-18F-18V-90D-b/05-08-2023, 11-24.json'
+group1 = 'N-1L-B'
+datafile1 = 'N-1L-13U-10F-23V-120D'
+logFile1 = f'jsonFiles/N-1L-B/N-1L-13U-10F-23V-120D/05-14-2023, 10-20.json'
 #spotGroup = 'spotTests'
 #spotDataFile = 'N-1L-10U-6F-23V-60D'
 #spotLogFile = f'jsonFiles/spotTests/N-1L-10U-6F-23V-60D/04-17-2023, 15-36.json'

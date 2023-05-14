@@ -18,8 +18,6 @@ def run_basic_model(group, filename, time_limit, description):
 def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, horizon_length, prediction_horizon):
     
     #frozen_variables = {key: [] for key in ['x','s','g','z','q','y']}
-    frozen_variables = []
-    frozen_variables_values = []
     iteration_count = 0
     last_inventory = {}
 
@@ -125,16 +123,29 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
             break
         
         if horizon_length*(iteration_count+1) <= len(loading_days):
-            model, x, z, w, g, s = freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon)
+            model, x, z, w, g, s = freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon, all_days)
             model.update()
 
             if prediction_horizon != "ALL": 
                 model, x, z, w, g, s = add_variables_for_next_prediction_horizon(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon, loading_days, des_contract_ids, des_spot_ids, loading_port_ids, production_quantities)
         
+        #last_inventory = get_last_inventory(model, horizon_length, iteration_count, prediction_horizon, all_days)
+
+        if iteration_count == 0:
+            c = model.getConstrByName("initital_inventory_control")
+            # Ensure the constraint exists before trying to remove it
+            if c:
+                model.remove(c)
+            # Update the model to make the changes take effect
+                model.update()
+            else:
+                print("Constraint not found")
+        '''
         constraints = model.getConstrs()
         # Remove each constraint from the model
         for constraint in constraints:
             model.remove(constraint)
+        '''
 
         model.update()
         
