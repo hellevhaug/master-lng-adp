@@ -183,7 +183,7 @@ def calculate_total_demand_delivered(des_contract_partitions, sailing_time_chart
             for (i,t,j), value in g.items():
                 if j == des_contract:
                     if t+sailing_time_charter[i,j] in partition_days[partition]:
-                        amount_chartered[partition] += value*0.85   
+                        amount_chartered[des_contract][partition] += value*0.85   
     return amount_chartered
 
 
