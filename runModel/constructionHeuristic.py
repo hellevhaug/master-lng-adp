@@ -75,70 +75,65 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
         if value != 0:
             print(f,t, value)
 
-    # Demand is not satisfied for all contracts yet 
-    all_demand_is_satisfied = False
-    tot_count = 0
-    while not all_demand_is_satisfied:
-        if tot_count > 3:
-            reset_g_vars(g_total_altered_vars, g, w)
+        # Then finding charter variables
+    amount_chartered = {des_contract: {partition:0 for partition in des_contract_partitions[des_contract]} for des_contract in des_contract_ids}
+    des_contract_partitions_updated = des_contract_partitions.copy()
+    des_contract_ids_updated = des_contract_ids.copy()
+    all_demand_satisfied = False
+    for loading_day in loading_days:
+
+        print(f'Day: {loading_day} \n')
+        # Randomly choosing an amount to charter
+        charter_amount = random.randrange(lower_charter_amount, upper_charter_amount)
+
+        # Finding the best contract and the best partition
+        best_des_contract, best_partition = find_best_contract_and_partition(loading_day, amount_chartered, loading_port, lower_partition_demand,
+        des_contract_ids_updated, des_loading_ports, des_contract_partitions_updated, partition_days, sailing_time_charter, minimum_spread, w,
+        loading_days, charter_amount, upper_partition_demand)
+
+        if (best_des_contract, best_partition) == (None, None):
+            print('Did not find a best partition and a best contract')
+            continue
+
+        print(best_des_contract, best_partition)
+
+        # Finding the corresponding loading port 
+        des_loading_port = des_loading_ports[best_des_contract][0]
+
+        inventory = s[des_loading_port, loading_day]   
+        if inventory < min_inventory[des_loading_port]+charter_amount:
+            print(f'Inventory infeasible for day: {loading_day}, inventory: {inventory}')
+            continue
+
+        # Checking if the charter move is feasible
+        if check_feasible_charter_move(loading_day, best_partition, best_des_contract, des_loading_port, charter_amount, min_inventory, s, w,
+                        number_of_berths, minimum_spread, amount_chartered, upper_partition_demand, loading_days, fob_loading_ports, z,
+                        partition_days, sailing_time_charter,g):
+            print(f'Found feasible move for {best_des_contract}, for partition {best_partition} in day {loading_day} with amount {charter_amount}')
+            g[des_loading_port, loading_day, best_des_contract] = charter_amount
+            w[des_loading_port, loading_day, best_des_contract] = 1
             update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
-            tot_count = 0
-        #print(f'Iteration for all contracts number: {tot_count}')
-        g_total_altered_vars = []
-        # Does the contracts in random order
-        random.shuffle(des_contract_ids)
-        for des_contract in des_contract_ids:
-            des_loading_port = des_loading_ports[des_contract][0]
-            amount_chartered = {partition:0 for partition in des_contract_partitions[des_contract]}
-            # Demand is not satisfied for all partitions yet
-            demand_is_satisfied = False
-            for partition in des_contract_partitions[des_contract]:
-                count = 0
-                amount_chartered = calculate_total_demand_delivered(des_contract, des_contract_partitions,
-                sailing_time_charter,partition_days, g)
-                while amount_chartered[partition] < lower_partition_demand[des_contract,partition]:
-                    count += 1
-                    if count > 1:
-                        reset_g_vars(g_altered_vars, g, w)
-                        g_total_altered_vars = [i for i in g_total_altered_vars if i not in g_altered_vars]
-                        amount_chartered = calculate_total_demand_delivered(des_contract, des_contract_partitions,
-                                                    sailing_time_charter,partition_days, g)
-                        update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
-                        if count > 350: 
-                            break
-                    g_altered_vars = []
-                    partition_loading_days = [i for i in loading_days if i+sailing_time_charter[des_loading_port, des_contract] in partition_days[partition]]
-                    random_loading_days = generate_random_loading_days(partition_loading_days)
-                    for day in random_loading_days:
-                        random_count = 0
-                        while random_count < 5:
-                            charter_amount = random.randrange(lower_charter_amount, upper_charter_amount)
-                            if check_feasible_charter_move(day, partition, des_contract, des_loading_port, charter_amount, min_inventory, s, w,
-                            number_of_berths, minimum_spread, amount_chartered, upper_partition_demand, loading_days, fob_loading_ports, z,
-                            partition_days, sailing_time_charter,g):
-                                g[des_loading_port, day, des_contract] = charter_amount
-                                w[des_loading_port, day, des_contract] = 1
-                                g_altered_vars.append((des_loading_port, day, des_contract))
-                                g_total_altered_vars.append((des_loading_port, day, des_contract))
-                                update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
-                                amount_chartered = calculate_total_demand_delivered(des_contract, des_contract_partitions,
-                                                    sailing_time_charter,partition_days, g)
-                                print(f'DES demand for {partition} updated, amount chartered: {amount_chartered[partition]}')
-                                print(amount_chartered)
-                                demand_is_satisfied = check_if_demand_is_satisfied(amount_chartered, des_contract, lower_partition_demand)
-                                random_count = 5
-                                if demand_is_satisfied:
-                                    count += 1
-                                if count == len(des_contract_ids):
-                                    all_demand_is_satisfied
-                            else: 
-                                random_count += 1
+            amount_chartered[best_des_contract] = calculate_total_demand_delivered(best_des_contract, des_contract_partitions,
+            sailing_time_charter, partition_days, g)
+            demand_is_satisfied = check_if_demand_is_satisfied(amount_chartered, best_des_contract, lower_partition_demand)
+            if demand_is_satisfied:
+                print(f'{best_des_contract} fulfilled \n\n')
+                des_contract_ids_updated.remove(best_des_contract)
+            if len(des_contract_ids_updated)==0:
+                print(f'All contracts fulfilled \n\n')
+                all_demand_satisfied = True
+                print('Finished with DES')
+                break
+            if amount_chartered[best_des_contract][best_partition] >= lower_partition_demand[best_des_contract,best_partition]:
+                print(f'Partition {best_partition} fulfilled \n\n')
+                des_contract_partitions_updated[best_des_contract].remove(best_partition)
+        
 
-    
+    print('(finished with DES\n')        
+    print(amount_chartered)
 
 
-    print('(finished with DES)')
-    
+    # Fixing excess demand
     for (loading_port, day), value in s.items():
         if value > max_inventory[loading_port]:
             for fake_fob_loading_port, fake_fob in fob_spot_art_ports.items():
@@ -147,7 +142,7 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
     
     print('(finished with inventory')
     """
-    """
+    
     for (loading_port, day), value in s.items():
         print(loading_port, day, value)
     
@@ -158,6 +153,7 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
     for (f,t), value in z.items():
         if value != 0:
             print(f,t, value)
+    """
 
     return x, z, s, w, g
 

@@ -263,3 +263,64 @@ for (f,t), value in z.items():
     if value != 0:
         print(f,t, value)
 
+
+"""
+# Demand is not satisfied for all contracts yet 
+all_demand_is_satisfied = False
+tot_count = 0
+while not all_demand_is_satisfied:
+    if tot_count > 3:
+        reset_g_vars(g_total_altered_vars, g, w)
+        update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
+        tot_count = 0
+    #print(f'Iteration for all contracts number: {tot_count}')
+    g_total_altered_vars = []
+    # Does the contracts in random order
+    random.shuffle(des_contract_ids)
+    for des_contract in des_contract_ids:
+        des_loading_port = des_loading_ports[des_contract][0]
+        amount_chartered = {partition:0 for partition in des_contract_partitions[des_contract]}
+        # Demand is not satisfied for all partitions yet
+        demand_is_satisfied = False
+        for partition in des_contract_partitions[des_contract]:
+            count = 0
+            amount_chartered = calculate_total_demand_delivered(des_contract, des_contract_partitions,
+            sailing_time_charter,partition_days, g)
+            while amount_chartered[partition] < lower_partition_demand[des_contract,partition]:
+                count += 1
+                if count > 1:
+                    reset_g_vars(g_altered_vars, g, w)
+                    g_total_altered_vars = [i for i in g_total_altered_vars if i not in g_altered_vars]
+                    amount_chartered = calculate_total_demand_delivered(des_contract, des_contract_partitions,
+                                                sailing_time_charter,partition_days, g)
+                    update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
+                    if count > 350: 
+                        break
+                g_altered_vars = []
+                partition_loading_days = [i for i in loading_days if i+sailing_time_charter[des_loading_port, des_contract] in partition_days[partition]]
+                random_loading_days = generate_random_loading_days(partition_loading_days)
+                for day in random_loading_days:
+                    random_count = 0
+                    while random_count < 5:
+                        charter_amount = random.randrange(lower_charter_amount, upper_charter_amount)
+                        if check_feasible_charter_move(day, partition, des_contract, des_loading_port, charter_amount, min_inventory, s, w,
+                        number_of_berths, minimum_spread, amount_chartered, upper_partition_demand, loading_days, fob_loading_ports, z,
+                        partition_days, sailing_time_charter,g):
+                            g[des_loading_port, day, des_contract] = charter_amount
+                            w[des_loading_port, day, des_contract] = 1
+                            g_altered_vars.append((des_loading_port, day, des_contract))
+                            g_total_altered_vars.append((des_loading_port, day, des_contract))
+                            update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
+                            amount_chartered = calculate_total_demand_delivered(des_contract, des_contract_partitions,
+                                                sailing_time_charter,partition_days, g)
+                            print(f'DES demand for {partition} updated, amount chartered: {amount_chartered[partition]}')
+                            print(amount_chartered)
+                            demand_is_satisfied = check_if_demand_is_satisfied(amount_chartered, des_contract, lower_partition_demand)
+                            random_count = 5
+                            if demand_is_satisfied:
+                                count += 1
+                            if count == len(des_contract_ids):
+                                all_demand_is_satisfied
+                        else: 
+                            random_count += 1
+"""
