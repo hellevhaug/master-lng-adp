@@ -84,11 +84,10 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
 
         # Then finding charter variables
     print(f'DES contract ids: {des_contract_ids}')
-    amount_chartered = {des_contract: {partition:0 for partition in des_contract_partitions[des_contract]} for des_contract in des_contract_ids}
     des_contract_partitions_updated = des_contract_partitions.copy()
     des_contract_ids_updated = des_contract_ids.copy()
     all_demand_satisfied = False
-    amount_chartered = calculate_total_demand_delivered(des_contract_partitions_updated, sailing_time_charter, partition_days, g, des_contract_ids_updated)
+    amount_chartered = calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days, g, des_contract_ids)
     demand_is_satisfied = check_if_demand_is_satisfied(amount_chartered, des_contract_ids_updated, lower_partition_demand)
     # For each loading day where LNG is produced
     for loading_day in loading_days:
@@ -137,15 +136,22 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                 if demand_is_satisfied[best_des_contract]:
                     print(f'{best_des_contract} fulfilled \n\n')
                     des_contract_ids_updated.remove(best_des_contract)
+                    des_contract_partitions_updated = remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
                 if len(des_contract_ids_updated)==0:
                     print(f'All contracts fulfilled \n\n')
                     all_demand_satisfied = True
                     print('Finished with DES')
                     break
-                des_contract_partitions_updated = remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
+                else:
+                    des_contract_partitions_updated = remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
             else:
                 # update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
                 continue
+
+
+    if not all_demand_satisfied:
+        relevant_days = [(l_port, day) for (l_port, day), value in s.items() if value > max_inventory[l_port]]
+
 
     print('(finished with DES\n')        
     print(amount_chartered)
