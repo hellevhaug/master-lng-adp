@@ -89,7 +89,7 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
     des_contract_ids_updated = des_contract_ids.copy()
     all_demand_satisfied = False
     amount_chartered = calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days, g, des_contract_ids)
-    demand_is_satisfied = check_if_demand_is_satisfied(amount_chartered, des_contract_ids, lower_partition_demand)
+    demand_is_satisfied = check_if_demand_is_satisfied(amount_chartered, des_contract_ids_updated, lower_partition_demand)
     # For each loading day where LNG is produced
     for loading_day in loading_days:
         
@@ -133,7 +133,7 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                 update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
                 amount_chartered = calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days,
                 g, des_contract_ids)
-                demand_is_satisfied = check_if_demand_is_satisfied(amount_chartered, best_des_contract, lower_partition_demand)
+                demand_is_satisfied = check_if_demand_is_satisfied(amount_chartered, des_contract_ids_updated, lower_partition_demand)
                 if demand_is_satisfied[best_des_contract]:
                     print(f'{best_des_contract} fulfilled \n\n')
                     des_contract_ids_updated.remove(best_des_contract)
