@@ -8,7 +8,7 @@ File for initializing a feasible solution to start with
 def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
         des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory,
         initial_inventory, production_quantities, minimum_spread, des_loading_ports, number_of_berths, sailing_time_charter,
-        loading_days, fob_loading_ports, maintenance_vessels, fob_spot_art_ports):
+        loading_days, fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days):
 
     # This function should return a initial solution that is feasible 
     # x : arcs
@@ -89,7 +89,7 @@ def find_initial_solution(x1, z1, s1, w1, g1, all_days, des_contract_ids, lower_
         # Finding the best contract and the best partition
         best_des_contract, best_partition = find_best_contract_and_partition(loading_day, amount_chartered, loading_port, lower_partition_demand,
         des_contract_ids_updated, des_loading_ports, des_contract_partitions_updated, partition_days, sailing_time_charter, minimum_spread, w,
-        loading_days, charter_amount, upper_partition_demand)
+        loading_days, charter_amount, upper_partition_demand, unloading_days)
 
         if (best_des_contract, best_partition) == (None, None):
             print('Did not find a best partition and a best contract')
@@ -282,7 +282,7 @@ def generate_random_loading_days(loading_days):
 
 def find_best_contract_and_partition(loading_day, amount_chartered, loading_port, lower_partition_demand,
     des_contract_ids, des_loading_ports, des_contract_partitions, partition_days,
-    sailing_time_charter, minimum_spread, w, loading_days, charter_amount, upper_partition_demand):
+    sailing_time_charter, minimum_spread, w, loading_days, charter_amount, upper_partition_demand, unloading_days):
 
     best_contract, best_partition = None, None
 
@@ -292,7 +292,7 @@ def find_best_contract_and_partition(loading_day, amount_chartered, loading_port
     for des_contract_id in des_contract_ids:
         loading_port = des_loading_ports[des_contract_id][0]
         # Minimum spread
-        if sum(w[loading_port,t,des_contract_id] for t in loading_days if t >= loading_day and t < loading_day+minimum_spread)+ 1 > 1:
+        if sum(w[loading_port,t,des_contract_id] for t in loading_days if t >= loading_day and t < loading_day+minimum_spread and t+sailing_time_charter[loading_port, des_contract_id] in unloading_days[des_contract_id])+ 1 > 1:
             #print(f'{partition}')
             #print('minimum spread')
             continue
