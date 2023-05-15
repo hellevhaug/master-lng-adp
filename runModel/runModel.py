@@ -18,10 +18,7 @@ def run_basic_model(group, filename, time_limit, description):
 def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, horizon_length, prediction_horizon):
     
     #frozen_variables = {key: [] for key in ['x','s','g','z','q','y']}
-    frozen_variables = []
-    frozen_variables_values = []
     iteration_count = 0
-    last_inventory = {}
 
     total_feasible_arcs,fob_ids,fob_days,loading_port_ids,\
     loading_days,des_contract_ids,spot_port_ids,production_quantities,\
@@ -47,7 +44,7 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
     model = relax_horizon(model, prediction_horizon, horizon_length, iteration_count)
 
     model = init_objective_and_constraints(model, x, z, w, g, s, horizon_length, prediction_horizon, \
-        iteration_count, last_inventory, fob_ids,fob_days,loading_port_ids,\
+        iteration_count, fob_ids,fob_days,loading_port_ids,\
         loading_days,des_contract_ids,spot_port_ids,production_quantities,\
         fob_revenues,fob_demands,des_contract_revenues,\
         vessel_capacities,vessel_boil_off_rate,vessel_ids,all_days,\
@@ -91,7 +88,6 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
         print("Horizon interval: period", horizon_length*iteration_count+1, "-", horizon_length*(iteration_count+1))
         #print("Number of freezed variables: ", len(frozen_variables))
         print("Tot. loading days length: ", len(loading_days))
-        print("Tot. unloading days length: ", unloading_days)
         print("Tot. all days length: ", len(all_days))
         print("Days frozen: ", horizon_length*iteration_count)
         print("----------------------------------------------------------------")
@@ -132,10 +128,23 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
             if prediction_horizon != "ALL": 
                 model, x, z, w, g, s = add_variables_for_next_prediction_horizon(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon, loading_days, des_contract_ids, des_spot_ids, loading_port_ids, production_quantities)
         
+        #last_inventory = get_last_inventory(model, horizon_length, iteration_count, prediction_horizon, all_days)
+
+        if iteration_count == 0:
+            c = model.getConstrByName("initital_inventory_control")
+            # Ensure the constraint exists before trying to remove it
+            if c:
+                model.remove(c)
+            # Update the model to make the changes take effect
+                model.update()
+            else:
+                print("Constraint not found")
+        '''
         constraints = model.getConstrs()
         # Remove each constraint from the model
         for constraint in constraints:
             model.remove(constraint)
+        '''
 
         model.update()
         
