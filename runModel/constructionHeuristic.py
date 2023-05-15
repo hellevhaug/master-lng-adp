@@ -212,11 +212,12 @@ def update_inventory(s, all_days, initial_inventory, production_quantities, des_
 def check_if_demand_is_satisfied(amount_chartered, des_contract_ids, lower_partition_demand):
     demand_is_satisfied = {des_contract: False for des_contract in des_contract_ids}
     for des_contract in des_contract_ids:
+        contract_satisfied = True
         for partition, value in amount_chartered[des_contract].items():
             if value < lower_partition_demand[des_contract,partition]:
-                demand_is_satisfied[des_contract] = False
+                contract_satisfied = False
                 break
-        demand_is_satisfied[des_contract] = True 
+        demand_is_satisfied[des_contract] = contract_satisfied 
     #print(f'Finishing finding demand for partition: {partition}, with {amount_chartered[partition]}')
     #print(partition, value, lower_partition_demand)
     return demand_is_satisfied
