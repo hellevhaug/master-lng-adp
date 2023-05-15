@@ -259,7 +259,8 @@ def initialize_basic_model(group, filename, heuristic):
         production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
         fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days)
 
-        x1 = find_initial_arcs(x, maintenance_vessels, vessel_feasible_arcs, all_days, maintenance_vessel_ports)
+        x1 = find_initial_arcs(x, maintenance_vessels, all_days, maintenance_vessel_ports, vessel_start_ports, maintenance_start_times,
+                                vessel_available_days, sailing_costs)
 
         print("\n--- Finished heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
 

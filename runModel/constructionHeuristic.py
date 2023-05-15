@@ -5,20 +5,21 @@ import random
 File for initializing a feasible solution to start with 
 """
 
-def find_initial_arcs(x1, maintenance_vessels, vessel_feasible_arcs, all_days, maintenance_vessel_ports):
+def find_initial_arcs(x1, maintenance_vessels, all_days, maintenance_vessel_ports, vessel_start_ports, 
+                      maintenance_start_times, vessel_available_days, sailing_costs):
 
     x = x1.copy()
 
     # Setting all arcs except the arcs indicating the vessel is not used to zero
     for (vessel, port1, day1, port2, day2), value in x.items():
-        if maintenance_vessels.__contains__(vessel):
-            find_best_maintenance_arcs(vessel, x, vessel_feasible_arcs, maintenance_vessel_ports)
+        if port1 == 'ART_PORT' and day1 == 0 and port2 == 'EXIT_PORT' and day2 == all_days[-1]+1 and not maintenance_vessels.__contains__(vessel):
+            x[vessel, port1, day1, port2, day2] = 1
         else:
-            if port1 == 'ART_PORT' and day1 == 0 and port2 == 'EXIT_PORT' and day2 == all_days[-1]+1:
-                x[vessel, port1, day1, port2, day2] = 1
-            else:
-                x[vessel, port1, day1, port2, day2] = 0
-    
+            x[vessel, port1, day1, port2, day2] = 0
+
+    find_best_maintenance_arcs(vessel, x, maintenance_vessel_ports, vessel_start_ports, vessel_available_days,
+    maintenance_start_times, all_days, sailing_costs)
+
     return x
 
 def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
@@ -337,14 +338,17 @@ def find_best_contract_and_partition(loading_day, amount_chartered, loading_port
     return best_contract, best_partition
 
 
-def find_best_maintenance_arcs(vessel, x, vessel_feasible_arcs, maintenance_vessel_ports, vessel_start_ports, vessel_available_days,
-    maintenance_start_times):
+def find_best_maintenance_arcs(vessel, x, maintenance_vessel_ports, vessel_start_ports, vessel_available_days,
+    maintenance_start_times, all_days, sailing_costs):
 
     # Ensuring that the vessels starts a voyage
     x[vessel, 'ART_PORT',0, vessel_start_ports[vessel], vessel_available_days[vessel][0]] = 1
 
-    # If the vessel can go directly from start port:
-    if vessel_feasible_arcs[vessel].has_key((vessel, vessel_available_days[vessel][0],vessel_start_ports[vessel], )):
-        0
-    for (v,i,t,j,t_) in vessel_feasible_arcs[vessel].keys():
-        0
+    # Goes only to maintenance and then done
+    direct_arc = (vessel, vessel_available_days[vessel][0],vessel_start_ports[vessel], maintenance_vessel_ports[vessel], maintenance_start_times[vessel])
+    sailing_costs[direct_arc] = 0
+    x[direct_arc] = 1
+    x[vessel, maintenance_vessel_ports[vessel], maintenance_start_times[vessel], 'EXIT_PORT', all_days[-1]+1]
+
+
+    return 
