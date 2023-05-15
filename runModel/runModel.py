@@ -19,7 +19,6 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
     
     #frozen_variables = {key: [] for key in ['x','s','g','z','q','y']}
     iteration_count = 0
-    last_inventory = {}
 
     total_feasible_arcs,fob_ids,fob_days,loading_port_ids,\
     loading_days,des_contract_ids,spot_port_ids,production_quantities,\
@@ -45,7 +44,7 @@ def run_basic_model_RHH(gap_limit, group, filename, time_limit, description, hor
     model = relax_horizon(model, prediction_horizon, horizon_length, iteration_count)
 
     model = init_objective_and_constraints(model, x, z, w, g, s, horizon_length, prediction_horizon, \
-        iteration_count, last_inventory, fob_ids,fob_days,loading_port_ids,\
+        iteration_count, fob_ids,fob_days,loading_port_ids,\
         loading_days,des_contract_ids,spot_port_ids,production_quantities,\
         fob_revenues,fob_demands,des_contract_revenues,\
         vessel_capacities,vessel_boil_off_rate,vessel_ids,all_days,\

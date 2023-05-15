@@ -3,6 +3,12 @@
 Maximize
  
 Subject To
- lower_demand[DESCON_1,0104]: >= 315700
+ charter_upper_capacity[NGBON,75,DESCON_3]: - 160000 w[NGBON,75,DESCON_3]
+   + g[NGBON,75,DESCON_3] <= 0
+ charter_lower_capacity[NGBON,75,DESCON_3]: 135000 w[NGBON,75,DESCON_3]
+   - g[NGBON,75,DESCON_3] <= 0
 Bounds
+ g[NGBON,75,DESCON_3] = 0.00599375713500194
+Binaries
+ w[NGBON,75,DESCON_3]
 End

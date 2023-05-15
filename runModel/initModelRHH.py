@@ -310,7 +310,7 @@ def relax_horizon(model, prediction_horizon, horizon_length, iteration_count):
 
         
 def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, prediction_horizon, \
-    iteration_count, last_inventory, fob_ids,fob_days,loading_port_ids,\
+    iteration_count, fob_ids,fob_days,loading_port_ids,\
     loading_days,des_contract_ids,spot_port_ids,production_quantities,\
     fob_revenues,fob_demands,des_contract_revenues,\
     vessel_capacities,vessel_boil_off_rate,vessel_ids,all_days,\
@@ -462,8 +462,8 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
             if 0 <= int(varName_list[2]) < horizon_length*(iteration_count+1):
                 #var.lb = var.X
                 #var.ub = var.X
-                x[tuple_key].lb = var.X
-                x[tuple_key].ub = var.X
+                x[tuple_key].lb = round(var.X)
+                x[tuple_key].ub = round(var.X)
             # making the variables in the next horizon binary:
             elif horizon_length*(iteration_count+1) <= int(varName_list[2]) < horizon_length*(iteration_count+2):
                 #var.vtype = GRB.BINARY
@@ -482,7 +482,7 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
                 del x[var]
             '''
                     
-        if var_name[0]=='s':
+        elif var_name[0]=='s':
             varName_list = var_name.split('[')[1].split(']')[0].split(',')
             key_parts = var_name[2:-1].split(',')
             tuple_key = (key_parts[0], int(key_parts[1]))
@@ -494,21 +494,12 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
                 s[tuple_key].ub = var.X
             # making the variables in the next horizon binary:
             '''
-            elif horizon_length*(iteration_count+1) <= int(varName_list[1]) < horizon_length*(iteration_count+2):
-                s[tuple_key].X = 0
-                var.vtype = GRB.BINARY
-                s[tuple_key].vtype = GRB.BINARY
-            # making the variables in the next prediction horizon continous ("ALL"):
-            elif horizon_length*(iteration_count+2) <= int(varName_list[1]):
-                var.vtype = GRB.CONTINUOUS
-                s[tuple_key].vtype = GRB.CONTINUOUS
-            
             else:
                 model.remove(var)
                 del s[var]
             '''
 
-        if var_name[0]=='g':
+        elif var_name[0]=='g':
             varName_list = var_name.split('[')[1].split(']')[0].split(',')
             key_parts = var_name[2:-1].split(',')
             tuple_key = (key_parts[0], int(key_parts[1]), key_parts[2])
@@ -520,21 +511,29 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
                 g[tuple_key].ub = var.X
             # making the variables in the next horizon binary:
             '''
-            elif horizon_length*(iteration_count+1) <= int(varName_list[1]) < horizon_length*(iteration_count+2):
-                g[tuple_key].X = 0
-                var.vtype = GRB.BINARY
-                g[tuple_key].vtype = GRB.BINARY
-            # making the variables in the next prediction horizon continous ("ALL"):
-            elif horizon_length*(iteration_count+2) <= int(varName_list[1]):
-                var.vtype = GRB.CONTINUOUS
-                g[tuple_key].vtype = GRB.CONTINUOUS
-            
             else:
                 model.remove(var)
                 del g[var]
             '''
 
-        if var_name[0]=='z':
+        elif var_name[0]=='w':
+            varName_list = var_name.split('[')[1].split(']')[0].split(',')
+            key_parts = var_name[2:-1].split(',')
+            tuple_key = (key_parts[0], int(key_parts[1]), key_parts[2])
+            # now looks like this: [FU,56,DESCON_1]
+            if 0 <= int(varName_list[1]) < horizon_length*(iteration_count+1):
+                #var.lb = var.X
+                #var.ub = var.X
+                w[tuple_key].lb = round(var.X)
+                w[tuple_key].ub = round(var.X)
+            # making the variables in the next horizon binary:
+            '''
+            else:
+                model.remove(var)
+                del g[var]
+            '''
+
+        elif var_name[0]=='z':
             varName_list = var_name.split('[')[1].split(']')[0].split(',')
             key_parts = var_name[2:-1].split(',')
             tuple_key = (key_parts[0], int(key_parts[1]))
