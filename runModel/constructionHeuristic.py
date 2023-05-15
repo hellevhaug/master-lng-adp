@@ -88,7 +88,7 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
     des_contract_partitions_updated = des_contract_partitions.copy()
     des_contract_ids_updated = des_contract_ids.copy()
     all_demand_satisfied = False
-    amount_chartered = calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days, g, des_contract_ids)
+    amount_chartered = calculate_total_demand_delivered(des_contract_partitions_updated, sailing_time_charter, partition_days, g, des_contract_ids_updated)
     demand_is_satisfied = check_if_demand_is_satisfied(amount_chartered, des_contract_ids_updated, lower_partition_demand)
     # For each loading day where LNG is produced
     for loading_day in loading_days:
@@ -149,6 +149,8 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
 
     print('(finished with DES\n')        
     print(amount_chartered)
+
+    
     
     
     for (loading_port, day), value in s.items():
