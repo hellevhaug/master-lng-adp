@@ -47,7 +47,7 @@ def read_all_contracts(data, port_types, port_locations, location_ports, loading
             des_biggest_demand[contract['id']] = 0
 
             partition_names, partition_days, contract, des_contract_partitions, des_contract_revenues, upper_partition_demand, \
-            lower_partition_demand, des_biggest_partition, des_biggest_demand = read_des_contracts(contract, last_day, loading_from_time, partition_names, partition_days, upper_partition_demand, 
+            lower_partition_demand, des_biggest_partition, des_biggest_demand, last_unloading_day, last_day = read_des_contracts(contract, last_day, loading_from_time, partition_names, partition_days, upper_partition_demand, 
             lower_partition_demand, unloading_days, des_biggest_demand, des_biggest_partition, des_contract_revenues, 
             des_contract_partitions, earliest_unloading_day, last_unloading_day)
 
@@ -138,7 +138,7 @@ des_contract_partitions, earliest_unloading_day, last_unloading_day):
                 des_contract_revenues[contract['id'], t] = price['price']
    
     return partition_names, partition_days, contract, des_contract_partitions, des_contract_revenues, upper_partition_demand, \
-    lower_partition_demand, des_biggest_partition, des_biggest_demand
+    lower_partition_demand, des_biggest_partition, des_biggest_demand, last_unloading_day, last_day
 
 def read_fob_contracts(contract, loading_from_time, fob_ids, fob_contract_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports):
     for partition in contract['fobRequests']:

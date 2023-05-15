@@ -377,11 +377,11 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
 
     # Constraint 5.8
-    model.addConstrs(init_upper_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
+    model.addConstrs(init_upper_demand_constr(all_days_stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
     partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, upper_partition_demand, des_contract_ids, des_spot_ids,
     des_contract_partitions), name='upper_demand')
 
-    model.addConstrs(init_lower_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
+    model.addConstrs(init_lower_demand_constr(all_days_stop_time, x, g, vessel_capacities, vessel_boil_off_rate, vessel_ids, port_ids, loading_days,
     partition_days, sailing_time_charter, charter_boil_off, loading_port_ids, lower_partition_demand, des_contract_ids, des_spot_ids,
     des_contract_partitions), name='lower_demand')
 
@@ -419,12 +419,17 @@ def init_objective_and_constraints(model, x, z, w, g, s, horizon_length, predict
 
 
 
-def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon):
+def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_count, prediction_horizon, all_days):
     print("Freezing variables...")
     # Freeze the variables that start in the current horizon: 
 
     start_time = time.time()
     print("\n--- Starting to freeze variables and change type: %.1f seconds ---" % (time.time() - start_time))
+
+    if prediction_horizon != "ALL":
+        horizon_stop_time = horizon_length*(iteration_count+2)+prediction_horizon
+    else:
+        horizon_stop_time = len(all_days)
 
     for var in model.getVars():
         var_name = var.varName
@@ -446,7 +451,7 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
                 #var.vtype = GRB.BINARY
                 x[tuple_key].vtype = GRB.BINARY
             # making the variables in the next prediction horizon continous ("ALL"):
-            elif horizon_length*(iteration_count+2) <= int(varName_list[2]) < horizon_length*(iteration_count+2)+prediction_horizon:
+            elif horizon_length*(iteration_count+2) <= int(varName_list[2]) < horizon_stop_time:
                 #var.vtype = GRB.CONTINUOUS
                 x[tuple_key].vtype = GRB.CONTINUOUS
             '''

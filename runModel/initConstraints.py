@@ -107,7 +107,7 @@ def init_upper_demand_constr(stop_time, x, g, vessel_capacities, vessel_boil_off
     if (v,i,t,j,t_) in x.keys()) +
     gp.quicksum(g[i,t,j]*(1-sailing_time_charter[i,j]*charter_boil_off) 
     for i in loading_port_ids for t in loading_days 
-    if t+sailing_time_charter[i,j] in partition_days[p] if partition_days[p][-1] <= stop_time if (i,t,j) in g.keys()) #relakserer dersom partisjonen går utenfor hor+pred_hor
+    if t+sailing_time_charter[i,j] in partition_days[p] and partition_days[p][-1] <= stop_time if (i,t,j) in g.keys()) #relakserer dersom partisjonen går utenfor hor+pred_hor
     # only feasibl earcs
     <= upper_partition_demand[j,p] 
     for j in (des_contract_ids+des_spot_ids) for p in des_contract_partitions[j])
