@@ -253,6 +253,15 @@ def init_model_vars_RHH(model, prediction_horizon, horizon_length, fob_ids, fob_
         production_quantities = {(i,t): value for (i,t), value in production_quantities.items() if t <= horizon_length*(iteration_count+1)+prediction_horizon}
 
     s = model.addVars(production_quantities, vtype='C', name='s')
+
+    """
+    if prediction_horizon != "ALL":
+        production_quantities = {(i,t): value for (i,t), value in production_quantities.items() if t <= horizon_length*(iteration_count+1)+prediction_horizon}
+
+    s = model.addVars(production_quantities, vtype='C', name='s')
+    """
+
+
     #('NGBON', 6): <gurobi.Var *Awaiting Model Update*>,
 
     print("\n--- Done initializing variables in: %.1f seconds ---" % (time.time() - start_time))
@@ -507,8 +516,8 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
             if 0 <= int(varName_list[1]) < horizon_length*(iteration_count+1):
                 #var.lb = var.X
                 #var.ub = var.X
-                g[tuple_key].lb = var.X
-                g[tuple_key].ub = var.X
+                g[tuple_key].lb = round(var.X)
+                g[tuple_key].ub = round(var.X)
             # making the variables in the next horizon binary:
             '''
             else:
@@ -541,8 +550,8 @@ def freeze_variables_and_change(model, x, z, w, g, s, horizon_length, iteration_
             if 0 <= int(varName_list[1]) < horizon_length*(iteration_count+1):
                 #var.lb = var.X
                 #var.ub = var.X
-                z[tuple_key].lb = var.X
-                z[tuple_key].ub = var.X
+                z[tuple_key].lb = round(var.X)
+                z[tuple_key].ub = round(var.X)
             # making the variables in the next horizon binary:
             elif horizon_length*(iteration_count+1) <= int(varName_list[1]) < horizon_length*(iteration_count+2):
                 #var.vtype = GRB.BINARY

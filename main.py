@@ -161,13 +161,13 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group1 = 'A-2L-D'
-filename1 = 'A-2L-6U-8F-15V-120D'
-runtime = 30 # seconds
+group1 = 'N-1L-A'
+filename1 = 'N-1L-16U-12F-23V-120D'
+runtime = 60*60*3 # seconds
 gap_limit = 0.005
 modelType = BASIC_MODEL
-spotGroup = 'spotTests'
-spotFilename='N-1L-8U-9F-23V-30D'
+#spotGroup = 'spotTests'
+#spotFilename='N-1L-8U-9F-23V-30D'
 
 RHH = "Y" # "Y" to run RHH algorithm
 horizon_length = 60 # days
