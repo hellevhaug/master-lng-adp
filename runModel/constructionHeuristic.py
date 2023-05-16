@@ -28,7 +28,7 @@ def find_initial_arcs(x1, maintenance_vessels, all_days, maintenance_vessel_port
 def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
         des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory,
         initial_inventory, production_quantities, minimum_spread, des_loading_ports, number_of_berths, sailing_time_charter,
-        loading_days, fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids):
+        loading_days, fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids):
 
     # This function should return a initial solution that is feasible 
     # x : arcs
@@ -184,14 +184,14 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
         (f'Amount chartered : {amount_chartered}\n')
         relevant_days = {(l_port, day): value for (l_port, day), value in s.items() if value > max_inventory[l_port]}
 
-        for des_contract in des_contract_partitions_updated.keys():
+        for des_contract in des_contract_ids_updated:
             for partition in des_contract_partitions_updated[des_contract]:
                 
                 # Identifying how much is missing for the contract and scaling for boil off 
                 missing_required_demand = (lower_partition_demand[des_contract, partition] - amount_chartered[des_contract][partition])/0.85
 
                 for (i,t,j), value in g.items():
-                    if j==des_contract and t+sailing_time_charter[i,j] in partition_days[partition]:
+                    if j==des_contract and t+sailing_time_charter[i,j] in partition_days[partition] and value > 0:
                         # If 
                         if missing_required_demand + value < upper_charter_amount:
                             # inventory constraints, never below minimum inventory
