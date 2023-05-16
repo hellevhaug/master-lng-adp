@@ -160,8 +160,8 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                 demand_is_satisfied = update_if_demand_is_satisfied(amount_chartered, des_contract_ids_updated, lower_partition_demand)
                 if demand_is_satisfied[best_des_contract]:
                     print(f'{best_des_contract} fulfilled \n\n')
-                    des_contract_ids_updated.remove(best_des_contract)
                     remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
+                    des_contract_ids_updated.remove(best_des_contract)
                 if len(des_contract_ids_updated)==0:
                     print(f'All contracts fulfilled \n\n')
                     all_demand_satisfied = True
@@ -196,7 +196,7 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                     missing_required_demand/0.85 + amount_chartered[des_contract][partition] < value-min_inventory[loading_port]):
                         g[loading_port, day, des_contract] += missing_required_demand/0.85
                         update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
-
+                        continue
 
                     # Missing demand is larger than what is feasible to leave as inventory at loading port 
                     elif missing_required_demand/0.85 > value-min_inventory[loading_port] and missing_required_demand > lower_charter_amount:
