@@ -21,8 +21,8 @@ ALLOWED_WAITING = 7
 PRODUCTION_SCALE_RATE = 0.3
 CHARTER_OUT_FRICTION = 0.05
 DES_HAS_LOADING_PORT = True
-GENERATE_ARCS = True
-WRITE_ARCS = False
+GENERATE_ARCS = False
+WRITE_ARCS = True
 
 ######################################################
 
