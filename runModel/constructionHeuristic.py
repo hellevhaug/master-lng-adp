@@ -106,8 +106,8 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
     # ------ Then finding charter variables for DES contracts --------
     print(f'DES contract ids: {des_contract_ids}')
     # Creating new list and dict for des_contract_ids and des_contract_partitions
-    des_contract_ids_updated = des_contract_ids.copy()
-    des_contract_partitions_updated = des_contract_partitions.copy()
+    des_contract_ids_updated = [des_contract_id for des_contract_id in des_contract_ids]
+    des_contract_partitions_updated = {des_contract_id: partition for des_contract_id, partition in des_contract_partitions.items()}
     # all_demand_satisfied is False as long as not all contracts is fulfuilled 
     all_demand_satisfied = False
     # amount chartered is calculcated 
