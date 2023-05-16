@@ -179,21 +179,25 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
  # ------------ Fixing left-over DES contracts -------------
     if not all_demand_satisfied:
         print('\n Not all contracts were satisfied')
-        (f'Des contracts : {des_contract_ids_updated}\n')
-        (f'Des contracts partitions : {des_contract_partitions_updated}\n')
-        (f'Amount chartered : {amount_chartered}\n')
-        relevant_days = {(l_port, day): value for (l_port, day), value in s.items() if value > max_inventory[l_port]}
+        print(f'Des contracts : {des_contract_ids_updated}\n')
+        print(f'Des contracts partitions : {des_contract_partitions_updated}\n')
+        print(f'Amount chartered : {amount_chartered}\n')
 
         for des_contract in des_contract_ids_updated:
             for partition in des_contract_partitions_updated[des_contract]:
+
+                g_vars = []
                 
                 # Identifying how much is missing for the contract and scaling for boil off 
                 missing_required_demand = (lower_partition_demand[des_contract, partition] - amount_chartered[des_contract][partition])/0.85
 
                 for (i,t,j), value in g.items():
                     if j==des_contract and t+sailing_time_charter[i,j] in partition_days[partition] and value > 0:
-                        # If 
+                        g_vars.append((i,t,j))
+
+                        # If missing demand is small enough to add to 
                         if missing_required_demand + value < upper_charter_amount:
+
                             # inventory constraints, never below minimum inventory
                             inventory_feasible = True
                             for t_ in range(t, loading_days[-1]+1):
@@ -223,7 +227,17 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                                 g, des_contract_ids)
                                 missing_required_demand -= biggest_feasible_delivery
                                 continue
-                                #remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
+                
+                # If the number of active g-variables for partition is too low 
+                average_charter_amount = (lower_partition_demand[partition]/0.85)/len(g_vars)
+                print(f'Did not finish for partition {partition}, must deliver at least {average_charter_amount} per ship')
+                distance_upper = abs(average_charter_amount- upper_charter_amount)
+                distance_lower = abs(average_charter_amount-lower_charter_amount)
+                if distance_upper > distance_lower:
+                    0
+                else:
+                    0
+
 
 
     print('(finished with DES)\n')        
