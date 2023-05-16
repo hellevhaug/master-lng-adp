@@ -1,5 +1,6 @@
 import gurobipy
 import random
+import copy
 from runModel.constructionSupportFuncs import *
 
 """
@@ -93,8 +94,6 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                     break
 
 
-
-
     # printing jippi beacuse we are done with FOB
     print('(finished with FOB, jippi)')
     for (f,t), value in z.items():
@@ -102,12 +101,13 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
             print(f,t, value)
 
 
-
     # ------ Then finding charter variables for DES contracts --------
+        # Creating new list and dict for des_contract_ids and des_contract_partitions
+    des_contract_ids_updated = copy.deepcopy(des_contract_ids)
+    des_contract_partitions_updated = copy.deepcopy(des_contract_partitions)
+    #des_contract_ids_updated = [des_contract_id for des_contract_id in des_contract_ids]
+    #des_contract_partitions_updated = {des_contract_id: partition for des_contract_id, partition in des_contract_partitions.items()}
     print(f'DES contract ids: {des_contract_ids}')
-    # Creating new list and dict for des_contract_ids and des_contract_partitions
-    des_contract_ids_updated = [des_contract_id for des_contract_id in des_contract_ids]
-    des_contract_partitions_updated = {des_contract_id: partition for des_contract_id, partition in des_contract_partitions.items()}
     # all_demand_satisfied is False as long as not all contracts is fulfuilled 
     all_demand_satisfied = False
     # amount chartered is calculcated 
@@ -120,8 +120,6 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
         for loading_port in loading_port_ids:
 
             print(f'Day: {loading_day} for loading port {loading_port }\n')
-            print(f'des contract ids: {des_contract_ids}')
-            print(f'des contract partitions: {des_contract_partitions}')
             # Randomly choosing an amount to charter
             charter_amount = random.randrange(lower_charter_amount, upper_charter_amount)
 
@@ -139,8 +137,6 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
             # Did not find any feasible contracts?? Weird but can happen I guess
             if (best_des_contract, best_partition) == (None, None):
                 print('Did not find a best partition and a best contract')
-                print(f'remaining contracts:{des_contract_ids_updated}')
-                print(f'remaining partitions:{des_contract_partitions_updated}')
                 continue
 
             print(best_des_contract, best_partition)
@@ -157,35 +153,35 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                 g[des_loading_port, loading_day, best_des_contract] = charter_amount
                 w[des_loading_port, loading_day, best_des_contract] = 1
                 update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
-                print(f'des contract ids: {des_contract_ids}')
-                print(f'des contract partitions: {des_contract_partitions}')
                 # her forsvinner de
                 amount_chartered = calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days,
                 g, des_contract_ids)
                 #print(f'amount_chartered: {amount_chartered}')
-                print(f'des contract ids: {des_contract_ids}')
-                print(f'des contract partitions: {des_contract_partitions}')
                 demand_is_satisfied = update_if_demand_is_satisfied(amount_chartered, des_contract_ids_updated, lower_partition_demand)
                 if demand_is_satisfied[best_des_contract]:
                     print(f'{best_des_contract} fulfilled \n\n')
                     des_contract_ids_updated.remove(best_des_contract)
-                    des_contract_partitions_updated = remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
+                    remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
                 if len(des_contract_ids_updated)==0:
                     print(f'All contracts fulfilled \n\n')
                     all_demand_satisfied = True
                     print('Finished with DES')
                     break
                 else:
-                    des_contract_partitions_updated = remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
+                    remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
             else:
                 # update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
                 continue
 
-
+    print(f'des_contract_partitions_updated')
 
 
  # ------------ Fixing left-over DES contracts -------------
     if not all_demand_satisfied:
+        print('\n Not all contracts were satisfied')
+        (f'Des contracts : {des_contract_ids_updated}\n')
+        (f'Des contracts partitions : {des_contract_partitions_updated}\n')
+        (f'Amount chartered : {amount_chartered}\n')
         relevant_days = {(l_port, day): value for (l_port, day), value in s.items() if value > max_inventory[l_port]}
         for (loading_port, day), value in relevant_days.items():
             for des_contract in des_contract_partitions_updated.keys():
@@ -212,11 +208,11 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                     else: 
                         smart_charter_amount = random.randrange(lower_charter_amount, (upper_charter_amount+lower_charter_amount)/2)
                     
-                    if check_feasible_charter_move(loading_day, best_partition, best_des_contract, des_loading_port, smart_charter_amount, min_inventory, s, w,
+                    if check_feasible_charter_move(day, partition, des_contract, loading_port, smart_charter_amount, min_inventory, s, w,
                             number_of_berths, minimum_spread, amount_chartered, upper_partition_demand, loading_days, fob_loading_ports, z,
                             partition_days, sailing_time_charter,g):
-                        g[loading_port, des_contract] = smart_charter_amount
-                        w[loading_port, des_contract] = 1
+                        g[loading_port, day, des_contract] = smart_charter_amount
+                        w[loading_port, day, des_contract] = 1
                         update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
                         amount_chartered = calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days,
                         g, des_contract_ids)
