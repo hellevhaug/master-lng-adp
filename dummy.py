@@ -252,3 +252,48 @@ while not total_demand_is_satisfied:
                     else:
                         continue
 """
+
+
+"""
+for (loading_port, day), value in relevant_days.items():
+    for des_contract in des_contract_partitions_updated.keys():
+        for partition in des_contract_partitions_updated[des_contract]:
+            # Not relevant, wont make it in time/too early
+            if day+sailing_time_charter[loading_port, des_contract] not in partition_days[partition]:
+                continue
+
+            # How much is missing from the contract
+            missing_required_demand = lower_partition_demand[des_contract, partition] - amount_chartered[des_contract][partition]
+
+            # If the missing required demand is less than a 
+
+
+            if (missing_required_demand/0.85 < lower_charter_amount and 
+            missing_required_demand/0.85 + amount_chartered[des_contract][partition] < value-min_inventory[loading_port]):
+                g[loading_port, day, des_contract] += missing_required_demand/0.85
+                update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
+
+
+            # Missing demand is larger than what is feasible to leave as inventory at loading port 
+            elif missing_required_demand/0.85 > value-min_inventory[loading_port] and missing_required_demand > lower_charter_amount:
+                smart_charter_amount = random.randrange(lower_charter_amount, value-min_inventory[loading_port])
+                
+            elif missing_required_demand/0.85 <= value-min_inventory[loading_port]:
+                smart_charter_amount = random.randrange(lower_charter_amount, upper_charter_amount)
+
+            else: 
+                smart_charter_amount = random.randrange(lower_charter_amount, (upper_charter_amount+lower_charter_amount)/2)
+            
+            if check_feasible_charter_move(day, partition, des_contract, loading_port, smart_charter_amount, min_inventory, s, w,
+                    number_of_berths, minimum_spread, amount_chartered, upper_partition_demand, loading_days, fob_loading_ports, z,
+                    partition_days, sailing_time_charter,g):
+                g[loading_port, day, des_contract] = smart_charter_amount
+                w[loading_port, day, des_contract] = 1
+                update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
+                amount_chartered = calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days,
+                g, des_contract_ids)
+
+            else:
+                continue
+
+"""

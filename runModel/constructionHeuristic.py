@@ -183,42 +183,60 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
         (f'Des contracts partitions : {des_contract_partitions_updated}\n')
         (f'Amount chartered : {amount_chartered}\n')
         relevant_days = {(l_port, day): value for (l_port, day), value in s.items() if value > max_inventory[l_port]}
-        for (loading_port, day), value in relevant_days.items():
-            for des_contract in des_contract_partitions_updated.keys():
-                for partition in des_contract_partitions_updated[des_contract]:
-                    # Not relevant, wont make it in time/too early
-                    if day+sailing_time_charter[loading_port, des_contract] not in partition_days[partition]:
-                        continue
-                    # How much is missing from the contract
-                    missing_required_demand = lower_partition_demand[des_contract, partition] - amount_chartered[des_contract][partition]
 
-                    if (missing_required_demand/0.85 + amount_chartered[des_contract][partition] < upper_charter_amount and 
-                    missing_required_demand/0.85 + amount_chartered[des_contract][partition] < value-min_inventory[loading_port]):
-                        g[loading_port, day, des_contract] += missing_required_demand/0.85
-                        update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
+        for des_contract in des_contract_partitions_updated.keys():
+            for partition in des_contract_partitions_updated[des_contract]:
+                
+                # Identifying how much is missing for the contract and scaling for boil off 
+                missing_required_demand = (lower_partition_demand[des_contract, partition] - amount_chartered[des_contract][partition])/0.85
 
+                for (i,t,j), value in g.items():
+                    if j==des_contract and t+sailing_time_charter[i,j] in partition_days[partition]:
+                        # If 
+                        if missing_required_demand + value < upper_charter_amount:
+                            # inventory constraints, never below minimum inventory
+                            inventory_feasible = True
+                            for t_ in range(t, loading_days[-1]+1):
+                                if s[i, t_] - missing_required_demand < min_inventory[i]:
+                                    inventory_feasible = False
+                                    break # Made partition feasible
+                            if inventory_feasible:
+                                g[i, t, j] += missing_required_demand
+                                update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
+                                amount_chartered = calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days,
+                                g, des_contract_ids)
+                                remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
+                                break
+                            else:
+                                continue
+                        else: 
+                            biggest_feasible_delivery = upper_charter_amount - value
+                            inventory_feasible = True
+                            for t_ in range(t, loading_days[-1]+1):
+                                if s[i, t_] - biggest_feasible_delivery < min_inventory[i]:
+                                    inventory_feasible = False
+                                    break # Made partition feasible
+                            if inventory_feasible:
+                                g[i,t,j] += biggest_feasible_delivery
+                                update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
+                                amount_chartered = calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days,
+                                g, des_contract_ids)
+                                missing_required_demand -= biggest_feasible_delivery
+                                continue
+                                #remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
 
-                    # Missing demand is larger than what is feasible to leave as inventory at loading port 
-                    elif missing_required_demand/0.85 > value-min_inventory[loading_port] and missing_required_demand > lower_charter_amount:
-                        smart_charter_amount = random.randrange(lower_charter_amount, value-min_inventory[loading_port])
-                        
-                    elif missing_required_demand/0.85 <= value-min_inventory[loading_port]:
-                        smart_charter_amount = random.randrange(lower_charter_amount, upper_charter_amount)
-
-                    else: 
-                        smart_charter_amount = random.randrange(lower_charter_amount, (upper_charter_amount+lower_charter_amount)/2)
-                    
-                    if check_feasible_charter_move(day, partition, des_contract, loading_port, smart_charter_amount, min_inventory, s, w,
+                            
+                        """
+                        if check_feasible_charter_move(t, partition, des_contract, i, missing_required_demand, min_inventory, s, w,
                             number_of_berths, minimum_spread, amount_chartered, upper_partition_demand, loading_days, fob_loading_ports, z,
                             partition_days, sailing_time_charter,g):
-                        g[loading_port, day, des_contract] = smart_charter_amount
-                        w[loading_port, day, des_contract] = 1
-                        update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands)
-                        amount_chartered = calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days,
-                        g, des_contract_ids)
+                            0 
+                            continue
+                        else:
+                        """
+                        
 
-                    else:
-                        continue
+
 
 
     print('(finished with DES)\n')        
