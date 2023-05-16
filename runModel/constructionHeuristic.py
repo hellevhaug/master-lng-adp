@@ -160,8 +160,8 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                 demand_is_satisfied = update_if_demand_is_satisfied(amount_chartered, des_contract_ids_updated, lower_partition_demand)
                 if demand_is_satisfied[best_des_contract]:
                     print(f'{best_des_contract} fulfilled \n\n')
-                    des_contract_ids_updated.remove(best_des_contract)
                     remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
+                    des_contract_ids_updated.remove(best_des_contract)
                 if len(des_contract_ids_updated)==0:
                     print(f'All contracts fulfilled \n\n')
                     all_demand_satisfied = True
@@ -224,19 +224,6 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                                 missing_required_demand -= biggest_feasible_delivery
                                 continue
                                 #remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
-
-                            
-                        """
-                        if check_feasible_charter_move(t, partition, des_contract, i, missing_required_demand, min_inventory, s, w,
-                            number_of_berths, minimum_spread, amount_chartered, upper_partition_demand, loading_days, fob_loading_ports, z,
-                            partition_days, sailing_time_charter,g):
-                            0 
-                            continue
-                        else:
-                        """
-                        
-
-
 
 
     print('(finished with DES)\n')        
