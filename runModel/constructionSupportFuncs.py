@@ -13,7 +13,7 @@ def calculate_total_demand_delivered(des_contract_partitions, sailing_time_chart
 
 
 # Updating the s-variables with g and z (charter and fob)
-def update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands):
+def update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands, fob_loading_ports):
     for (loading_port, day), value in s.items():
         if day == all_days[0]:
             s[loading_port, day] = initial_inventory[loading_port] + production_quantities[loading_port, day]
@@ -21,7 +21,7 @@ def update_inventory(s, all_days, initial_inventory, production_quantities, des_
                 if (loading_port, day, j) in g.keys():
                     s[loading_port, day] -= g[loading_port, day, j] 
             for fob_id in fob_ids:
-                if (fob_id,day) in z.keys():
+                if (fob_id,day) in z.keys() and loading_port in fob_loading_ports[fob_id]:
                     s[loading_port, day] -= z[fob_id, day]*fob_demands[fob_id]
         else: 
             s[loading_port, day] = s[loading_port, day-1] + production_quantities[loading_port, day]
@@ -29,7 +29,7 @@ def update_inventory(s, all_days, initial_inventory, production_quantities, des_
                 if (loading_port, day, j) in g.keys():
                     s[loading_port, day] -=  g[loading_port, day, j] 
             for fob_id in fob_ids:
-                if (fob_id, day) in z.keys():
+                if (fob_id, day) in z.keys() and loading_port in fob_loading_ports[fob_id]:
                     s[loading_port, day] -= z[fob_id, day]*fob_demands[fob_id]
 
 
@@ -138,6 +138,9 @@ def find_best_contract_and_partition(loading_day, amount_chartered, loading_port
 
     for des_contract_id in des_contract_ids: 
         if des_loading_ports[des_contract_id].__contains__(loading_port):
+            last_partition_day = partition_days[partition][-1]
+            if last_partition_day > best_last_partition_day:
+                continue
             # Minimum spread
             if sum(w[loading_port,t,des_contract_id] for t in loading_days if t >= loading_day and t < loading_day+minimum_spread and t+sailing_time_charter[loading_port, des_contract_id] in unloading_days[des_contract_id])+ 1 > 1:
                 #print(f'{partition}')
@@ -163,7 +166,6 @@ def find_best_contract_and_partition(loading_day, amount_chartered, loading_port
                             break
                 if infeasible_partition:
                     continue
-                last_partition_day = partition_days[partition][-1]
                 if last_partition_day < best_last_partition_day:
                     best_last_partition_day = last_partition_day
                     best_contract, best_partition = des_contract_id, partition

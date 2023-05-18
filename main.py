@@ -62,6 +62,18 @@ def run_one_instance_heuristic(group, filename, runtime, modelType):
     if modelType=='basic':
         model = run_basic_model_heuristic(group, filename, runtime, f'Running file: {filename}')
         write_vars_to_file(group, filename, model, 'Basic model with minimum spread, heuristic')
+    elif modelType=='variableProduction':
+        model = run_variable_production_model_heuristic(group, filename, runtime, f'Running file: {filename}')
+        write_vars_to_file(group, filename, model, 'Model with variable production, heuristic')
+    elif modelType=='charterOut':
+        model = run_charter_out_model_heuristic(group, filename, runtime, f'Running file: {filename}')
+        write_vars_to_file(group, filename, model, 'Model with chartering out, heuristic')
+    elif modelType=='combinedModel':
+        model = run_combined_model_heuristic(group, filename, runtime, f'Running file: {filename}')
+        write_vars_to_file(group, filename, model, 'Model with combined extensions, heuristic')
+    else:
+        raise ValueError('Uknown model type for running')
+    
         return model
 
 
@@ -158,7 +170,7 @@ filename1 = 'A-2L-6U-20F-15V-120D'
 constructionGroup = 'N-1L-45D'
 constructionFile = 'N-1L-6U-13F-18V-45D-a'
 runtime = 60*60*4
-modelType = BASIC_MODEL
+modelType = VARIABLE_PRODUCTION_MODEL
 
 #run_one_instance(group, filename1, runtime, modelType)
 #test_init_model(group, filename, modelType)

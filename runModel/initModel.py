@@ -283,7 +283,7 @@ def initialize_basic_model(group, filename, heuristic):
 
 
 ### Dummy model?
-def initialize_model_dummy(group, filename):
+def initialize_model_dummy(group, filename, heuristic):
 
     # Finding out if it is data from Nigeria or Abu Dabi
     loading_port_ids = set_loading_port_ids(filename)
@@ -295,7 +295,7 @@ def initialize_model_dummy(group, filename):
 
 
 ### Extension 1 - Variable production
-def initialize_variable_production_model(group, filename):
+def initialize_variable_production_model(group, filename, heuristic):
 
     start_time = time.time()
     print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
@@ -456,6 +456,8 @@ def initialize_variable_production_model(group, filename):
 
     q = model.addVars(production_quantities, vtype='C', name='q')
 
+    model.update() 
+
     # Initializing constraints
 
     model.setObjective(init_objective(x, z, s, w, g, fob_revenues, fob_demands, fob_ids, fob_days,
@@ -535,6 +537,38 @@ def initialize_variable_production_model(group, filename):
 
     print("\n--- Done initializing arcs in: %.1f seconds ---" % (time.time() - start_time))   
 
+    if heuristic:
+        print("\n--- Starting heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
+        z1, s1, w1, g1 = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+        des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+        production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+        fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
+
+        x1 = find_initial_arcs(x, maintenance_vessels, all_days, maintenance_vessel_ports, vessel_start_ports, maintenance_start_times,
+                                vessel_available_days, sailing_costs)
+        
+        q1 = find_production_vars(q, production_quantities)
+
+        print("\n--- Finished heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
+
+        for (v,i,t,j,t_) in x.keys():
+            x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
+        
+        for (i,t,j) in g.keys():
+            g[i,t,j].VarHintVal = g1[i,t,j]
+            w[i,t,j].VarHintVal = w1[i,t,j]
+        
+        for (f,t) in z.keys():
+            z[f,t].VarHintVal = z1[f,t]
+
+        for (i,t) in s.keys():
+            s[i,t].VarHintVal = s1[i,t]
+        
+        for (i,t) in q.keys():
+            q[i,t].VarHintVal = q1[i,t]
+
+        model.update()
+
     #NB! The parameter minimum and maximum production rate for each loading port must be defined; Maximum can be set to the default amount from data.
 
 
@@ -542,7 +576,7 @@ def initialize_variable_production_model(group, filename):
 
 
 ### Extension 2 - Charter out vessels
-def initialize_charter_out_model(group, filename):
+def initialize_charter_out_model(group, filename, heuristic):
 
     start_time = time.time()
     print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
@@ -702,6 +736,8 @@ def initialize_charter_out_model(group, filename):
     s = model.addVars(production_quantities, vtype='C', name='s')
 
     y = model.addVars(vessel_ids, vtype='B', name='y')
+
+    model.update()
    
 
     # Initializing constraints
@@ -794,11 +830,47 @@ def initialize_charter_out_model(group, filename):
 
     print("\n--- Done initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
+
+    if heuristic:
+        print("\n--- Starting heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
+        z1, s1, w1, g1 = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+        des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+        production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+        fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
+
+        x1 = find_initial_arcs(x, maintenance_vessels, all_days, maintenance_vessel_ports, vessel_start_ports, maintenance_start_times,
+                                vessel_available_days, sailing_costs)
+
+        y1 = find_charter_out_vars(y, vessel_ids)
+
+        print("\n--- Finished heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
+
+        # Setting all the variables
+
+        for (v,i,t,j,t_) in x.keys():
+            x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
+        
+        for (i,t,j) in g.keys():
+            g[i,t,j].VarHintVal = g1[i,t,j]
+            w[i,t,j].VarHintVal = w1[i,t,j]
+        
+        for (f,t) in z.keys():
+            z[f,t].VarHintVal = z1[f,t]
+
+        for (i,t) in s.keys():
+            s[i,t].VarHintVal = s1[i,t]
+
+        for (v) in y.keys():
+            y[v] = y1[v]
+
+
+        model.update()
+
     return model # This line must be moved to activate the extensions
 
 
 ### Extension 1 + 2
-def initialize_combined_model(group, filename):
+def initialize_combined_model(group, filename, heuristic):
 
     start_time = time.time()
     print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
@@ -964,6 +1036,8 @@ def initialize_combined_model(group, filename):
     q = model.addVars(production_quantities, vtype='C', name='q')
 
     s = model.addVars(production_quantities, vtype='C', name='s')
+
+    model.update()
    
 
     # Initializing constraints
@@ -1061,5 +1135,46 @@ def initialize_combined_model(group, filename):
     print("\n--- Done initalizing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
     #NB! The parameter minimum and maximum production rate for each loading port must be defined; Maximum can be set to the default amount from data.
+
+    if heuristic:
+        print("\n--- Starting heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
+        z1, s1, w1, g1 = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+        des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+        production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+        fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
+
+        x1 = find_initial_arcs(x, maintenance_vessels, all_days, maintenance_vessel_ports, vessel_start_ports, maintenance_start_times,
+                                vessel_available_days, sailing_costs)
+        
+        q1 = find_production_vars(q, production_quantities)
+
+
+        y1 = find_charter_out_vars(y, vessel_ids)
+
+        print("\n--- Finished heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
+
+        # Setting all the variables
+
+        for (v,i,t,j,t_) in x.keys():
+            x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
+        
+        for (i,t,j) in g.keys():
+            g[i,t,j].VarHintVal = g1[i,t,j]
+            w[i,t,j].VarHintVal = w1[i,t,j]
+        
+        for (f,t) in z.keys():
+            z[f,t].VarHintVal = z1[f,t]
+
+        for (i,t) in s.keys():
+            s[i,t].VarHintVal = s1[i,t]
+        
+        for (i,t) in q.keys():
+            q[i,t].VarHintVal = q1[i,t]
+
+        for (v) in y.keys():
+            y[v] = y1[v]
+
+
+        model.update()
 
     return model # This line must be moved to activate the extensions
