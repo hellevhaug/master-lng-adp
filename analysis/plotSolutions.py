@@ -22,7 +22,28 @@ File defining helper-functions for plotting different aspects of a solution
 def get_coordinates_dataframe():
     path = 'analysis/coordinates.csv'
     df = pd.read_csv(path, delimiter=',')
+    return df
+
+
+def get_contract_dataframe(group, filename):
+    
+    df = get_coordinates_dataframe()
+    data = read_data_file(group, filename)
+
+    loading_port_ids = set_loading_port_ids(filename)
+
+    loading_from_time, loading_to_time, loading_days = read_planning_horizion(data)
+    location_ids, location_names, location_types, location_ports, port_types, port_locations = initialize_location_sets() 
+    read_all_locations(data, location_ids, location_names)
+    unloading_locations_ids = [location for location in location_ids if location not in loading_port_ids]
+    set_unloading_ports(unloading_locations_ids, location_types, location_ports)
+    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_ports, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    
+    relevant_locations = list(port_locations.values())
+    print(relevant_locations)
+    df = df[df['ID'].isin(relevant_locations)]
     df = df.set_index(['ID'])
+
     return df
 
 
@@ -34,12 +55,14 @@ def reformat_coordinates_dataframe(df):
         longitude[row['ID']] = row['Longitude']
     return longitude, latitude
 
-def plot_ports(df):
+def plot_ports_for_instance(group, filename):
     countries = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
     countries = countries.drop(159) # Antartica
     fig, ax = plt.subplots(figsize=(8,6))
 
     countries.plot(color="lightgrey",ax=ax)
+
+    df = get_contract_dataframe(group, filename)
 
     df.plot(x="longitude", y="latitude", kind="scatter", 
             c="red", colormap="YlOrRd", 
@@ -164,16 +187,25 @@ def contract_gant_chart(logDataPath, group, testDataFile, chartType):
     production_quantities = set_production_quantities(production_quantity, loading_days)
 
     ## Initialize lists for contracts
-    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_port, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
+    port_types, des_contract_ids, des_contract_revenues, des_contract_partitions, partition_names, partition_days, upper_partition_demand, lower_partition_demand, des_biggest_partition, des_biggest_demand, fob_ids, fob_contract_ids, fob_revenues, fob_demands, fob_days, fob_loading_ports, unloading_days, last_unloading_day, all_days= read_all_contracts(data, port_types, port_locations, location_ports, loading_to_time, loading_from_time)
 
     ## Initalize distances 
     distances = set_distances(data)
 
     ## Initialize spot stuffz
     spot_port_ids, des_spot_ids, fob_spot_ids = initialize_spot_sets()
-    des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
-    loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
-    fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time)
+    # Not all datasets have spot :)
+    try:
+        des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
+        loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
+        fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
+        if len(fob_spot_ids+des_spot_ids)!=len(set(fob_spot_ids+des_spot_ids)):
+            raise ValueError('There are duplicates in spot data')
+    except KeyError:
+        print('This dataset does not have spot ')
+    except:
+        print('Something went wrong!')
+        pass
     #ays_between_delivery = {(j): set_minimum_days_between() for j in (des_contract_ids+des_spot_ids)}
 
     ## Initialize fake fob stuffz + set fob_operational_times

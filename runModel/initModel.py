@@ -1,6 +1,8 @@
 import gurobipy as gp
 from gurobipy import GRB
 import itertools
+import time
+from datetime import datetime
 
 from readData.readOtherData import *
 from readData.readContractData import *
@@ -14,14 +16,20 @@ from runModel.initArcs import *
 ### Basic model
 def initialize_basic_model(group, filename):
 
+    start_time = time.time()
+    print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
+
     # Finding out if it is data from Nigeria or Abu Dabi
     loading_port_ids = set_loading_port_ids(filename)
+
+    print(f"Number of loading ports: {len(loading_port_ids)}")   
 
     ## Initializing data
     data = read_data_file(group, filename)
 
     # Planning horizion
     loading_from_time, loading_to_time, loading_days = read_planning_horizion(data)
+
 
     ## Initialize lists for locations and ports
     location_ids, location_names, location_types, location_ports, port_types, port_locations = initialize_location_sets() 
@@ -45,6 +53,8 @@ def initialize_basic_model(group, filename):
     except KeyError:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
 
+    print(f"Number of DES contracts: {len(des_contract_ids)}")
+    print(f"Number of FOB contracts: {len(fob_contract_ids)}")
 
     ## Initalize distances 
     distances = set_distances(data)
@@ -58,8 +68,9 @@ def initialize_basic_model(group, filename):
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
         if len(fob_spot_ids+des_spot_ids)!=len(set(fob_spot_ids+des_spot_ids)):
             raise ValueError('There are duplicates in spot data')
+        set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids)
     except KeyError:
-        print('This dataset does not have spot ')
+        print('This dataset does not have spot')
     except:
         print('Something went wrong!')
         pass
@@ -88,6 +99,7 @@ def initialize_basic_model(group, filename):
     # Adding spot ports to vessel port acceptances, this should mabye not be here, we will see.
     add_spot_to_vessel_acceptances(vessel_port_acceptances, des_spot_ids)
 
+    print(f"Number of vessels: {len(vessel_ids)}")
 
     # Now all ports is defined, should include DES-contracts, DES-spot, loading- and maintenance ports :')
     port_ids = [port_id for port_id in port_locations]
@@ -104,18 +116,47 @@ def initialize_basic_model(group, filename):
     arc_speeds, arc_waiting_times, arc_sailing_times, sailing_costs, total_feasible_arcs = init_arc_sets()
     fuel_price, charter_boil_off, tank_leftover_value, allowed_waiting = set_external_data(data)
 
-
     # Setting operational times for vessel-port-combinations
     operational_times = {(v,i,j): set_operational_time(v,i,j, maintenance_ids, maintenance_durations) 
     for v,i,j in list(itertools.product(vessel_ids, port_ids, port_ids))}
 
-    vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
-    maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
-    des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
-    fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
-    vessel_ballast_speed_profile, BASIC_MODEL, des_loading_ports) 
-    for vessel in vessel_ids}
-        
+    generate_arcs = GENERATE_ARCS
+    write_arcs = WRITE_ARCS
+    if generate_arcs:
+        print("\n--- Starting to generate arcs in: %.1f seconds ---" % (time.time() - start_time))
+
+        vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
+        maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
+        des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+        fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
+        vessel_ballast_speed_profile, BASIC_MODEL, des_loading_ports) 
+        for vessel in vessel_ids}
+
+        if write_arcs:
+            path = f'arcs/{group}/basic/{filename}-arcs.json'
+            try:
+                with open(path,'x') as init_arc_json:
+                    pass
+            except FileExistsError:
+                open(path, 'w').close()
+            with open(path, "a") as f:
+                arc_dict = {}
+                now = datetime.now()
+                arc_dict['timeWritten'] = now.strftime("%Y-%m-%d %H:%M:%S")
+                arc_dict['arcs'] = total_feasible_arcs
+                arc_dict['sailingCosts'] = [{'key': (v,i,t,j,t_), 'value': cost} for (v,i,t,j,t_), cost in sailing_costs.items()]
+                json.dump(arc_dict, f, indent=3)
+    
+    else:
+        try:
+            arc_file = open(f'arcs/{group}/basic/{filename}-arcs.json')
+            arc_data = json.load(arc_file)
+            total_feasible_arcs = [tuple(x) for x in arc_data['arcs']]
+            sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
+        except FileNotFoundError:
+            raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
+
+    print("\n--- Initalizing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
     #######################  INITIALIZING GUROBI ########################
     model = gp.Model()
@@ -127,12 +168,14 @@ def initialize_basic_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
+    charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days  if t+sailing_time_charter[i,j] in unloading_days[j]]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
 
     s = model.addVars(production_quantities, vtype='C', name='s')
+
+    model.update() 
 
     # Initializing constraints
 
@@ -144,13 +187,13 @@ def initialize_basic_model(group, filename):
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports, des_spot_ids),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids), name='inventory_control')
 
 
     # Constraint 5.4
@@ -196,7 +239,7 @@ def initialize_basic_model(group, filename):
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids, fob_loading_ports), name='berth_constraint')
 
 
     # Constraint 5.13 
@@ -205,6 +248,8 @@ def initialize_basic_model(group, filename):
 
     model.addConstrs(init_charter_lower_capacity_constr(g, w, charter_vessel_lower_capacity, loading_port_ids, loading_days, 
     des_spot_ids, des_contract_ids), name='charter_lower_capacity') # This should be the last thing happening here
+
+    print("\n--- Done initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
     return model # This line must be moved to activate the extensions
 
@@ -223,6 +268,9 @@ def initialize_model_dummy(group, filename):
 
 ### Extension 1 - Variable production
 def initialize_variable_production_model(group, filename):
+
+    start_time = time.time()
+    print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
     
     # Finding out if it is data from Nigeria or Abu Dabi
     loading_port_ids = set_loading_port_ids(filename)
@@ -232,6 +280,8 @@ def initialize_variable_production_model(group, filename):
 
     # Planning horizion
     loading_from_time, loading_to_time, loading_days = read_planning_horizion(data)
+
+    print(f"Number of loading port: {len(loading_port_ids)}")
 
     ## Initialize lists for locations and ports
     location_ids, location_names, location_types, location_ports, port_types, port_locations = initialize_location_sets() 
@@ -256,6 +306,9 @@ def initialize_variable_production_model(group, filename):
         convert_loading_ports(des_loading_ports)
     except KeyError:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
+    
+    print(f"Number of DES contracts: {len(des_contract_ids)}")
+    print(f"Number of FOB contracts: {len(fob_contract_ids)}")
 
     ## Initalize distances 
     distances = set_distances(data)
@@ -267,6 +320,7 @@ def initialize_variable_production_model(group, filename):
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
+        set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids)
     except KeyError:
         print('This dataset does not have spot ')
     except:
@@ -315,13 +369,44 @@ def initialize_variable_production_model(group, filename):
     operational_times = {(v,i,j): set_operational_time(v,i,j, maintenance_ids, maintenance_durations) 
     for v,i,j in list(itertools.product(vessel_ids, port_ids, port_ids))}
 
-    vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
-    maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
-    des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
-    fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
-    vessel_ballast_speed_profile, VARIABLE_PRODUCTION_MODEL, des_loading_ports) 
-    for vessel in vessel_ids}
+    generate_arcs = GENERATE_ARCS
+    write_arcs = WRITE_ARCS
+    if generate_arcs:
+        print("\n--- Generating arcs in: %.1f seconds ---" % (time.time() - start_time))
 
+        vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
+        maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
+        des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+        fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
+        vessel_ballast_speed_profile, VARIABLE_PRODUCTION_MODEL, des_loading_ports) 
+        for vessel in vessel_ids}
+
+        if write_arcs:
+            path = f'arcs/{group}/basic/{filename}-arcs.json'
+            try:
+                with open(path,'x') as init_arc_json:
+                    pass
+            except FileExistsError:
+                open(path, 'w').close()
+            with open(path, "a") as f:
+                arc_dict = {}
+                now = datetime.now()
+                arc_dict['timeWritten'] = now.strftime("%Y-%m-%d %H:%M:%S")
+                arc_dict['arcs'] = total_feasible_arcs
+                arc_dict['sailingCosts'] = [{'key': (v,i,t,j,t_), 'value': cost} for (v,i,t,j,t_), cost in sailing_costs.items()]
+                json.dump(arc_dict, f, indent=1)
+    
+    else:
+        try:
+            arc_file = open(f'arcs/{group}/basic/{filename}-arcs.json')
+            arc_data = json.load(arc_file)
+            total_feasible_arcs = [tuple(x) for x in arc_data['arcs']]
+            sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
+        except FileNotFoundError:
+            raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
+
+
+    print("\n--- Initializing constraints in: %.1f seconds ---" % (time.time() - start_time))    
 
     #######################  INITIALIZING GUROBI ########################
     model = gp.Model()
@@ -333,7 +418,7 @@ def initialize_variable_production_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
+    charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days  if t+sailing_time_charter[i,j] in unloading_days[j]]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -353,13 +438,13 @@ def initialize_variable_production_model(group, filename):
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, q, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports, des_spot_ids),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(s, g, z, x, q, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids), name='inventory_control')
 
 
     # Constraint 5.4
@@ -405,7 +490,7 @@ def initialize_variable_production_model(group, filename):
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids, fob_loading_ports), name='berth_constraint')
 
 
     # Constraint 5.13 
@@ -420,16 +505,24 @@ def initialize_variable_production_model(group, filename):
     model.addConstrs(init_lower_prod_rate_constr(q, min_production_quantity, loading_days, loading_port_ids), name='lower_prod_rate')
     model.addConstrs(init_upper_prod_rate_constr(q, production_quantity, loading_days, loading_port_ids), name='upper_prod_rate')
 
+    print("\n--- Done initializing arcs in: %.1f seconds ---" % (time.time() - start_time))   
+
     #NB! The parameter minimum and maximum production rate for each loading port must be defined; Maximum can be set to the default amount from data.
 
 
     return model # This line must be moved to activate the extensions
 
+
 ### Extension 2 - Charter out vessels
 def initialize_charter_out_model(group, filename):
 
+    start_time = time.time()
+    print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
+
     # Finding out if it is data from Nigeria or Abu Dabi
     loading_port_ids = set_loading_port_ids(filename)
+
+    print(f"Number of loading ports: {len(loading_port_ids)}")
 
     ## Initializing data
     data = read_data_file(group, filename)
@@ -459,6 +552,9 @@ def initialize_charter_out_model(group, filename):
     except KeyError:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
 
+    print(f"Number of DES contracts: {len(des_contract_ids)}")
+    print(f"Number of FOB contracts: {len(fob_contract_ids)}")
+
     ## Initalize distances 
     distances = set_distances(data)
 
@@ -469,6 +565,7 @@ def initialize_charter_out_model(group, filename):
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
+        set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids)
     except KeyError:
         print('This dataset does not have spot ')
     except:
@@ -520,12 +617,43 @@ def initialize_charter_out_model(group, filename):
     operational_times = {(v,i,j): set_operational_time(v,i,j, maintenance_ids, maintenance_durations) 
     for v,i,j in list(itertools.product(vessel_ids, port_ids, port_ids))}
 
-    vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
-    maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
-    des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
-    fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
-    vessel_ballast_speed_profile, CHARTER_OUT_MODEL, des_loading_ports) 
-    for vessel in vessel_ids}
+    generate_arcs = GENERATE_ARCS
+    write_arcs = WRITE_ARCS
+    if generate_arcs:
+        print("\n--- Generating arcs in: %.1f seconds ---" % (time.time() - start_time))
+
+        vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
+        maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
+        des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+        fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
+        vessel_ballast_speed_profile, CHARTER_OUT_MODEL, des_loading_ports) 
+        for vessel in vessel_ids}
+
+        if write_arcs:
+            path = f'arcs/{group}/charter/{filename}-arcs.json'
+            try:
+                with open(path,'x') as init_arc_json:
+                    pass
+            except FileExistsError:
+                open(path, 'w').close()
+            with open(path, "a") as f:
+                arc_dict = {}
+                now = datetime.now()
+                arc_dict['timeWritten'] = now.strftime("%Y-%m-%d %H:%M:%S")
+                arc_dict['arcs'] = total_feasible_arcs
+                arc_dict['sailingCosts'] = [{'key': (v,i,t,j,t_), 'value': cost} for (v,i,t,j,t_), cost in sailing_costs.items()]
+                json.dump(arc_dict, f, indent=1)
+    
+    else:
+        try:
+            arc_file = open(f'arcs/{group}/charter/{filename}-arcs.json')
+            arc_data = json.load(arc_file)
+            total_feasible_arcs = [tuple(x) for x in arc_data['arcs']]
+            sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
+        except FileNotFoundError:
+            raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
+
+    print("\n--- Initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
 
     #######################  INITIALIZING GUROBI ########################
@@ -538,7 +666,7 @@ def initialize_charter_out_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
+    charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days  if t+sailing_time_charter[i,j] in unloading_days[j]]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -558,13 +686,13 @@ def initialize_charter_out_model(group, filename):
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports, des_spot_ids),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids), name='inventory_control')
 
 
     # Constraint 5.4
@@ -610,7 +738,7 @@ def initialize_charter_out_model(group, filename):
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids, fob_loading_ports), name='berth_constraint')
 
 
     # Constraint 5.13 
@@ -636,10 +764,16 @@ def initialize_charter_out_model(group, filename):
     # NEW CONSTRAINT (5.26, must return to loading port after being chartered out)
     model.addConstrs(init_charter_return_to_loading_constr(x, loading_days, loading_port_ids, vessel_ids, port_ids), name='charter_return')
 
+    print("\n--- Done initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
+
     return model # This line must be moved to activate the extensions
+
 
 ### Extension 1 + 2
 def initialize_combined_model(group, filename):
+
+    start_time = time.time()
+    print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
 
     # Finding out if it is data from Nigeria or Abu Dabi
     loading_port_ids = set_loading_port_ids(filename)
@@ -649,6 +783,8 @@ def initialize_combined_model(group, filename):
 
     # Planning horizion
     loading_from_time, loading_to_time, loading_days = read_planning_horizion(data)
+
+    print(f"Number of loading_ports: {len(loading_port_ids)}")
 
     ## Initialize lists for locations and ports
     location_ids, location_names, location_types, location_ports, port_types, port_locations = initialize_location_sets() 
@@ -673,6 +809,9 @@ def initialize_combined_model(group, filename):
         convert_loading_ports(des_loading_ports)
     except KeyError:
         des_loading_ports = read_des_loading_ports(data, False, loading_port_ids)
+    
+    print(f"Number of DES contracts: {len(des_contract_ids)}")
+    print(f"Number of FOB contracts: {len(fob_contract_ids)}")
 
     ## Initalize distances 
     distances = set_distances(data)
@@ -684,6 +823,7 @@ def initialize_combined_model(group, filename):
         des_spot_ids, port_locations, port_types, des_contract_partitions, upper_partition_demand, lower_partition_demand, partition_days, unloading_days, des_contract_revenues= read_spot_des_contracts(data, spot_port_ids, des_spot_ids, port_locations, port_types, des_contract_partitions,
         loading_from_time, loading_to_time, upper_partition_demand, lower_partition_demand, partition_days, unloading_days,des_contract_revenues)
         fob_ids, fob_spot_ids, fob_demands, fob_days, fob_revenues, fob_loading_ports = read_spot_fob_contracts(data, fob_spot_ids, fob_ids, fob_demands, fob_days, fob_revenues, loading_from_time, fob_loading_ports)
+        set_des_loading_ports(des_spot_ids, des_loading_ports, loading_port_ids)
     except KeyError:
         print('This dataset does not have spot ')
     except:
@@ -735,12 +875,43 @@ def initialize_combined_model(group, filename):
     operational_times = {(v,i,j): set_operational_time(v,i,j, maintenance_ids, maintenance_durations) 
     for v,i,j in list(itertools.product(vessel_ids, port_ids, port_ids))}
 
-    vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
-    maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
-    des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
-    fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
-    vessel_ballast_speed_profile, CHARTER_OUT_MODEL, des_loading_ports) 
-    for vessel in vessel_ids}
+    generate_arcs = GENERATE_ARCS
+    write_arcs = WRITE_ARCS
+    if generate_arcs:
+        print("\n--- Starting to generate arcs in: %.1f seconds ---" % (time.time() - start_time))
+
+        vessel_feasible_arcs = {vessel: find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_available_days, sailing_costs, arc_sailing_times, all_days, 
+        maintenance_vessels, vessel_port_acceptances, port_types, loading_port_ids, maintenance_ids, des_contract_ids, distances, 
+        des_spot_ids, loading_days, port_locations, vessel_max_speed, vessel_min_speed, arc_speeds, arc_waiting_times, operational_times,
+        fuel_price, total_feasible_arcs, maintenance_start_times, maintenance_durations, maintenance_vessel_ports, unloading_days, vessel_laden_speed_profile,
+        vessel_ballast_speed_profile, CHARTER_OUT_MODEL, des_loading_ports) 
+        for vessel in vessel_ids}
+
+        if write_arcs:
+            path = f'arcs/{group}/charter/{filename}-arcs.json'
+            try:
+                with open(path,'x') as init_arc_json:
+                    pass
+            except FileExistsError:
+                open(path, 'w').close()
+            with open(path, "w") as f:
+                arc_dict = {}
+                now = datetime.now()
+                arc_dict['timeWritten'] = now.strftime("%Y-%m-%d %H:%M:%S")
+                arc_dict['arcs'] = total_feasible_arcs
+                arc_dict['sailingCosts'] = [{'key': (v,i,t,j,t_), 'value': cost} for (v,i,t,j,t_), cost in sailing_costs.items()]
+                json.dump(arc_dict, f, indent=1)
+    
+    else:
+        try:
+            arc_file = open(f'arcs/{group}/charter/{filename}-arcs.json')
+            arc_data = json.load(arc_file)
+            total_feasible_arcs = [tuple(x) for x in arc_data['arcs']]
+            sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
+        except FileNotFoundError:
+            raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
+
+    print("\n--- Initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
 
     #######################  INITIALIZING GUROBI ########################
@@ -753,7 +924,7 @@ def initialize_combined_model(group, filename):
     fob_dimensions = [(f,t) for f in fob_ids for t in fob_days[f]] # Each fob contract has a specific loading node 
     z = model.addVars(fob_dimensions, vtype ='B', name='z')
 
-    charter_dimensions = [(i,t,j) for i in loading_port_ids for t in loading_days for j in (des_contract_ids + des_spot_ids)]
+    charter_dimensions = [(i,t,j) for j in (des_contract_ids + des_spot_ids) for i in des_loading_ports[j] for t in loading_days  if t+sailing_time_charter[i,j] in unloading_days[j]]
     w = model.addVars(charter_dimensions, vtype ='B', name='w')
 
     g = model.addVars(charter_dimensions, vtype='C', name='g')
@@ -777,13 +948,13 @@ def initialize_combined_model(group, filename):
 
     # Constraint 5.2
     model.addConstrs(init_initial_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, 
-    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports),
+    vessel_ids, des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, initial_inventory, fob_loading_ports, des_spot_ids),
     name='initital_inventory_control')
 
 
     # Constraint 5.3
     model.addConstrs(init_loading_inventory_constr(s, g, z, x, production_quantities, vessel_capacities, vessel_ids,
-    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports), name='inventory_control')
+    des_contract_ids, all_days,fob_demands, fob_ids, loading_port_ids, loading_days, fob_loading_ports, des_spot_ids), name='inventory_control')
 
 
     # Constraint 5.4
@@ -829,7 +1000,7 @@ def initialize_combined_model(group, filename):
 
     # Constraint 5.12
     model.addConstrs(init_berth_constr(x, z, w, vessel_ids, port_ids, loading_days, operational_times, des_contract_ids, fob_ids, 
-    fob_operational_times, number_of_berths, loading_port_ids), name='berth_constraint')
+    fob_operational_times, number_of_berths, loading_port_ids, des_spot_ids, fob_loading_ports), name='berth_constraint')
 
 
     # Constraint 5.13 
@@ -858,6 +1029,8 @@ def initialize_combined_model(group, filename):
      # Constraint 5.19
     model.addConstrs(init_lower_prod_rate_constr(q, min_production_quantity, loading_days, loading_port_ids), name='lower_prod_rate')
     model.addConstrs(init_upper_prod_rate_constr(q, production_quantity, loading_days, loading_port_ids), name='upper_prod_rate')
+
+    print("\n--- Done initalizing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
     #NB! The parameter minimum and maximum production rate for each loading port must be defined; Maximum can be set to the default amount from data.
 

@@ -22,14 +22,16 @@ File for plotting different stuffz
 
 
 ## Example of how to plot a gant chart ##
-group1 = 'A-2L-60D'
-datafile1 = 'A-2L-6U-11F-7V-60D-a'
-logFile1 = f'jsonFiles/A-2L-60D/A-2L-6U-11F-7V-60D-a/03-22-2023, 20-08.json'
-spotGroup = 'spotTests'
-spotDataFile = 'N-1L-10U-6F-23V-60D'
-spotLogFile = f'jsonFiles/spotTests/N-1L-10U-6F-23V-60D/04-17-2023, 15-36.json'
+group1 = 'N-1L-D'
+datafile1 = 'N-1L-14U-14F-23V-120D'
+logFile1 = f'jsonFiles/N-1L-D/N-1L-14U-14F-23V-120D/05-11-2023, 14-06.json'
+#spotGroup = 'spotTests'
+#spotDataFile = 'N-1L-10U-6F-23V-60D'
+#spotLogFile = f'jsonFiles/spotTests/A-2L-6U-17F-15V-120D/05-04-2023, 18-36.json'
 
-solutionData = read_solved_json_file(spotLogFile)
-contract_gant_chart(solutionData, spotGroup, spotDataFile, UNLOADING) #Can plot both loading and unloading
-plot_inventory_levels(solutionData, spotGroup, spotDataFile)
-plot_produced_lng(solutionData, spotGroup, spotDataFile)
+solutionData = read_solved_json_file(logFile1)
+contract_gant_chart(solutionData, group1, datafile1, LOADING) #Can plot both loading and unloading
+plot_inventory_levels(solutionData, group1, datafile1)
+plot_produced_lng(solutionData, group1, datafile1)
+
+plot_ports_for_instance(group1, datafile1)
