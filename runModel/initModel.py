@@ -277,6 +277,8 @@ def initialize_basic_model(group, filename, heuristic):
         for (i,t) in s.keys():
             s[i,t].VarHintVal = s1[i,t]
 
+        model.update()
+
     return model # This line must be moved to activate the extensions
 
 

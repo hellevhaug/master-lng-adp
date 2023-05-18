@@ -201,6 +201,6 @@ def remove_satisfied_partitions(des_contract_ids_updated, des_contract_partition
     for des_contract_id in des_contract_ids_updated:
         for partition in des_contract_partitions_updated[des_contract_id]:
             # If lower demand is satisfied, the partition is satisfied
-            if amount_chartered[des_contract_id][partition] >= lower_partition_demand[des_contract_id,partition]:
+            if amount_chartered[des_contract_id][partition] > lower_partition_demand[des_contract_id,partition]:
                 print(f'Partition {partition} fulfilled \n\n')
                 des_contract_partitions_updated[des_contract_id].remove(partition)
