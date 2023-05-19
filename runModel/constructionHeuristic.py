@@ -251,7 +251,7 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                                         break # Made partition feasible
                                 if inventory_feasible:
                                     g[i,t,j] += biggest_feasible_delivery
-                                    update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands, fob_loading_port)
+                                    update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands, fob_loading_ports)
                                     amount_chartered = calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days,
                                     g, des_contract_ids)
                                     missing_required_demand -= biggest_feasible_delivery

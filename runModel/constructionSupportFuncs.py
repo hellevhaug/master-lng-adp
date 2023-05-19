@@ -138,15 +138,14 @@ def find_best_contract_and_partition(loading_day, amount_chartered, loading_port
 
     for des_contract_id in des_contract_ids: 
         if des_loading_ports[des_contract_id].__contains__(loading_port):
-            last_partition_day = partition_days[partition][-1]
-            if last_partition_day > best_last_partition_day:
-                continue
             # Minimum spread
             if sum(w[loading_port,t,des_contract_id] for t in loading_days if t >= loading_day and t < loading_day+minimum_spread and t+sailing_time_charter[loading_port, des_contract_id] in unloading_days[des_contract_id])+ 1 > 1:
-                #print(f'{partition}')
-                #print('minimum spread')
                 continue
             for partition in des_contract_partitions[des_contract_id]:
+                # Not using bigger partitions
+                last_partition_day = partition_days[partition][-1]
+                if last_partition_day > best_last_partition_day:
+                    continue
                 # Should be delivered within unloading days for the partition
                 if not loading_day+sailing_time_charter[loading_port, des_contract_id] in partition_days[partition]:
                     #print(f'{partition}')
@@ -204,5 +203,4 @@ def remove_satisfied_partitions(des_contract_ids_updated, des_contract_partition
         for partition in des_contract_partitions_updated[des_contract_id]:
             # If lower demand is satisfied, the partition is satisfied
             if amount_chartered[des_contract_id][partition] > lower_partition_demand[des_contract_id,partition]:
-                print(f'Partition {partition} fulfilled \n\n')
                 des_contract_partitions_updated[des_contract_id].remove(partition)
