@@ -63,7 +63,7 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
     # s : inventory for loading ports 
 
     lower_charter_amount = 135000
-    upper_charter_amount = 180000
+    upper_charter_amount = 160000
 
     # Creating copies of variables
     z = z1.copy()
