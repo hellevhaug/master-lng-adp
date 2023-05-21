@@ -140,11 +140,9 @@ def find_best_contract_and_partition(loading_day, amount_chartered, loading_port
         if des_loading_ports[des_contract_id].__contains__(loading_port):
             # Minimum spread
             if sum(w[loading_port,t,des_contract_id] for t in loading_days if t >= loading_day and t < loading_day+minimum_spread and t+sailing_time_charter[loading_port, des_contract_id] in unloading_days[des_contract_id])+ 1 > 1:
-                #print(f'{partition}')
-                #print('minimum spread')
                 continue
             for partition in des_contract_partitions[des_contract_id]:
-
+                # Not using bigger partitions
                 last_partition_day = partition_days[partition][-1]
                 if last_partition_day > best_last_partition_day:
                     continue
