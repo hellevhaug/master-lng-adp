@@ -138,15 +138,16 @@ def find_best_contract_and_partition(loading_day, amount_chartered, loading_port
 
     for des_contract_id in des_contract_ids: 
         if des_loading_ports[des_contract_id].__contains__(loading_port):
-            last_partition_day = partition_days[partition][-1]
-            if last_partition_day > best_last_partition_day:
-                continue
             # Minimum spread
             if sum(w[loading_port,t,des_contract_id] for t in loading_days if t >= loading_day and t < loading_day+minimum_spread and t+sailing_time_charter[loading_port, des_contract_id] in unloading_days[des_contract_id])+ 1 > 1:
                 #print(f'{partition}')
                 #print('minimum spread')
                 continue
             for partition in des_contract_partitions[des_contract_id]:
+
+                last_partition_day = partition_days[partition][-1]
+                if last_partition_day > best_last_partition_day:
+                    continue
                 # Should be delivered within unloading days for the partition
                 if not loading_day+sailing_time_charter[loading_port, des_contract_id] in partition_days[partition]:
                     #print(f'{partition}')
@@ -166,11 +167,12 @@ def find_best_contract_and_partition(loading_day, amount_chartered, loading_port
                             break
                 if infeasible_partition:
                     continue
+                amount_missing = lower_partition_demand[des_contract_id,partition] - amount_chartered[des_contract_id][partition]
                 if last_partition_day < best_last_partition_day:
                     best_last_partition_day = last_partition_day
+                    best_amount_missing = amount_missing
                     best_contract, best_partition = des_contract_id, partition
                 elif last_partition_day == best_last_partition_day:
-                    amount_missing = lower_partition_demand[des_contract_id,partition] - amount_chartered[des_contract_id][partition]
                     if amount_missing > best_amount_missing:
                         best_last_partition_day = last_partition_day
                         best_amount_missing = amount_missing
@@ -189,7 +191,7 @@ def find_best_maintenance_arcs(vessel, x, maintenance_vessel_ports, vessel_start
     x[vessel, 'ART_PORT',0, vessel_start_ports[vessel], vessel_available_days[vessel][0]] = 1
 
     # Goes only to maintenance and then done
-    direct_arc = (vessel, vessel_available_days[vessel][0],vessel_start_ports[vessel], maintenance_vessel_ports[vessel], maintenance_start_times[vessel])
+    direct_arc = (vessel,vessel_start_ports[vessel], vessel_available_days[vessel][0], maintenance_vessel_ports[vessel], maintenance_start_times[vessel])
     sailing_costs[direct_arc] = 0
     x[direct_arc] = 1
     x[vessel, maintenance_vessel_ports[vessel], maintenance_start_times[vessel], 'EXIT_PORT', all_days[-1]+1]
@@ -204,5 +206,4 @@ def remove_satisfied_partitions(des_contract_ids_updated, des_contract_partition
         for partition in des_contract_partitions_updated[des_contract_id]:
             # If lower demand is satisfied, the partition is satisfied
             if amount_chartered[des_contract_id][partition] > lower_partition_demand[des_contract_id,partition]:
-                print(f'Partition {partition} fulfilled \n\n')
                 des_contract_partitions_updated[des_contract_id].remove(partition)
