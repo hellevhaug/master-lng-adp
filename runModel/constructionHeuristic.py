@@ -211,7 +211,7 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                     if len(des_contract_ids_updated)==0:
                         print(f'All contracts fulfilled \n\n')
                         all_demand_satisfied = True
-                        print('Finished with DES')
+                        print('Finished with DES\n')
                         break
                     else:
                         remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand)
@@ -300,7 +300,7 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                 if fake_fob_loading_port==loading_port:
                     z[fake_fob, day] = 1
     
-    print('(finished with fixing inventory')
+    print('\n(finished with fixing inventory)')
 
 
-    return z, s, w, g
+    return z, s, w, g, all_demand_satisfied

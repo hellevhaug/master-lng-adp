@@ -254,7 +254,7 @@ def initialize_basic_model(group, filename, heuristic):
 
     if heuristic:
         print("\n--- Starting heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
-        z1, s1, w1, g1 = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+        z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
         des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
         production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
         fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
@@ -264,18 +264,34 @@ def initialize_basic_model(group, filename, heuristic):
 
         print("\n--- Finished heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
 
-        for (v,i,t,j,t_) in x.keys():
-            x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
-        
-        for (i,t,j) in g.keys():
-            g[i,t,j].VarHintVal = g1[i,t,j]
-            w[i,t,j].VarHintVal = w1[i,t,j]
-        
-        for (f,t) in z.keys():
-            z[f,t].VarHintVal = z1[f,t]
+        if demand_satisfied:
 
-        for (i,t) in s.keys():
-            s[i,t].VarHintVal = s1[i,t]
+            for (v,i,t,j,t_) in x.keys():
+                x[v,i,t,j,t_].Start = x1[v,i,t,j,t_]
+            
+            for (i,t,j) in g.keys():
+                g[i,t,j].Start = g1[i,t,j]
+                w[i,t,j].Start = w1[i,t,j]
+            
+            for (f,t) in z.keys():
+                z[f,t].Start = z1[f,t]
+
+            for (i,t) in s.keys():
+                s[i,t].Start = s1[i,t]
+
+        else:
+            for (v,i,t,j,t_) in x.keys():
+                x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
+            
+            for (i,t,j) in g.keys():
+                g[i,t,j].VarHintVal = g1[i,t,j]
+                w[i,t,j].VarHintVal = w1[i,t,j]
+            
+            for (f,t) in z.keys():
+                z[f,t].VarHintVal = z1[f,t]
+
+            for (i,t) in s.keys():
+                s[i,t].VarHintVal = s1[i,t]
 
         model.update()
 
@@ -539,7 +555,7 @@ def initialize_variable_production_model(group, filename, heuristic):
 
     if heuristic:
         print("\n--- Starting heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
-        z1, s1, w1, g1 = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+        z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
         des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
         production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
         fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
@@ -833,7 +849,7 @@ def initialize_charter_out_model(group, filename, heuristic):
 
     if heuristic:
         print("\n--- Starting heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
-        z1, s1, w1, g1 = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+        z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
         des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
         production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
         fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
@@ -1138,7 +1154,7 @@ def initialize_combined_model(group, filename, heuristic):
 
     if heuristic:
         print("\n--- Starting heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
-        z1, s1, w1, g1 = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+        z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
         des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
         production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
         fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
