@@ -274,10 +274,6 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
     if len(fob_contract_ids_updated) != 0:
         print('\n Not all fobs were fixed')
         all_demand_satisfied = False
-
-    print('Before fixing inventory: \n')
-    for (loading_port, day), value in s.items():
-        print(loading_port, day, value)
     
     # Fixing excess demand
     for (loading_port, day), value in s.items():
@@ -286,10 +282,10 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                 if fake_fob_loading_port==loading_port:
                     z[fake_fob, day] = 1
                     update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands, fob_loading_ports)
-    
-    print('\nFinished with fixing inventory, jippi!\n')
-    for (loading_port, day), value in s.items():
-        print(loading_port, day, value)
 
+    print('FOB loads: \n')
+    for (f,t), value in z.items():
+        if value != 0:
+            print(f,t, value)
 
     return z, s, w, g, all_demand_satisfied

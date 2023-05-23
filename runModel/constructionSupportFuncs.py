@@ -204,7 +204,7 @@ def set_planned_fob_day(fob_contract_id, fob_days):
 
     f_days = fob_days[fob_contract_id]
     last_point = len(f_days)
-    two_three_point = math.ceil(last_point*2/3)
+    two_three_point = math.ceil(last_point/2)
     shorter_fob_days = f_days[two_three_point:last_point-3]
     random_day = random.choice(shorter_fob_days)
 
@@ -216,7 +216,7 @@ def check_if_fob_is_planned(loading_day, planned_fob_days, loading_port, fob_loa
     planned_fobs = []
 
     for fob_contract_id, value in planned_fob_days.items():
-        if fob_loading_ports[fob_contract_id][0] == loading_port:
+        if loading_port in fob_loading_ports[fob_contract_id]:
             if value == loading_day:
                 planned_fobs.append(fob_contract_id)
     
