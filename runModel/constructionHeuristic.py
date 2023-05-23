@@ -280,7 +280,17 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
         print(f'Des contracts not satisfied : {des_contract_ids_updated}\n')
         print(f'Des contracts partitions not satisfied : {des_contract_partitions_updated}\n')
     
-    """
+    # Fixing excess demand
+    for (loading_port, day), value in s.items():
+        if value > max_inventory[loading_port]:
+            for fake_fob_loading_port, fake_fob in fob_spot_art_ports.items():
+                if fake_fob_loading_port==loading_port:
+                    z[fake_fob, day] = 1
+                    update_inventory(s, all_days, initial_inventory, production_quantities, des_contract_ids, g, z, fob_ids, fob_demands, fob_loading_ports)
+    
+    print('\n(finished with fixing inventory)')
+
+        
     for (loading_port, day), value in s.items():
         print(loading_port, day, value)
     
@@ -291,16 +301,6 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
     for (f,t), value in z.items():
         if value != 0:
             print(f,t, value)
-    """
-    
-    # Fixing excess demand
-    for (loading_port, day), value in s.items():
-        if value > max_inventory[loading_port]:
-            for fake_fob_loading_port, fake_fob in fob_spot_art_ports.items():
-                if fake_fob_loading_port==loading_port:
-                    z[fake_fob, day] = 1
-    
-    print('\n(finished with fixing inventory)')
 
 
     return z, s, w, g, all_demand_satisfied
