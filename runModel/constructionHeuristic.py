@@ -1,6 +1,7 @@
 import gurobipy
 import random
 import copy
+import math
 from runModel.constructionSupportFuncs import *
 
 """
@@ -149,7 +150,7 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
 
                 #print(f'Day: {loading_day} for loading port {loading_port}, round {iteration_count} \n')
                 # Randomly choosing an amount to charter
-                charter_amount = random.randrange(lower_charter_amount, upper_charter_amount)
+                charter_amount = upper_charter_amount
 
                 # If there is too little 
                 inventory = s[loading_port, loading_day]   
@@ -171,9 +172,20 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                 # Did not find any feasible contracts?? Weird but can happen I guess
                 if (best_des_contract, best_partition) == (None, None):
                     #print('Did not find a best partition and a best contract')
-                    continue
+                    charter_amount = random.randrange(lower_charter_amount, lower_charter_amount+(upper_charter_amount-lower_charter_amount)*1/2)
+                    best_des_contract, best_partition = find_best_contract_and_partition(loading_day, amount_chartered, loading_port, lower_partition_demand,
+                    des_contract_ids_updated, des_loading_ports, des_contract_partitions_updated, partition_days, sailing_time_charter, minimum_spread, w,
+                    loading_days, charter_amount, upper_partition_demand, unloading_days)
+                    if (best_des_contract, best_partition) == (None, None):
+                        continue
+                
+                
+                missing_demand = (lower_partition_demand[best_des_contract, best_partition] - amount_chartered[best_des_contract][best_partition])/(0.90)
+                if (math.ceil(missing_demand/lower_charter_amount) == math.ceil(missing_demand/upper_charter_amount)):
+                    charter_amount = lower_charter_amount
+                else: 
+                    charter_amount = missing_demand/(math.ceil(missing_demand/upper_charter_amount))
 
-                print(best_des_contract, best_partition)
 
                 # Finding the corresponding loading port 
                 des_loading_port = loading_port
@@ -218,7 +230,7 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                     g_vars = []
                     
                     # Identifying how much is missing for the contract and scaling for boil off 
-                    missing_required_demand = (lower_partition_demand[des_contract, partition] - amount_chartered[des_contract][partition])/0.85
+                    missing_required_demand = (lower_partition_demand[des_contract, partition] - amount_chartered[des_contract][partition])/0.90
 
                     for (i,t,j), value in g.items():
                         if j==des_contract and t+sailing_time_charter[i,j] in partition_days[partition] and value > 0:
@@ -259,7 +271,7 @@ def find_initial_solution(z1, s1, w1, g1, all_days, des_contract_ids, lower_part
                     
                     # If the partition is not the first partition (with minimum demand==0)
                     if not len(g_vars)==0:
-                        average_charter_amount = (lower_partition_demand[des_contract,partition]/0.85)/len(g_vars)
+                        average_charter_amount = (lower_partition_demand[des_contract,partition]/0.90)/len(g_vars)
                         print(f'Did not finish for partition {partition}, must deliver at least {average_charter_amount} per ship')
                         # distance_upper = abs(average_charter_amount- upper_charter_amount)
                         # distance_lower = abs(average_charter_amount-lower_charter_amount)

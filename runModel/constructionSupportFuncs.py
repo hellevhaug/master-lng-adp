@@ -8,7 +8,7 @@ def calculate_total_demand_delivered(des_contract_partitions, sailing_time_chart
             for (i,t,j), value in g.items():
                 if j == des_contract:
                     if t+sailing_time_charter[i,j] in partition_days[partition]:
-                        amount_chartered[des_contract][partition] += value*0.85   
+                        amount_chartered[des_contract][partition] += value*0.90   
     return amount_chartered
 
 
@@ -79,7 +79,7 @@ def check_feasible_charter_move(day, partition, des_contract, des_loading_port, 
     # never above upper demand for partition
     for ot_partition, value in amount_chartered[des_contract].items():
         if day+sailing_time_charter[des_loading_port, des_contract] in partition_days[ot_partition]:
-            if amount_chartered[des_contract][ot_partition] + charter_amount*0.85 > upper_partition_demand[des_contract, ot_partition]:
+            if amount_chartered[des_contract][ot_partition] + charter_amount*0.90 > upper_partition_demand[des_contract, ot_partition]:
                 print('infeasible pa')
                 return False
 
@@ -160,7 +160,7 @@ def find_best_contract_and_partition(loading_day, amount_chartered, loading_port
                 infeasible_partition = False
                 for ot_partition, value in amount_chartered[des_contract_id].items():
                     if loading_day+sailing_time_charter[loading_port, des_contract_id] in partition_days[ot_partition]:
-                        if value + charter_amount*0.85 > upper_partition_demand[des_contract_id, ot_partition]:
+                        if value + charter_amount*0.90 > upper_partition_demand[des_contract_id, ot_partition]:
                             infeasible_partition = True
                             break
                 if infeasible_partition:

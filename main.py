@@ -164,13 +164,13 @@ Call whatever functions you'll like below here
 
 # An example for how to run the code 
 group = 'N-1L-D'
-filename = 'N-1L-14U-21F-23V-180D'
+filename = 'N-1L-14U-14F-23V-120D'
 group1 = 'A-2L-B'
 filename1 = 'A-2L-6U-20F-15V-120D'
-constructionGroup = 'N-1L-45D'
-constructionFile = 'N-1L-6U-13F-18V-45D-a'
+group2 = 'N-1L-D'
+filename2 = 'N-1L-14U-27F-23V-240D'
 runtime = 60*60*4
-modelType = VARIABLE_PRODUCTION_MODEL
+modelType = BASIC_MODEL
 
 #run_one_instance(group, filename1, runtime, modelType)
 #test_init_model(group, filename, modelType)
