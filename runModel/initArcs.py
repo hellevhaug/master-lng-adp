@@ -60,8 +60,11 @@ def get_daily_fuel(speed, vessel, i, loading_port_ids, vessel_min_speed, vessel_
 def get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vessel_available_days, maintenance_start_times, 
     maintenance_vessel_ports, distances, port_locations, maintenance_durations, vessel_max_speed, all_days, vessel_min_speed, arc_speeds, 
     arc_waiting_times, arc_sailing_times, sailing_costs, loading_port_ids, unloading_days, allowed_waiting, operational_times, fuel_price,
-    vessel_laden_speed_profile, vessel_ballast_speed_profile):
+    vessel_laden_speed_profile, vessel_ballast_speed_profile, vessel_start_ports):
     maintenance_arcs = []
+    direct_arc = (vessel,vessel_start_ports[vessel], vessel_available_days[vessel][0], maintenance_vessel_ports[vessel], maintenance_start_times[vessel])
+    maintenance_arcs.append(direct_arc)
+    sailing_costs[direct_arc] = 0
     for unloading in vessel_port_acceptances[vessel]:
         if des_contract_ids.__contains__(unloading):
             for t in range(vessel_available_days[vessel][0], maintenance_start_times[vessel]+1):
@@ -153,7 +156,7 @@ def find_feasible_arcs(vessel, allowed_waiting, vessel_start_ports, vessel_avail
         maintenance_arcs = get_maintenance_arcs(vessel, vessel_port_acceptances, des_contract_ids, vessel_available_days, maintenance_start_times, 
     maintenance_vessel_ports, distances, port_locations, maintenance_durations, vessel_max_speed, all_days, vessel_min_speed, arc_speeds, 
     arc_waiting_times, arc_sailing_times, sailing_costs, loading_port_ids, unloading_days, allowed_waiting, operational_times, fuel_price,
-    vessel_laden_speed_profile, vessel_ballast_speed_profile)
+    vessel_laden_speed_profile, vessel_ballast_speed_profile, vessel_start_ports)
         feasible_arcs.extend(maintenance_arcs)
     if modelType == 'charterOut':
         charter_out_arcs = get_charter_out_arcs(vessel, loading_days, sailing_costs, des_contract_ids, maintenance_ids,

@@ -12,7 +12,7 @@ from readData.readSpotData import *
 from supportFiles.constants import *
 from runModel.initConstraints import *
 from runModel.initArcs import *
-from runModel.constructionHeuristic import *
+from runModel.newConstructionHeuristic import *
 
 ### Basic model
 def initialize_basic_model(group, filename, heuristic):
@@ -277,6 +277,7 @@ def initialize_basic_model(group, filename, heuristic):
                 z[f,t].Start = z1[f,t]
 
             for (i,t) in s.keys():
+                s[i,t].Start = s1[i,t]
                 s[i,t].Start = s1[i,t]
 
         else:

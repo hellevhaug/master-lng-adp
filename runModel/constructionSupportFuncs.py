@@ -1,14 +1,17 @@
 import random
+import math
+import copy
+from supportFiles.constants import *
 
 # Calculates all amount delivered for every partition in every contract
-def calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days, g, des_contract_ids):
+def calculate_total_demand_delivered(des_contract_partitions, sailing_time_charter, partition_days, g, des_contract_ids, boil_off_factors):
     amount_chartered = {des_contract: {partition:0 for partition in des_contract_partitions[des_contract]} for des_contract in des_contract_ids}
     for des_contract in des_contract_ids:
         for partition in des_contract_partitions[des_contract]:
             for (i,t,j), value in g.items():
                 if j == des_contract:
                     if t+sailing_time_charter[i,j] in partition_days[partition]:
-                        amount_chartered[des_contract][partition] += value*0.90   
+                        amount_chartered[des_contract][partition] += value*boil_off_factors[des_contract]   
     return amount_chartered
 
 
@@ -51,7 +54,7 @@ def update_if_demand_is_satisfied(amount_chartered, des_contract_ids, lower_part
 # Checks if a given charter-move is feasible
 def check_feasible_charter_move(day, partition, des_contract, des_loading_port, charter_amount, min_inventory, s, w,
     number_of_berths, minimum_spread, amount_chartered, upper_partition_demand, loading_days, fob_loading_ports, z,
-    partition_days, sailing_time_charter,g):
+    partition_days, sailing_time_charter,boil_off_factors):
 
     # 
     if day+sailing_time_charter[des_loading_port,des_contract] not in partition_days[partition]:
@@ -79,7 +82,7 @@ def check_feasible_charter_move(day, partition, des_contract, des_loading_port, 
     # never above upper demand for partition
     for ot_partition, value in amount_chartered[des_contract].items():
         if day+sailing_time_charter[des_loading_port, des_contract] in partition_days[ot_partition]:
-            if amount_chartered[des_contract][ot_partition] + charter_amount*0.90 > upper_partition_demand[des_contract, ot_partition]:
+            if amount_chartered[des_contract][ot_partition] + charter_amount*boil_off_factors[des_contract] > upper_partition_demand[des_contract, ot_partition]:
                 print('infeasible pa')
                 return False
 
@@ -129,7 +132,7 @@ def generate_random_loading_days(loading_days):
 # Function for finding the best contract,partition to charter to at day=loading_day
 def find_best_contract_and_partition(loading_day, amount_chartered, loading_port, lower_partition_demand,
     des_contract_ids, des_loading_ports, des_contract_partitions, partition_days,
-    sailing_time_charter, minimum_spread, w, loading_days, charter_amount, upper_partition_demand, unloading_days):
+    sailing_time_charter, minimum_spread, w, loading_days, charter_amount, upper_partition_demand, unloading_days,boil_off_factors):
 
     best_contract, best_partition = None, None
 
@@ -160,7 +163,7 @@ def find_best_contract_and_partition(loading_day, amount_chartered, loading_port
                 infeasible_partition = False
                 for ot_partition, value in amount_chartered[des_contract_id].items():
                     if loading_day+sailing_time_charter[loading_port, des_contract_id] in partition_days[ot_partition]:
-                        if value + charter_amount*0.90 > upper_partition_demand[des_contract_id, ot_partition]:
+                        if value + charter_amount*boil_off_factors[des_contract_id] > upper_partition_demand[des_contract_id, ot_partition]:
                             infeasible_partition = True
                             break
                 if infeasible_partition:
@@ -190,12 +193,34 @@ def find_best_maintenance_arcs(vessel, x, maintenance_vessel_ports, vessel_start
 
     # Goes only to maintenance and then done
     direct_arc = (vessel,vessel_start_ports[vessel], vessel_available_days[vessel][0], maintenance_vessel_ports[vessel], maintenance_start_times[vessel])
-    sailing_costs[direct_arc] = 0
     x[direct_arc] = 1
-    x[vessel, maintenance_vessel_ports[vessel], maintenance_start_times[vessel], 'EXIT_PORT', all_days[-1]+1]
+    x[vessel, maintenance_vessel_ports[vessel], maintenance_start_times[vessel], 'EXIT_PORT', all_days[-1]+1] = 1
 
 
     return 
+
+
+def set_planned_fob_day(fob_contract_id, fob_days):
+
+    f_days = fob_days[fob_contract_id]
+    last_point = len(f_days)
+    two_three_point = math.ceil(last_point*2/3)
+    shorter_fob_days = f_days[two_three_point:last_point-3]
+    random_day = random.choice(shorter_fob_days)
+
+    return random_day
+
+
+def check_if_fob_is_planned(loading_day, planned_fob_days, loading_port, fob_loading_ports):
+
+    planned_fobs = []
+
+    for fob_contract_id, value in planned_fob_days.items():
+        if fob_loading_ports[fob_contract_id][0] == loading_port:
+            if value == loading_day:
+                planned_fobs.append(fob_contract_id)
+    
+    return planned_fobs
 
 
 # Function for removing satisfied partitions from the des_contract_partition_updated-dict
@@ -205,3 +230,37 @@ def remove_satisfied_partitions(des_contract_ids_updated, des_contract_partition
             # If lower demand is satisfied, the partition is satisfied
             if amount_chartered[des_contract_id][partition] > lower_partition_demand[des_contract_id,partition]:
                 des_contract_partitions_updated[des_contract_id].remove(partition)
+
+
+def choose_fob(planned_fobs,fob_days, planned_fob_days):
+
+    planned_fob_days_updated = copy.deepcopy(planned_fob_days)
+
+    if len(planned_fobs)==1:
+        chosen_fob = planned_fobs[0]
+    else:
+        earliest_last_day = 10000
+        for fob_contract in planned_fobs:
+            if fob_days[fob_contract][-1] < earliest_last_day:
+                chosen_fob = fob_contract
+                earliest_last_day = fob_days[fob_contract][-1]
+    
+        for fob_contract in planned_fobs:
+            if fob_contract != chosen_fob:
+                planned_fob_days_updated[fob_contract] += 1
+
+    
+    return chosen_fob, planned_fob_days_updated
+
+
+# Function for finding 
+def calc_boil_off_factors(des_contract_ids, des_loading_ports, sailing_time_charter):
+
+    boil_off_factors = {}
+    for des_contract_id in des_contract_ids:
+        des_loading_port = des_loading_ports[des_contract_id][0]
+        sailing_charter_time = sailing_time_charter[des_loading_port, des_contract_id]
+        factor = (1-sailing_charter_time*CHARTER_BOIL_OFF)
+        boil_off_factors[des_contract_id] = factor
+
+    return boil_off_factors
