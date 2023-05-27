@@ -12,10 +12,10 @@ from readData.readSpotData import *
 from supportFiles.constants import *
 from runModel.initConstraints import *
 from runModel.initArcs import *
-from runModel.newConstructionHeuristic import *
+from runModel.constructionHeuristic import *
 
 ### Basic model
-def initialize_basic_model(group, filename, heuristic):
+def initialize_basic_model(group, filename):
 
     start_time = time.time()
     print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
@@ -123,6 +123,12 @@ def initialize_basic_model(group, filename, heuristic):
 
     generate_arcs = GENERATE_ARCS
     write_arcs = WRITE_ARCS
+
+    try:
+        arc_file = open(f'arcs/{group}/basic/{filename}-arcs.json')
+    except FileNotFoundError:
+        generate_arcs = True
+
     if generate_arcs:
         print("\n--- Starting to generate arcs in: %.1f seconds ---" % (time.time() - start_time))
 
@@ -156,6 +162,13 @@ def initialize_basic_model(group, filename, heuristic):
             sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
         except FileNotFoundError:
             raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
+    
+    for vessel in maintenance_vessels:
+        direct_arc = (vessel, vessel_start_ports[vessel], vessel_available_days[vessel][0], maintenance_vessel_ports[vessel], maintenance_start_times[vessel])
+        if not direct_arc in total_feasible_arcs:
+            total_feasible_arcs.append(direct_arc)
+            sailing_costs[direct_arc] = 0
+            print('Added aditional construction maintenace arc')
 
     print("\n--- Initalizing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
@@ -252,53 +265,86 @@ def initialize_basic_model(group, filename, heuristic):
 
     print("\n--- Done initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
-    if heuristic:
+    construction = CONSTRUCTION
 
-        print("\n--- Starting heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
+    if construction:
+        print("\n--- Starting heuristic construction with random FOB ----\n")
 
         x1 = find_initial_arcs(x, maintenance_vessels, all_days, maintenance_vessel_ports, vessel_start_ports, maintenance_start_times,
                                 vessel_available_days, sailing_costs)
-        for i in range(5):
+
+        z1, s1, w1, g1, demand_satisfied = find_initial_solution_random(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+        des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+        production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+        fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
+
+        if not demand_satisfied: 
+
+            config = 'tryFob'
+
+            print("\n--- Trying heuristic construction with prioritixing FOB ----\n")
+
             z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
             des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
             production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
-            fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
+            fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids, config)
+
+        if not demand_satisfied:
+
+            print("\n--- Trying heuristic construction with prioritixing DES ----\n")
+            
+            config = 'tryDes'
+            
+            z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+            des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+            production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+            fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids, config)
+
+        if not demand_satisfied:
+            
+            print("\n--- Trying heuristic construction with prioritixing FOB and squaring score ----\n")
+
+            config = 'trySquared'
+
+            z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+            des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+            production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+            fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids, config)
 
             # If the model finds a feasible solution
-            if demand_satisfied:
+        if demand_satisfied:
 
-                for (v,i,t,j,t_) in x.keys():
-                    x[v,i,t,j,t_].Start = x1[v,i,t,j,t_]
-                
-                for (i,t,j) in g.keys():
-                    g[i,t,j].Start = g1[i,t,j]
-                    w[i,t,j].Start = w1[i,t,j]
-                
-                for (f,t) in z.keys():
-                    z[f,t].Start = z1[f,t]
-
-                for (i,t) in s.keys():
-                    s[i,t].Start = s1[i,t]
-                    s[i,t].Start = s1[i,t]
+            for (v,i,t,j,t_) in x.keys():
+                x[v,i,t,j,t_].Start = x1[v,i,t,j,t_]
             
-                print("\n--- Finished heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
-                break
+            for (i,t,j) in g.keys():
+                g[i,t,j].Start = g1[i,t,j]
+                w[i,t,j].Start = w1[i,t,j]
+            
+            for (f,t) in z.keys():
+                z[f,t].Start = z1[f,t]
 
-            else:
-                for (v,i,t,j,t_) in x.keys():
-                    x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
-                
-                for (i,t,j) in g.keys():
-                    g[i,t,j].VarHintVal = g1[i,t,j]
-                    w[i,t,j].VarHintVal = w1[i,t,j]
-                
-                for (f,t) in z.keys():
-                    z[f,t].VarHintVal = z1[f,t]
+            for (i,t) in s.keys():
+                s[i,t].Start = s1[i,t]
+                s[i,t].Start = s1[i,t]
+        
+            print("\n--- Finished heuristic construction ----\n")
 
-                for (i,t) in s.keys():
-                    s[i,t].VarHintVal = s1[i,t]
+        else:
+            for (v,i,t,j,t_) in x.keys():
+                x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
+            
+            for (i,t,j) in g.keys():
+                g[i,t,j].VarHintVal = g1[i,t,j]
+                w[i,t,j].VarHintVal = w1[i,t,j]
+            
+            for (f,t) in z.keys():
+                z[f,t].VarHintVal = z1[f,t]
 
-                print("\n--- Did not find a feasible solution for this problem in: %.1f seconds ---" % (time.time() - start_time))
+            for (i,t) in s.keys():
+                s[i,t].VarHintVal = s1[i,t]
+
+            print("\n--- Did not find a feasible solution for this problem----\n")
 
         model.update()
 
@@ -306,7 +352,7 @@ def initialize_basic_model(group, filename, heuristic):
 
 
 ### Dummy model?
-def initialize_model_dummy(group, filename, heuristic):
+def initialize_model_dummy(group, filename):
 
     # Finding out if it is data from Nigeria or Abu Dabi
     loading_port_ids = set_loading_port_ids(filename)
@@ -318,7 +364,7 @@ def initialize_model_dummy(group, filename, heuristic):
 
 
 ### Extension 1 - Variable production
-def initialize_variable_production_model(group, filename, heuristic):
+def initialize_variable_production_model(group, filename):
 
     start_time = time.time()
     print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
@@ -422,6 +468,12 @@ def initialize_variable_production_model(group, filename, heuristic):
 
     generate_arcs = GENERATE_ARCS
     write_arcs = WRITE_ARCS
+
+    try:
+        arc_file = open(f'arcs/{group}/basic/{filename}-arcs.json')
+    except FileNotFoundError:
+        generate_arcs = True
+
     if generate_arcs:
         print("\n--- Generating arcs in: %.1f seconds ---" % (time.time() - start_time))
 
@@ -455,6 +507,13 @@ def initialize_variable_production_model(group, filename, heuristic):
             sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
         except FileNotFoundError:
             raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
+        
+    for vessel in maintenance_vessels:
+        direct_arc = (vessel, vessel_start_ports[vessel], vessel_available_days[vessel][0], maintenance_vessel_ports[vessel], maintenance_start_times[vessel])
+        if not direct_arc in total_feasible_arcs:
+            total_feasible_arcs.append(direct_arc)
+            sailing_costs[direct_arc] = 0
+            print('Added aditional construction maintenace arc')
 
 
     print("\n--- Initializing constraints in: %.1f seconds ---" % (time.time() - start_time))    
@@ -560,37 +619,94 @@ def initialize_variable_production_model(group, filename, heuristic):
 
     print("\n--- Done initializing arcs in: %.1f seconds ---" % (time.time() - start_time))   
 
-    if heuristic:
-        print("\n--- Starting heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
-        z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
-        des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
-        production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
-        fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
+    construction = CONSTRUCTION
+
+    if construction:
+        print("\n--- Starting heuristic construction with random FOB ----\n")
 
         x1 = find_initial_arcs(x, maintenance_vessels, all_days, maintenance_vessel_ports, vessel_start_ports, maintenance_start_times,
                                 vessel_available_days, sailing_costs)
         
         q1 = find_production_vars(q, production_quantities)
 
-        print("\n--- Finished heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
+        z1, s1, w1, g1, demand_satisfied = find_initial_solution_random(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+        des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+        production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+        fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
 
-        for (v,i,t,j,t_) in x.keys():
-            x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
-        
-        for (i,t,j) in g.keys():
-            g[i,t,j].VarHintVal = g1[i,t,j]
-            w[i,t,j].VarHintVal = w1[i,t,j]
-        
-        for (f,t) in z.keys():
-            z[f,t].VarHintVal = z1[f,t]
+        if not demand_satisfied: 
 
-        for (i,t) in s.keys():
-            s[i,t].VarHintVal = s1[i,t]
-        
-        for (i,t) in q.keys():
-            q[i,t].VarHintVal = q1[i,t]
+            config = 'tryFob'
 
-        model.update()
+            print("\n--- Trying heuristic construction with prioritixing FOB ----\n")
+
+            z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+            des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+            production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+            fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids, config)
+
+        if not demand_satisfied:
+
+            print("\n--- Trying heuristic construction with prioritixing DES ----\n")
+            
+            config = 'tryDes'
+            
+            z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+            des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+            production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+            fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids, config)
+
+        if not demand_satisfied:
+            
+            print("\n--- Trying heuristic construction with prioritixing FOB and squaring score ----\n")
+
+            config = 'trySquared'
+
+            z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+            des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+            production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+            fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids, config)
+
+            # If the model finds a feasible solution
+        if demand_satisfied:
+
+            for (v,i,t,j,t_) in x.keys():
+                x[v,i,t,j,t_].Start = x1[v,i,t,j,t_]
+            
+            for (i,t,j) in g.keys():
+                g[i,t,j].Start = g1[i,t,j]
+                w[i,t,j].Start = w1[i,t,j]
+            
+            for (f,t) in z.keys():
+                z[f,t].Start = z1[f,t]
+
+            for (i,t) in s.keys():
+                s[i,t].Start = s1[i,t]
+                s[i,t].Start = s1[i,t]
+            
+            for (i,t) in q.keys():
+                q[i,t].Start = q1[i,t]
+        
+            print("\n--- Finished heuristic construction ----\n")
+
+        else:
+            for (v,i,t,j,t_) in x.keys():
+                x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
+            
+            for (i,t,j) in g.keys():
+                g[i,t,j].VarHintVal = g1[i,t,j]
+                w[i,t,j].VarHintVal = w1[i,t,j]
+            
+            for (f,t) in z.keys():
+                z[f,t].VarHintVal = z1[f,t]
+
+            for (i,t) in s.keys():
+                s[i,t].VarHintVal = s1[i,t]
+            
+            for (i,t) in q.keys():
+                q[i,t].VarHintVal = q1[i,t]
+
+            print("\n--- Did not find a feasible solution for this problem----\n")
 
     #NB! The parameter minimum and maximum production rate for each loading port must be defined; Maximum can be set to the default amount from data.
 
@@ -599,7 +715,7 @@ def initialize_variable_production_model(group, filename, heuristic):
 
 
 ### Extension 2 - Charter out vessels
-def initialize_charter_out_model(group, filename, heuristic):
+def initialize_charter_out_model(group, filename):
 
     start_time = time.time()
     print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
@@ -704,6 +820,12 @@ def initialize_charter_out_model(group, filename, heuristic):
 
     generate_arcs = GENERATE_ARCS
     write_arcs = WRITE_ARCS
+
+    try:
+        arc_file = open(f'arcs/{group}/basic/{filename}-arcs.json')
+    except FileNotFoundError:
+        generate_arcs = True
+
     if generate_arcs:
         print("\n--- Generating arcs in: %.1f seconds ---" % (time.time() - start_time))
 
@@ -737,6 +859,13 @@ def initialize_charter_out_model(group, filename, heuristic):
             sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
         except FileNotFoundError:
             raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
+        
+    for vessel in maintenance_vessels:
+        direct_arc = (vessel, vessel_start_ports[vessel], vessel_available_days[vessel][0], maintenance_vessel_ports[vessel], maintenance_start_times[vessel])
+        if not direct_arc in total_feasible_arcs:
+            total_feasible_arcs.append(direct_arc)
+            sailing_costs[direct_arc] = 0
+            print('Added aditional construction maintenace arc')
 
     print("\n--- Initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
@@ -853,47 +982,100 @@ def initialize_charter_out_model(group, filename, heuristic):
 
     print("\n--- Done initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
+    construction = CONSTRUCTION
 
-    if heuristic:
-        print("\n--- Starting heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
-        z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
-        des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
-        production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
-        fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
+    if construction:
+        print("\n--- Starting heuristic construction with random FOB ----\n")
 
         x1 = find_initial_arcs(x, maintenance_vessels, all_days, maintenance_vessel_ports, vessel_start_ports, maintenance_start_times,
                                 vessel_available_days, sailing_costs)
-
+        
         y1 = find_charter_out_vars(y, vessel_ids)
 
-        print("\n--- Finished heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
+        z1, s1, w1, g1, demand_satisfied = find_initial_solution_random(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+        des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+        production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+        fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
 
-        # Setting all the variables
+        if not demand_satisfied: 
 
-        for (v,i,t,j,t_) in x.keys():
-            x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
+            config = 'tryFob'
+
+            print("\n--- Trying heuristic construction with prioritixing FOB ----\n")
+
+            z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+            des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+            production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+            fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids, config)
+
+        if not demand_satisfied:
+
+            print("\n--- Trying heuristic construction with prioritixing DES ----\n")
+            
+            config = 'tryDes'
+            
+            z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+            des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+            production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+            fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids, config)
+
+        if not demand_satisfied:
+            
+            print("\n--- Trying heuristic construction with prioritixing FOB and squaring score ----\n")
+
+            config = 'trySquared'
+
+            z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+            des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+            production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+            fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids, config)
+
+            # If the model finds a feasible solution
+        if demand_satisfied:
+
+            for (v,i,t,j,t_) in x.keys():
+                x[v,i,t,j,t_].Start = x1[v,i,t,j,t_]
+            
+            for (i,t,j) in g.keys():
+                g[i,t,j].Start = g1[i,t,j]
+                w[i,t,j].Start = w1[i,t,j]
+            
+            for (f,t) in z.keys():
+                z[f,t].Start = z1[f,t]
+
+            for (i,t) in s.keys():
+                s[i,t].Start = s1[i,t]
+                s[i,t].Start = s1[i,t]
+            
+            for (v) in y.keys():
+                y[v].Start = y1[v]
         
-        for (i,t,j) in g.keys():
-            g[i,t,j].VarHintVal = g1[i,t,j]
-            w[i,t,j].VarHintVal = w1[i,t,j]
-        
-        for (f,t) in z.keys():
-            z[f,t].VarHintVal = z1[f,t]
+            print("\n--- Finished heuristic construction ----\n")
 
-        for (i,t) in s.keys():
-            s[i,t].VarHintVal = s1[i,t]
+        else:
+            for (v,i,t,j,t_) in x.keys():
+                x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
+            
+            for (i,t,j) in g.keys():
+                g[i,t,j].VarHintVal = g1[i,t,j]
+                w[i,t,j].VarHintVal = w1[i,t,j]
+            
+            for (f,t) in z.keys():
+                z[f,t].VarHintVal = z1[f,t]
 
-        for (v) in y.keys():
-            y[v] = y1[v]
+            for (i,t) in s.keys():
+                s[i,t].VarHintVal = s1[i,t]
+            
+            for (v) in y.keys():
+                y[v].VarHintVal = y1[v]
 
-
-        model.update()
+            print("\n--- Did not find a feasible solution for this problem----\n")
 
     return model # This line must be moved to activate the extensions
 
 
 ### Extension 1 + 2
-def initialize_combined_model(group, filename, heuristic):
+def initialize_combined_model(group, filename):
 
     start_time = time.time()
     print("\n--- Initializing data in: %.1f seconds ---" % (time.time() - start_time))
@@ -1000,6 +1182,12 @@ def initialize_combined_model(group, filename, heuristic):
 
     generate_arcs = GENERATE_ARCS
     write_arcs = WRITE_ARCS
+
+    try:
+        arc_file = open(f'arcs/{group}/basic/{filename}-arcs.json')
+    except FileNotFoundError:
+        generate_arcs = True
+
     if generate_arcs:
         print("\n--- Starting to generate arcs in: %.1f seconds ---" % (time.time() - start_time))
 
@@ -1033,6 +1221,13 @@ def initialize_combined_model(group, filename, heuristic):
             sailing_costs = {tuple(sailing_cost['key']): sailing_cost['value'] for sailing_cost in arc_data['sailingCosts']}
         except FileNotFoundError:
             raise AttributeError('Arcs for this dataset is not generated yet. Change the GENERATE_ARCS-attribute.')
+    
+    for vessel in maintenance_vessels:
+        direct_arc = (vessel, vessel_start_ports[vessel], vessel_available_days[vessel][0], maintenance_vessel_ports[vessel], maintenance_start_times[vessel])
+        if not direct_arc in total_feasible_arcs:
+            total_feasible_arcs.append(direct_arc)
+            sailing_costs[direct_arc] = 0
+            print('Added aditional construction maintenace arc')
 
     print("\n--- Initializing constraints in: %.1f seconds ---" % (time.time() - start_time))
 
@@ -1159,45 +1354,100 @@ def initialize_combined_model(group, filename, heuristic):
 
     #NB! The parameter minimum and maximum production rate for each loading port must be defined; Maximum can be set to the default amount from data.
 
-    if heuristic:
-        print("\n--- Starting heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
-        z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
-        des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
-        production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
-        fob_loading_ports, maintenance_vessels, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
+    construction = CONSTRUCTION
+
+    if construction:
+        print("\n--- Starting heuristic construction with random FOB ----\n")
 
         x1 = find_initial_arcs(x, maintenance_vessels, all_days, maintenance_vessel_ports, vessel_start_ports, maintenance_start_times,
                                 vessel_available_days, sailing_costs)
         
         q1 = find_production_vars(q, production_quantities)
-
-
         y1 = find_charter_out_vars(y, vessel_ids)
 
-        print("\n--- Finished heuristic construction in: %.1f seconds ---" % (time.time() - start_time))
+        z1, s1, w1, g1, demand_satisfied = find_initial_solution_random(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+        des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+        production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+        fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids)
 
-        # Setting all the variables
+        if not demand_satisfied: 
 
-        for (v,i,t,j,t_) in x.keys():
-            x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
+            config = 'tryFob'
+
+            print("\n--- Trying heuristic construction with prioritixing FOB ----\n")
+
+            z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+            des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+            production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+            fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids, config)
+
+        if not demand_satisfied:
+
+            print("\n--- Trying heuristic construction with prioritixing DES ----\n")
+            
+            config = 'tryDes'
+            
+            z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+            des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+            production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+            fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids, config)
+
+        if not demand_satisfied:
+            
+            print("\n--- Trying heuristic construction with prioritixing FOB and squaring score ----\n")
+
+            config = 'trySquared'
+
+            z1, s1, w1, g1, demand_satisfied = find_initial_solution(z, s, w, g, all_days, des_contract_ids, lower_partition_demand, upper_partition_demand,
+            des_contract_partitions, partition_days, fob_ids, fob_contract_ids, fob_demands, fob_days, min_inventory, max_inventory, initial_inventory, 
+            production_quantities, MINIMUM_DAYS_BETWEEN_DELIVERY, des_loading_ports, number_of_berths, sailing_time_charter, loading_days,
+            fob_loading_ports, fob_spot_art_ports, unloading_days, loading_port_ids, des_spot_ids, config)
+
+            # If the model finds a feasible solution
+        if demand_satisfied:
+
+            for (v,i,t,j,t_) in x.keys():
+                x[v,i,t,j,t_].Start = x1[v,i,t,j,t_]
+            
+            for (i,t,j) in g.keys():
+                g[i,t,j].Start = g1[i,t,j]
+                w[i,t,j].Start = w1[i,t,j]
+            
+            for (f,t) in z.keys():
+                z[f,t].Start = z1[f,t]
+
+            for (i,t) in s.keys():
+                s[i,t].Start = s1[i,t]
+                s[i,t].Start = s1[i,t]
+                
+            for (i,t) in q.keys():
+                q[i,t].Start = q1[i,t]
+            
+            for (v) in y.keys():
+                y[v].Start = y1[v]
         
-        for (i,t,j) in g.keys():
-            g[i,t,j].VarHintVal = g1[i,t,j]
-            w[i,t,j].VarHintVal = w1[i,t,j]
-        
-        for (f,t) in z.keys():
-            z[f,t].VarHintVal = z1[f,t]
+            print("\n--- Finished heuristic construction ----\n")
 
-        for (i,t) in s.keys():
-            s[i,t].VarHintVal = s1[i,t]
-        
-        for (i,t) in q.keys():
-            q[i,t].VarHintVal = q1[i,t]
+        else:
+            for (v,i,t,j,t_) in x.keys():
+                x[v,i,t,j,t_].VarHintVal = x1[v,i,t,j,t_]
+            
+            for (i,t,j) in g.keys():
+                g[i,t,j].VarHintVal = g1[i,t,j]
+                w[i,t,j].VarHintVal = w1[i,t,j]
+            
+            for (f,t) in z.keys():
+                z[f,t].VarHintVal = z1[f,t]
 
-        for (v) in y.keys():
-            y[v] = y1[v]
+            for (i,t) in s.keys():
+                s[i,t].VarHintVal = s1[i,t]
+                    
+            for (i,t) in q.keys():
+                q[i,t].VarHintVal = q1[i,t]
+            
+            for (v) in y.keys():
+                y[v].VarHintVal = y1[v]
 
-
-        model.update()
+            print("\n--- Did not find a feasible solution for this problem----\n")
 
     return model # This line must be moved to activate the extensions

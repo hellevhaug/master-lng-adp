@@ -1,6 +1,6 @@
 import random
-import copy
 import math
+import copy
 from supportFiles.constants import *
 
 # Calculates all amount delivered for every partition in every contract
@@ -58,15 +58,14 @@ def check_feasible_charter_move(day, partition, des_contract, des_loading_port, 
 
     # 
     if day+sailing_time_charter[des_loading_port,des_contract] not in partition_days[partition]:
-        #print('should be within the partitions unloading days')
+        print('should be within the partitions unloading days')
         return False
 
     # inventory constraints, never below minimum inventory
     for t in range(day, loading_days[-1]+1):
-        if (des_loading_port, t) in s.keys():
-            if s[des_loading_port, t] - charter_amount < min_inventory[des_loading_port]:
-                print('inventory problems')
-                return False
+        if s[des_loading_port, t] - charter_amount < min_inventory[des_loading_port]:
+            print('inventory problems')
+            return False
     
     # berth constraints for the loading port, never more than number of berth g vars per day
     if (sum(value for (i,t,j), value in w.items() if i ==des_loading_port and t == day)+sum(value for (z,t), value
@@ -97,9 +96,8 @@ def check_feasible_fob_move(day, loading_days, s, fob_loading_port, fob_amount, 
 
     # inventory constraints, never below minimum inventory
     for t in range(day, loading_days[-1]+1):
-        if (fob_loading_port, t) in s.keys():
-            if s[fob_loading_port, t] - fob_amount < min_inventory[fob_loading_port]:
-                return False
+        if s[fob_loading_port, t] - fob_amount < min_inventory[fob_loading_port]:
+            return False
     
     # berth constraints for the loading port, never more than number of berth g vars per day
     if (sum(value for (i,t,j), value in w.items() if i == fob_loading_port and t == day)+sum(value for (z,t), value
@@ -134,55 +132,23 @@ def generate_random_loading_days(loading_days):
 # Function for finding the best contract,partition to charter to at day=loading_day
 def find_best_contract_and_partition(loading_day, amount_chartered, loading_port, lower_partition_demand,
     des_contract_ids, des_loading_ports, des_contract_partitions, partition_days,
-    sailing_time_charter, minimum_spread, w, loading_days, charter_amount, upper_partition_demand, unloading_days,boil_off_factors,
-    lower_charter_amount, upper_charter_amount, s, min_inventory, config):
+    sailing_time_charter, minimum_spread, w, loading_days, charter_amount, upper_partition_demand, unloading_days,boil_off_factors):
 
     best_contract, best_partition = None, None
 
     best_amount_missing = 0
-    best_partition_days_left = 1000
-    best_des_score = 0
+    best_last_partition_day = 1000
 
     for des_contract_id in des_contract_ids: 
         if des_loading_ports[des_contract_id].__contains__(loading_port):
-
             # Minimum spread
-            if sum(w[loading_port,t,des_contract_id] for t in loading_days if t >= loading_day-minimum_spread and t <= loading_day and t+sailing_time_charter[loading_port, des_contract_id] in unloading_days[des_contract_id]
-                and (loading_port,t,des_contract_id) in w.keys())+ 1 > 1:
+            if sum(w[loading_port,t,des_contract_id] for t in loading_days if t >= loading_day and t < loading_day+minimum_spread and t+sailing_time_charter[loading_port, des_contract_id] in unloading_days[des_contract_id])+ 1 > 1:
                 continue
-
-            #
             for partition in des_contract_partitions[des_contract_id]:
-                amount_missing = (lower_partition_demand[des_contract_id,partition] - amount_chartered[des_contract_id][partition])/boil_off_factors[des_contract_id]
-                partition_days_left = partition_days[partition][-1]-sailing_time_charter[loading_port, des_contract_id]-loading_day+1
-                if partition_days_left <= 0:
+                # Not using bigger partitions
+                last_partition_day = partition_days[partition][-1]
+                if last_partition_day > best_last_partition_day:
                     continue
-                if config=='trySquared':
-                    des_score = amount_missing/(partition_days_left**2)
-                else: 
-                    des_score = amount_missing/(partition_days_left)
-                if des_score < best_des_score:
-                    continue
-
-                # Deciding what amount to charter 
-                missing_demand = (lower_partition_demand[des_contract_id, partition] - amount_chartered[des_contract_id][partition])/boil_off_factors[des_contract_id]    
-
-                if config == 'tryDes':
-                    if (math.ceil(missing_demand/lower_charter_amount) == math.ceil(missing_demand/upper_charter_amount)):
-                        charter_amount = lower_charter_amount
-                    else: 
-                        charter_amount = math.ceil(missing_demand/(math.ceil(missing_demand/upper_charter_amount)))
-
-                # Not feasible inventory
-                inventory_infeasible = False
-                for t in range(loading_day, loading_days[-1]+1):
-                    if (loading_port, t) in s.keys():
-                        if s[loading_port, t] - charter_amount < min_inventory[loading_port]:
-                            inventory_infeasible = True
-                            break
-                if inventory_infeasible:
-                    continue              
-
                 # Should be delivered within unloading days for the partition
                 if not loading_day+sailing_time_charter[loading_port, des_contract_id] in partition_days[partition]:
                     #print(f'{partition}')
@@ -202,13 +168,20 @@ def find_best_contract_and_partition(loading_day, amount_chartered, loading_port
                             break
                 if infeasible_partition:
                     continue
-                if des_score > best_des_score:
-                    best_des_score = des_score
+                amount_missing = lower_partition_demand[des_contract_id,partition] - amount_chartered[des_contract_id][partition]
+                if last_partition_day < best_last_partition_day:
+                    best_last_partition_day = last_partition_day
+                    best_amount_missing = amount_missing
                     best_contract, best_partition = des_contract_id, partition
+                elif last_partition_day == best_last_partition_day:
+                    if amount_missing > best_amount_missing:
+                        best_last_partition_day = last_partition_day
+                        best_amount_missing = amount_missing
+                        best_contract, best_partition = des_contract_id, partition
                 else:
                     continue
 
-    return best_contract, best_partition, best_des_score
+    return best_contract, best_partition
 
 
 # Just sets stupid maintenance arcs
@@ -223,54 +196,21 @@ def find_best_maintenance_arcs(vessel, x, maintenance_vessel_ports, vessel_start
     x[direct_arc] = 1
     x[vessel, maintenance_vessel_ports[vessel], maintenance_start_times[vessel], 'EXIT_PORT', all_days[-1]+1] = 1
 
+
     return 
 
 
-# Function for removing satisfied partitions from the des_contract_partition_updated-dict
-def remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand):
-    for des_contract_id in des_contract_ids_updated:
-        for partition in des_contract_partitions_updated[des_contract_id]:
-            # If lower demand is satisfied, the partition is satisfied
-            if amount_chartered[des_contract_id][partition] > lower_partition_demand[des_contract_id,partition]:
-                des_contract_partitions_updated[des_contract_id].remove(partition)
-
-
-# Removing not relevant partitions from the set
-def remove_infeasible_partitions(des_contract_partitions, partition_days, stop_time, overlap):
-    # Removing not feasible partitions for this horizon
-    new_des_contract_partitions = {des_contract: [] for des_contract in des_contract_partitions.keys()}
-    for des_contract, partitions in des_contract_partitions.items():
-        for partition in partitions:
-            if partition_days[partition][-1] <= stop_time+overlap:
-                new_des_contract_partitions[des_contract].append(partition)
-    
-    return new_des_contract_partitions
-
-
-# Find feasible FOB contracts given stop time
-def find_feasible_fob_contracts(fob_contract_ids, stop_time, fob_days, overlap):
-    # Removing not feasible fob ids for this horizon
-    fob_contract_ids_updated = []
-    for fob_id in fob_contract_ids:
-        if fob_days[fob_id][-1] <= stop_time+overlap:
-            fob_contract_ids_updated.append(fob_id)
-
-    return fob_contract_ids_updated
-
-
-# Set a random day to schedule a FOB pick-up
 def set_planned_fob_day(fob_contract_id, fob_days):
 
     f_days = fob_days[fob_contract_id]
     last_point = len(f_days)
-    half_point = math.ceil(last_point/2)
-    shorter_fob_days = f_days[half_point:last_point-5]
+    two_three_point = math.ceil(last_point/2)
+    shorter_fob_days = f_days[two_three_point:last_point-3]
     random_day = random.choice(shorter_fob_days)
 
     return random_day
 
 
-# Check if FOB-delivery is planned on day loading day for each contract
 def check_if_fob_is_planned(loading_day, planned_fob_days, loading_port, fob_loading_ports):
 
     planned_fobs = []
@@ -283,7 +223,15 @@ def check_if_fob_is_planned(loading_day, planned_fob_days, loading_port, fob_loa
     return planned_fobs
 
 
-# Choose the best FOB, old version
+# Function for removing satisfied partitions from the des_contract_partition_updated-dict
+def remove_satisfied_partitions(des_contract_ids_updated, des_contract_partitions_updated, amount_chartered, lower_partition_demand):
+    for des_contract_id in des_contract_ids_updated:
+        for partition in des_contract_partitions_updated[des_contract_id]:
+            # If lower demand is satisfied, the partition is satisfied
+            if amount_chartered[des_contract_id][partition] > lower_partition_demand[des_contract_id,partition]:
+                des_contract_partitions_updated[des_contract_id].remove(partition)
+
+
 def choose_fob(planned_fobs,fob_days, planned_fob_days):
 
     planned_fob_days_updated = copy.deepcopy(planned_fob_days)
@@ -316,38 +264,3 @@ def calc_boil_off_factors(des_contract_ids, des_loading_ports, sailing_time_char
         boil_off_factors[des_contract_id] = factor
 
     return boil_off_factors
-
-
-# Function for finding best FOB-contract
-def find_best_fob_contract(loading_day, fob_contract_ids_updated, fob_days, fob_demands, loading_port, fob_loading_ports
-                           , loading_days, s, min_inventory):
-
-    best_fob_contract = None
-    fob_days_left = 1000
-    amount_missing = 0
-    best_fob_score = 0
-
-    for fob_contract_id in fob_contract_ids_updated:
-        if loading_port in fob_loading_ports[fob_contract_id]:
-            if loading_day in fob_days[fob_contract_id]:
-                current_days_left = fob_days[fob_contract_id][-1] - loading_day + 1
-                if current_days_left <= 0:
-                    continue
-                fob_amount = fob_demands[fob_contract_id]
-
-                # inventory
-                inventory_infeasible = False
-                for t in range(loading_day, loading_days[-1]+1):
-                    if (loading_port, t) in s.keys():
-                        if s[loading_port, t] - fob_amount < min_inventory[loading_port]:
-                            inventory_infeasible = True
-                            break
-                if inventory_infeasible: 
-                    continue
-
-                fob_score = fob_amount/(current_days_left)
-                if fob_score > best_fob_score:
-                    best_fob_contract = fob_contract_id
-                    best_fob_score = fob_score
-    
-    return best_fob_contract, best_fob_score

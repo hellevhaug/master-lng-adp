@@ -53,6 +53,8 @@ def run_combined_model(group, filename, time_limit, description):
     # Will figure out something smart here
     return model
 
+
+"""
 # Function for running model with possibility to both vary production and charter out 
 def run_basic_model_heuristic(group, filename, time_limit, description):
     print(f'\n You are now running file {filename}, in group {group}, with a contruction heuristic')
@@ -100,3 +102,4 @@ def run_combined_model_heuristic(group, filename, time_limit, description):
     # Finding out what should be returned here as well, mabye just like a status message 
     # Will figure out something smart here
     return model
+"""

@@ -26,6 +26,7 @@ def set_parameter_dict():
     parameter_dict['ProductionScaleRate'] = PRODUCTION_SCALE_RATE
     parameter_dict['CharterOutFrictionRate'] = CHARTER_OUT_FRICTION
     parameter_dict['DesHasLoadingPort'] = DES_HAS_LOADING_PORT
+    parameter_dict['WarmStart'] = CONSTRUCTION
 
     return parameter_dict
 

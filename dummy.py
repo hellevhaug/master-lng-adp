@@ -1,5 +1,5 @@
 import random
-from runModel.constructionHeuristic import *
+from runModel.oldConstructionHeuristic import *
 ###
 ## Creating some simple data
 ##

@@ -55,26 +55,6 @@ def run_one_instance(group, filename, runtime, modelType):
         write_vars_to_file(group, filename, model, 'Model with combined extensions', runtime)
     else:
         raise ValueError('Uknown model type for running')
-    
-
-# Function for running a specific instance
-def run_one_instance_heuristic(group, filename, runtime, modelType):
-    if modelType=='basic':
-        model = run_basic_model_heuristic(group, filename, runtime, f'Running file: {filename}')
-        write_vars_to_file(group, filename, model, 'Basic model with minimum spread, heuristic', runtime)
-    elif modelType=='variableProduction':
-        model = run_variable_production_model_heuristic(group, filename, runtime, f'Running file: {filename}')
-        write_vars_to_file(group, filename, model, 'Model with variable production, heuristic', runtime)
-    elif modelType=='charterOut':
-        model = run_charter_out_model_heuristic(group, filename, runtime, f'Running file: {filename}')
-        write_vars_to_file(group, filename, model, 'Model with chartering out, heuristic', runtime)
-    elif modelType=='combinedModel':
-        model = run_combined_model_heuristic(group, filename, runtime, f'Running file: {filename}')
-        write_vars_to_file(group, filename, model, 'Model with combined extensions, heuristic', runtime)
-    else:
-        raise ValueError('Uknown model type for running')
-    
-        return model
 
 
 # Oppdatering: Denne funker! Runs all model types one one instance
@@ -182,4 +162,3 @@ modelType = BASIC_MODEL
 
 #run_one_instance(constructionGroup, constructionFile,# runtime, modelType)
 #run_one_instance_heuristic(constructionGroup, constructionFile, runtime, modelType)
-run_one_instance_heuristic(group1, filename1, runtime, modelType)
