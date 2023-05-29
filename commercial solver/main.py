@@ -143,8 +143,8 @@ Call whatever functions you'll like below here
 """
 
 # An example for how to run the code 
-group = 'N-1L-A'
-filename = 'N-1L-16U-12F-23V-120D'
+group = 'A-2L-C'
+filename = 'A-2L-6U-8F-15V-120D'
 group1 = 'A-2L-C'
 filename1 = 'A-2L-6U-8F-15V-120D'
 runtime = 60*60*3
