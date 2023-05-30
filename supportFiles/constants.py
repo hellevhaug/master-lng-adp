@@ -22,8 +22,8 @@ PRODUCTION_SCALE_RATE = 0.3
 CHARTER_OUT_FRICTION = 0.05
 DES_HAS_LOADING_PORT = True
 GENERATE_ARCS = True
-WRITE_ARCS = True
-CONSTRUCTION = True
+WRITE_ARCS = False
+CONSTRUCTION = False
 
 ######################################################
 
