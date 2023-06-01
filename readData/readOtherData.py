@@ -62,7 +62,7 @@ def read_fake_fob(loading_port_ids, fob_ids, fob_spot_ids, fob_days, loading_day
         fob_days[fake_fob_id] = loading_days
         port_types[fake_fob_id] = 's'
         for t in loading_days:
-            fob_demands[fake_fob_id] = fake_fob_quantity[loading_port]
+            fob_demands[fake_fob_id] = 0 #fake_fob_quantity[loading_port]
             fob_revenues[fake_fob_id, t] = 0
 
     return fob_spot_art_ports, fob_loading_ports
