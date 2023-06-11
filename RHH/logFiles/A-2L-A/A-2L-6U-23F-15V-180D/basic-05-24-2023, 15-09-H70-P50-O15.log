@@ -1,0 +1,42 @@
+
+Gurobi 10.0.1 (linux64) logging started Wed May 24 15:09:34 2023
+
+Set parameter LogFile to value "logFiles/A-2L-A/A-2L-6U-23F-15V-180D/basic-05-24-2023, 15-09-H70-P50-O15.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (linux64)
+
+CPU model: Intel(R) Xeon(R) Gold 5115 CPU @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 20 physical cores, 40 logical processors, using up to 20 threads
+
+Optimize a model with 22953 rows, 415552 columns and 2105470 nonzeros
+Model fingerprint: 0x04049d7a
+Variable types: 224546 continuous, 191006 integer (191006 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 7129 rows and 0 columns
+Presolve time: 0.09s
+
+Explored 0 nodes (0 simplex iterations) in 0.20 seconds (0.05 work units)
+Thread count was 1 (of 40 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 7129 rows and 0 columns
+Presolve time: 0.09s
+
+Explored 0 nodes (0 simplex iterations) in 0.36 seconds (0.05 work units)
+Thread count was 1 (of 40 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 0.39 seconds (0.05 work units)

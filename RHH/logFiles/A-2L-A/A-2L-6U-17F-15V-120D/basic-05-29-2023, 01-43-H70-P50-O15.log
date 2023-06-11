@@ -1,0 +1,58 @@
+
+Gurobi 9.5.1 (win64) logging started Mon May 29 01:43:47 2023
+
+Set parameter LogFile to value "logFiles/A-2L-A/A-2L-6U-17F-15V-120D/basic-05-29-2023, 01-43-H70-P50-O15.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 29213 rows, 347421 columns and 1832940 nonzeros
+Model fingerprint: 0x7d05f96d
+Variable types: 95316 continuous, 252105 integer (252105 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 17494 rows and 52333 columns
+Presolve time: 4.29s
+Presolved: 11719 rows, 295088 columns, 1321183 nonzeros
+Variable types: 50586 continuous, 244502 integer (244490 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    6.2330694e+08   1.495536e+06   2.655400e+15      6s
+  105370    7.7884401e+08   3.949778e+02   7.711353e+10     10s
+  169708    6.8851794e+09   2.145018e+05   0.000000e+00     15s
+  190300    8.4999201e+08   1.152225e+05   0.000000e+00     20s
+  200908    8.3526364e+08   9.214797e+04   0.000000e+00     25s
+  208708    8.3188240e+08   1.865484e+05   0.000000e+00     30s
+  213120    8.3081894e+08   2.122520e+05   0.000000e+00     35s
+  216608    8.3024154e+08   4.652882e+04   0.000000e+00     40s
+  220964    8.2998271e+08   7.882241e+04   0.000000e+00     45s
+  224928    8.2984948e+08   1.141130e+05   0.000000e+00     50s
+  228134    8.2972553e+08   4.236407e+05   0.000000e+00     55s
+  230716    8.2963428e+08   5.459526e+04   0.000000e+00     60s
+  233428    8.2952372e+08   3.031276e+05   0.000000e+00     65s
+  235996    8.2942952e+08   2.005119e+05   0.000000e+00     70s
+  238424    8.2936224e+08   3.394294e+05   0.000000e+00     75s
+
+
+Root relaxation: interrupted, 239213 iterations, 72.04 seconds (56.07 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0          -    0               - 1.6134e+12      -     -   77s
+
+Explored 1 nodes (239213 simplex iterations) in 77.17 seconds (64.43 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 0
+
+Solve interrupted
+Best objective -, best bound 1.613401328043e+12, gap -
+IIS runtime: 4.73 seconds (7.51 work units)

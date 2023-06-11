@@ -1,0 +1,399 @@
+
+Gurobi 10.0.1 (win64) logging started Fri May 19 15:56:28 2023
+
+Set parameter LogFile to value "logFiles/N-1L-D/N-1L-14U-40F-23V-365D-basic-heuristic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: Intel(R) Core(TM) i7-10700 CPU @ 2.90GHz, instruction set [SSE2|AVX|AVX2]
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+
+Optimize a model with 290880 rows, 3536272 columns and 32569503 nonzeros
+Model fingerprint: 0xe448a350
+Variable types: 5109 continuous, 3531163 integer (3531163 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 6e+06]
+Presolve removed 158534 rows and 40092 columns (presolve time = 5s) ...
+Presolve removed 158581 rows and 40100 columns (presolve time = 11s) ...
+Presolve removed 165363 rows and 40100 columns (presolve time = 15s) ...
+Presolve removed 165363 rows and 40100 columns (presolve time = 20s) ...
+Presolve removed 165363 rows and 40100 columns (presolve time = 25s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 31s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 35s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 40s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 45s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 50s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 55s) ...
+Presolve removed 165365 rows and 40292 columns (presolve time = 62s) ...
+Presolve removed 165144 rows and 40064 columns
+Presolve time: 63.32s
+Presolved: 125736 rows, 3496208 columns, 24497408 nonzeros
+Variable types: 5315 continuous, 3490893 integer (3490893 binary)
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Elapsed ordering time = 5s
+Elapsed ordering time = 10s
+Elapsed ordering time = 117s
+Elapsed ordering time = 120s
+Elapsed ordering time = 125s
+Elapsed ordering time = 130s
+Ordering time: 132.96s
+
+Barrier statistics:
+ AA' NZ     : 1.010e+07
+ Factor NZ  : 3.873e+07 (roughly 1.8 GB of memory)
+ Factor Ops : 9.273e+10 (roughly 1 second per iteration)
+ Threads    : 5
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -2.64699436e+17  2.72451750e+13  2.76e+10 5.43e+05  2.85e+11   238s
+   1  -9.54867747e+16  3.14938865e+13  9.97e+09 5.34e+05  1.03e+11   243s
+   2  -1.53882524e+16  2.52275733e+13  1.63e+09 9.94e+04  1.72e+10   249s
+   3  -8.35497161e+14  1.46310697e+13  8.84e+07 3.17e+03  9.39e+08   256s
+   4  -9.21042021e+13  7.71948226e+12  9.72e+06 6.29e-09  1.08e+08   264s
+   5  -2.32279931e+13  4.05792114e+12  2.45e+06 1.63e-09  2.84e+07   271s
+   6  -1.68394808e+13  3.83992548e+12  1.78e+06 3.60e+01  2.07e+07   277s
+   7  -1.64437559e+13  3.82291520e+12  1.74e+06 3.56e+01  2.02e+07   282s
+   8  -1.48222405e+13  3.77397186e+12  1.57e+06 3.42e+01  1.83e+07   288s
+   9  -5.27866579e+12  3.37237895e+12  5.57e+05 2.00e+01  6.79e+06   293s
+  10  -2.18577744e+12  2.93255158e+12  2.30e+05 1.23e+01  2.97e+06   299s
+  11  -7.22681421e+11  2.58511516e+12  7.56e+04 8.92e+00  1.19e+06   306s
+  12  -5.67067032e+11  2.47964586e+12  5.94e+04 8.50e+00  9.89e+05   311s
+  13  -3.10720605e+11  1.94887640e+12  3.27e+04 5.80e+00  6.05e+05   316s
+  14  -1.07958410e+11  9.83713198e+11  1.19e+04 2.05e+00  2.39e+05   322s
+  15  -2.11718744e+10  3.43233130e+11  2.73e+03 5.00e-01  6.67e+04   329s
+  16  -1.46854849e+10  2.69507177e+11  2.04e+03 3.77e-01  5.09e+04   336s
+  17  -5.47617672e+09  9.65314959e+10  1.07e+03 1.03e-01  1.93e+04   341s
+  18   2.07370876e+09  5.40606934e+10  2.76e+02 5.29e-02  8.57e+03   347s
+  19   3.22466706e+09  3.24754754e+10  1.56e+02 2.89e-02  4.80e+03   354s
+  20   3.61512600e+09  2.40079228e+10  1.16e+02 2.04e-02  3.37e+03   362s
+  21   3.65012353e+09  2.23640791e+10  1.12e+02 1.86e-02  3.11e+03   368s
+  22   3.97955886e+09  1.76364070e+10  7.97e+01 1.34e-02  2.27e+03   374s
+  23   4.22865293e+09  1.58683539e+10  5.67e+01 1.15e-02  1.89e+03   381s
+  24   4.37426049e+09  1.48219723e+10  4.34e+01 1.03e-02  1.67e+03   390s
+  25   4.42112138e+09  1.32492888e+10  4.03e+01 8.83e-03  1.43e+03   398s
+  26   4.44944267e+09  1.18529565e+10  3.78e+01 7.58e-03  1.22e+03   406s
+  27   4.58718811e+09  1.12573340e+10  2.75e+01 7.03e-03  1.07e+03   415s
+  28   4.63663749e+09  9.81408753e+09  2.34e+01 5.58e-03  8.43e+02   424s
+  29   4.67365104e+09  8.58060911e+09  2.09e+01 4.16e-03  6.52e+02   432s
+  30   4.70534532e+09  7.99313740e+09  1.87e+01 3.46e-03  5.56e+02   441s
+  31   4.75684376e+09  7.84560354e+09  1.49e+01 3.31e-03  5.10e+02   449s
+  32   4.76926831e+09  7.40645024e+09  1.39e+01 2.75e-03  4.41e+02   458s
+  33   4.80290432e+09  6.90275491e+09  1.15e+01 2.06e-03  3.49e+02   468s
+  34   4.82565270e+09  6.70791139e+09  9.71e+00 1.80e-03  3.08e+02   476s
+  35   4.84898055e+09  6.58998477e+09  8.07e+00 1.68e-03  2.80e+02   484s
+  36   4.86477256e+09  6.27889364e+09  6.93e+00 1.30e-03  2.26e+02   492s
+  37   4.87027635e+09  6.07968937e+09  6.51e+00 1.08e-03  1.93e+02   498s
+  38   4.88197231e+09  5.80539612e+09  5.75e+00 7.75e-04  1.47e+02   506s
+  39   4.90151142e+09  5.65401877e+09  4.36e+00 6.18e-04  1.17e+02   515s
+  40   4.91246503e+09  5.57946863e+09  3.68e+00 5.47e-04  1.03e+02   523s
+  41   4.92802419e+09  5.38475884e+09  2.62e+00 3.63e-04  6.93e+01   532s
+  42   4.94153517e+09  5.29058451e+09  1.93e+00 2.79e-04  5.22e+01   540s
+  43   4.95978603e+09  5.20709416e+09  1.08e+00 2.03e-04  3.63e+01   548s
+  44   4.96744623e+09  5.16688290e+09  8.48e-01 1.68e-04  2.92e+01   556s
+  45   4.97232921e+09  5.14311916e+09  7.28e-01 1.46e-04  2.49e+01   563s
+  46   4.97584123e+09  5.12135156e+09  6.64e-01 1.23e-04  2.12e+01   570s
+  47   4.97767111e+09  5.11466754e+09  6.28e-01 1.15e-04  1.99e+01   576s
+  48   4.98072409e+09  5.10051370e+09  5.71e-01 1.01e-04  1.74e+01   583s
+  49   4.98599236e+09  5.09636886e+09  4.78e-01 9.66e-05  1.60e+01   590s
+  50   4.99190545e+09  5.08705051e+09  3.86e-01 8.53e-05  1.38e+01   597s
+  51   4.99454012e+09  5.07347602e+09  3.49e-01 6.77e-05  1.14e+01   604s
+  52   4.99665955e+09  5.06491053e+09  3.22e-01 5.62e-05  9.86e+00   611s
+  53   4.99948015e+09  5.06216483e+09  2.86e-01 5.27e-05  9.05e+00   618s
+  54   5.00428748e+09  5.05589296e+09  2.28e-01 4.39e-05  7.45e+00   625s
+  55   5.00543146e+09  5.05277695e+09  2.16e-01 3.92e-05  6.83e+00   632s
+  56   5.00896034e+09  5.04938238e+09  1.80e-01 3.39e-05  5.83e+00   638s
+  57   5.01125310e+09  5.04631259e+09  1.57e-01 2.94e-05  5.05e+00   646s
+  58   5.01385226e+09  5.04473522e+09  1.32e-01 2.70e-05  4.45e+00   652s
+  59   5.01451508e+09  5.04314794e+09  1.26e-01 2.44e-05  4.13e+00   659s
+  60   5.01645485e+09  5.04148213e+09  1.09e-01 2.15e-05  3.61e+00   666s
+  61   5.01802505e+09  5.03906939e+09  9.50e-02 1.72e-05  3.03e+00   673s
+  62   5.02145897e+09  5.03698604e+09  6.52e-02 1.35e-05  2.24e+00   680s
+  63   5.02365329e+09  5.03545435e+09  4.70e-02 1.08e-05  1.70e+00   687s
+  64   5.02490939e+09  5.03458332e+09  3.67e-02 9.29e-06  1.39e+00   693s
+  65   5.02588700e+09  5.03324994e+09  2.88e-02 6.77e-06  1.06e+00   700s
+  66   5.02668448e+09  5.03254676e+09  2.26e-02 5.43e-06  8.45e-01   707s
+  67   5.02761796e+09  5.03161655e+09  1.52e-02 3.67e-06  5.76e-01   715s
+  68   5.02839388e+09  5.03114226e+09  9.24e-03 2.75e-06  3.96e-01   722s
+  69   5.02879380e+09  5.03075018e+09  6.22e-03 2.02e-06  2.82e-01   730s
+  70   5.02918565e+09  5.03039193e+09  3.38e-03 1.41e-06  1.74e-01   737s
+  71   5.02943450e+09  5.03024125e+09  1.50e-03 1.11e-06  1.16e-01   745s
+  72   5.02951785e+09  5.02996765e+09  9.14e-04 5.73e-07  6.47e-02   751s
+  73   5.02956582e+09  5.02983887e+09  6.03e-04 3.29e-07  3.93e-02   756s
+  74   5.02958723e+09  5.02976456e+09  4.58e-04 1.89e-07  2.56e-02   761s
+  75   5.02962868e+09  5.02972058e+09  1.96e-04 1.29e-07  1.32e-02   767s
+  76   5.02964346e+09  5.02970957e+09  1.00e-04 1.07e-07  9.50e-03   772s
+  77   5.02964519e+09  5.02969055e+09  8.90e-05 1.07e-07  6.53e-03   777s
+  78   5.02965334e+09  5.02968182e+09  4.04e-05 8.23e-08  4.09e-03   782s
+  79   5.02965621e+09  5.02967414e+09  2.23e-05 1.05e-07  2.58e-03   787s
+  80   5.02965849e+09  5.02966544e+09  1.04e-05 1.06e-07  1.00e-03   794s
+  81   5.02965948e+09  5.02966363e+09  4.11e-06 1.16e-07  5.96e-04   800s
+  82   5.02965998e+09  5.02966150e+09  1.10e-06 1.35e-07  2.19e-04   807s
+  83   5.02966006e+09  5.02966109e+09  7.43e-07 9.38e-08  1.48e-04   813s
+  84   5.02966008e+09  5.02966051e+09  6.47e-07 1.11e-07  6.11e-05   821s
+  85   5.02966021e+09  5.02966036e+09  8.80e-08 1.15e-07  2.10e-05   828s
+  86   5.02966023e+09  5.02966025e+09  1.00e-07 1.65e-07  1.61e-06   834s
+  87   5.02966024e+09  5.02966024e+09  2.93e-09 1.70e-07  1.33e-07   841s
+  88   5.02966024e+09  5.02966024e+09  1.80e-07 1.20e-07  3.62e-10   847s
+
+Barrier solved model in 88 iterations and 847.18 seconds (392.48 work units)
+Optimal objective 5.02966024e+09
+
+
+Root crossover log...
+
+  106285 DPushes remaining with DInf 0.0000000e+00               848s
+    1949 DPushes remaining with DInf 0.0000000e+00               850s
+     140 DPushes remaining with DInf 0.0000000e+00               867s
+      80 DPushes remaining with DInf 0.0000000e+00               881s
+      20 DPushes remaining with DInf 0.0000000e+00               896s
+       0 DPushes remaining with DInf 0.0000000e+00               902s
+
+    3806 PPushes remaining with PInf 4.7289239e-04               902s
+       0 PPushes remaining with PInf 0.0000000e+00               902s
+
+  Push phase complete: Pinf 0.0000000e+00, Dinf 9.5893282e-02    903s
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+  110094    5.0296602e+09   0.000000e+00   9.594959e-02    903s
+  110099    5.0296602e+09   0.000000e+00   0.000000e+00    905s
+Concurrent spin time: 0.00s
+
+Solved with barrier
+  110099    5.0296602e+09   0.000000e+00   0.000000e+00    908s
+
+Root relaxation: objective 5.029660e+09, 110099 iterations, 831.27 seconds (282.50 work units)
+Total elapsed time = 919.45s
+Total elapsed time = 923.19s
+Total elapsed time = 930.48s
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 5.0297e+09    0 2499          - 5.0297e+09      -     -  945s
+     0     0 5.0297e+09    0 2499          - 5.0297e+09      -     - 1611s
+     0     0 5.0296e+09    0 2260          - 5.0296e+09      -     - 3467s
+     0     0 5.0294e+09    0 2434          - 5.0294e+09      -     - 12383s
+     0     0 5.0294e+09    0 2378          - 5.0294e+09      -     - 13908s
+     0     0 5.0289e+09    0 2785          - 5.0289e+09      -     - 18555s
+     0     0          -    0               - 5.0289e+09      -     - 21600s
+
+Cutting planes:
+  Cover: 16
+  Implied bound: 78
+  Clique: 3
+  MIR: 17
+  Flow cover: 11
+  RLT: 160
+  Relax-and-lift: 35
+
+Explored 1 nodes (418356 simplex iterations) in 21600.49 seconds (13744.97 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 0
+
+Time limit reached
+Best objective -, best bound 5.028903829281e+09, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 158534 rows and 40092 columns (presolve time = 5s) ...
+Presolve removed 158581 rows and 40100 columns (presolve time = 11s) ...
+Presolve removed 165363 rows and 40100 columns (presolve time = 15s) ...
+Presolve removed 165363 rows and 40100 columns (presolve time = 20s) ...
+Presolve removed 165363 rows and 40100 columns (presolve time = 25s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 31s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 35s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 41s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 45s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 50s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 55s) ...
+Presolve removed 165365 rows and 40100 columns (presolve time = 60s) ...
+Presolve removed 165372 rows and 40292 columns (presolve time = 65s) ...
+Presolve removed 165144 rows and 40064 columns
+Presolve time: 65.48s
+Presolved: 125736 rows, 3496208 columns, 24497408 nonzeros
+Variable types: 5315 continuous, 3490893 integer (3490893 binary)
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Elapsed ordering time = 5s
+Elapsed ordering time = 10s
+Ordering time: 10.53s
+
+Barrier statistics:
+ AA' NZ     : 1.010e+07
+ Factor NZ  : 6.962e+07 (roughly 2.0 GB of memory)
+ Factor Ops : 3.729e+11 (roughly 2 seconds per iteration)
+ Threads    : 6
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -0.00000000e+00  1.91718678e+06  2.76e+10 0.00e+00  2.00e+04   121s
+   1  -0.00000000e+00  2.20283543e+06  9.99e+09 4.01e-02  7.26e+03   126s
+   2  -0.00000000e+00  1.80420445e+06  8.43e+08 8.47e-03  6.28e+02   133s
+   3  -0.00000000e+00  9.21087614e+05  5.87e+07 1.93e-04  4.39e+01   141s
+   4  -0.00000000e+00  2.51646910e+05  1.13e+07 4.13e-05  4.26e+00   150s
+   5  -0.00000000e+00  7.23549843e+04  6.02e+06 1.17e-05  1.32e+00   159s
+   6  -0.00000000e+00  2.63983462e+04  2.16e+06 4.59e-06  2.03e-01   171s
+   7  -0.00000000e+00  1.50445044e+04  2.57e+05 2.66e-06  1.66e-02   182s
+   8  -0.00000000e+00  5.30229682e+03  8.49e+04 1.02e-06  2.98e-03   191s
+   9  -0.00000000e+00  1.86717541e+03  3.76e+04 4.13e-07  8.25e-04   201s
+  10  -0.00000000e+00  3.01795613e+02  6.09e+03 2.15e-07  8.77e-05   211s
+  11  -0.00000000e+00  1.11576215e+02  2.02e+03 1.86e-07  2.63e-05   220s
+  12  -0.00000000e+00  3.56901189e+01  9.87e+02 1.20e-07  9.18e-06   228s
+  13  -0.00000000e+00  3.05435905e+01  4.19e+02 1.09e-07  6.14e-06   235s
+  14  -0.00000000e+00  1.56889249e+01  1.90e+02 6.61e-08  3.03e-06   242s
+  15  -0.00000000e+00  1.08341042e+01  1.37e+02 4.85e-08  2.11e-06   249s
+  16  -0.00000000e+00  9.76618232e+00  1.20e+02 4.50e-08  1.89e-06   256s
+  17  -0.00000000e+00  8.84552865e+00  1.10e+02 4.11e-08  1.71e-06   263s
+  18  -0.00000000e+00  7.48637766e+00  1.00e+02 3.52e-08  1.48e-06   271s
+  19  -0.00000000e+00  6.63145095e+00  7.41e+01 3.04e-08  1.25e-06   280s
+  20  -0.00000000e+00  4.94367764e+00  5.89e+01 2.28e-08  9.49e-07   290s
+  21  -0.00000000e+00  3.36841203e+00  3.72e+01 1.60e-08  6.41e-07   300s
+  22  -0.00000000e+00  2.61734126e+00  2.77e+01 1.39e-08  4.96e-07   309s
+  23  -0.00000000e+00  2.10823008e+00  2.37e+01 2.38e-08  4.08e-07   319s
+  24  -0.00000000e+00  1.80024708e+00  1.90e+01 3.22e-08  3.42e-07   329s
+  25  -0.00000000e+00  1.57255996e+00  1.77e+01 4.03e-08  3.04e-07   338s
+  26  -0.00000000e+00  1.37348882e+00  1.55e+01 4.51e-08  2.66e-07   348s
+  27  -0.00000000e+00  9.36094956e-01  1.05e+01 5.35e-08  1.81e-07   357s
+  28  -0.00000000e+00  7.22511539e-01  6.95e+00 5.16e-08  1.35e-07   367s
+  29  -0.00000000e+00  3.22663219e-01  4.22e+00 3.96e-08  6.66e-08   376s
+  30  -0.00000000e+00  2.37916806e-01  1.49e+00 3.48e-08  4.54e-08   386s
+  31  -0.00000000e+00  8.22174844e-02  6.07e-01 1.61e-08  1.67e-08   395s
+  32  -0.00000000e+00  3.41309652e-02  4.45e-02 7.67e-09  6.97e-09   403s
+  33  -0.00000000e+00  1.01164131e-02  4.39e-03 2.33e-09  2.10e-09   410s
+  34  -0.00000000e+00  1.58925670e-04  3.35e-04 4.62e-11  3.96e-11   417s
+  35  -0.00000000e+00  1.79187130e-08  5.23e-09 7.65e-15  4.53e-15   425s
+  36  -0.00000000e+00  1.77727528e-14  1.33e-09 3.02e-17  4.71e-21   432s
+
+Barrier solved model in 36 iterations and 432.02 seconds (321.66 work units)
+Optimal objective -0.00000000e+00
+
+  Building initial crossover basis                               456s
+  Building initial crossover basis                               463s
+  Building initial crossover basis                               468s
+  Building initial crossover basis                               474s
+  Building initial crossover basis                               480s
+  Building initial crossover basis                               488s
+  Building initial crossover basis                               496s
+  Building initial crossover basis                               504s
+  Building initial crossover basis                               511s
+  Building initial crossover basis                               518s
+  Building initial crossover basis                               526s
+  Building initial crossover basis                               534s
+  Building initial crossover basis                               542s
+  Building initial crossover basis                               551s
+  Building initial crossover basis                               560s
+  Building initial crossover basis                               566s
+  Building initial crossover basis                               574s
+  Building initial crossover basis                               581s
+  Building initial crossover basis                               589s
+  Building initial crossover basis                               596s
+  Building initial crossover basis                               604s
+  Building initial crossover basis                               611s
+  Building initial crossover basis                               618s
+  Building initial crossover basis                               626s
+  Building initial crossover basis                               633s
+  Building initial crossover basis                               641s
+  Building initial crossover basis                               647s
+  Building initial crossover basis                               654s
+  Building initial crossover basis                               662s
+  Building initial crossover basis                               669s
+  Building initial crossover basis                               676s
+  Building initial crossover basis                               684s
+  Building initial crossover basis                               690s
+  Building initial crossover basis                               696s
+  Building initial crossover basis                               701s
+  Building initial crossover basis                               707s
+  Building initial crossover basis                               714s
+  Building initial crossover basis                               721s
+  Building initial crossover basis                               728s
+  Building initial crossover basis                               736s
+  Building initial crossover basis                               742s
+  Building initial crossover basis                               748s
+  Building initial crossover basis                               755s
+  Building initial crossover basis                               762s
+  Building initial crossover basis                               769s
+  Building initial crossover basis                               777s
+  Building initial crossover basis                               784s
+  Building initial crossover basis                               791s
+  Building initial crossover basis                               798s
+  Building initial crossover basis                               804s
+  Building initial crossover basis                               811s
+  Building initial crossover basis                               818s
+  Building initial crossover basis                               826s
+  Building initial crossover basis                               833s
+  Building initial crossover basis                               841s
+  Building initial crossover basis                               848s
+  Building initial crossover basis                               856s
+  Building initial crossover basis                               863s
+  Building initial crossover basis                               869s
+  Building initial crossover basis                               877s
+  Building initial crossover basis                               884s
+  Building initial crossover basis                               891s
+  Building initial crossover basis                               897s
+  Building initial crossover basis                               904s
+  Building initial crossover basis                               912s
+  Building initial crossover basis                               918s
+  Building initial crossover basis                               925s
+  Building initial crossover basis                               932s
+  Building initial crossover basis                               939s
+  Building initial crossover basis                               946s
+  Building initial crossover basis                               954s
+  Building initial crossover basis                               960s
+  Building initial crossover basis                               967s
+  Building initial crossover basis                               975s
+  Building initial crossover basis                               982s
+  Building initial crossover basis                               990s
+  Building initial crossover basis                               997s
+  Building initial crossover basis                              1003s
+  Building initial crossover basis                              1011s
+  Building initial crossover basis                              1019s
+  Building initial crossover basis                              1026s
+  Building initial crossover basis                              1033s
+  Building initial crossover basis                              1041s
+  Building initial crossover basis                              1049s
+  Building initial crossover basis                              1056s
+  Building initial crossover basis                              1063s
+  Building initial crossover basis                              1070s
+  Building initial crossover basis                              1078s
+  Building initial crossover basis                              1084s
+  Building initial crossover basis                              1091s
+  Building initial crossover basis                              1098s
+  Building initial crossover basis                              1105s
+  Building initial crossover basis                              1113s
+  Building initial crossover basis                              1121s
+  Building initial crossover basis                              1131s
+  Building initial crossover basis                              1141s
+  Building initial crossover basis                              1149s
+  Building initial crossover basis                              1156s
+  Building initial crossover basis                              1163s
+  Building initial crossover basis                              1170s
+  Building initial crossover basis                              1178s
+
+
+Root relaxation: interrupted, 156151 iterations, 1097.40 seconds (491.13 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0          -    0               -   -0.00000      -     - 1181s
+
+Explored 1 nodes (156151 simplex iterations) in 1181.42 seconds (619.59 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 0
+
+Solve interrupted
+Best objective -, best bound -0.000000000000e+00, gap -
+IIS runtime: 1181.67 seconds (619.59 work units)

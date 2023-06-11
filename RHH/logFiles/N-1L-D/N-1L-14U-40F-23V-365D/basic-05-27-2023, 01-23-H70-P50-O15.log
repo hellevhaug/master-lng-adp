@@ -1,0 +1,46 @@
+
+Gurobi 10.0.1 (linux64) logging started Sat May 27 01:23:19 2023
+
+Set parameter LogFile to value "logFiles/N-1L-D/N-1L-14U-40F-23V-365D/basic-05-27-2023, 01-23-H70-P50-O15.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (linux64)
+
+CPU model: Intel(R) Xeon(R) Gold 5115 CPU @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 20 physical cores, 40 logical processors, using up to 20 threads
+
+Optimize a model with 93452 rows, 1195488 columns and 6201280 nonzeros
+Model fingerprint: 0xdb370489
+Variable types: 433085 continuous, 762403 integer (762403 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+06]
+
+User MIP start did not produce a new incumbent solution
+User MIP start violates constraint fob_max_contracts[FOBCON_1-9] by 1.000000000
+
+Presolve removed 53812 rows and 0 columns
+Presolve time: 0.25s
+
+Explored 0 nodes (0 simplex iterations) in 0.71 seconds (0.24 work units)
+Thread count was 1 (of 40 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 53812 rows and 0 columns
+Presolve time: 0.23s
+
+Explored 0 nodes (0 simplex iterations) in 0.98 seconds (0.17 work units)
+Thread count was 1 (of 40 available processors)
+
+Solution count 0
+No other solutions better than -1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+IIS computed: 1 constraints, 0 bounds
+IIS runtime: 1.03 seconds (0.17 work units)

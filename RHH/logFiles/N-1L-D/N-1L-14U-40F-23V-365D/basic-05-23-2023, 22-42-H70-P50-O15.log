@@ -1,0 +1,27 @@
+
+Gurobi 10.0.1 (linux64) logging started Tue May 23 22:42:45 2023
+
+Set parameter LogFile to value "logFiles/N-1L-D/N-1L-14U-40F-23V-365D/basic-05-23-2023, 22-42-H70-P50-O15.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (linux64)
+
+CPU model: Intel(R) Xeon(R) Gold 5115 CPU @ 2.40GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 20 physical cores, 40 logical processors, using up to 20 threads
+
+Optimize a model with 93426 rows, 1195488 columns and 6818678 nonzeros
+Model fingerprint: 0x404ac71d
+Variable types: 433085 continuous, 762403 integer (762403 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+06]
+Presolve removed 53774 rows and 0 columns
+Presolve time: 0.30s
+
+Explored 0 nodes (0 simplex iterations) in 0.66 seconds (0.18 work units)
+Thread count was 1 (of 40 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -
