@@ -1,0 +1,90 @@
+
+Gurobi 9.5.1 (win64) logging started Mon May 29 02:01:03 2023
+
+Set parameter LogFile to value "logFiles/A-2L-A/A-2L-6U-17F-15V-120D/basic-05-29-2023, 02-01-H70-P50-O15.log"
+Gurobi Optimizer version 9.5.1 build v9.5.1rc2 (win64)
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+Optimize a model with 29213 rows, 347421 columns and 1832940 nonzeros
+Model fingerprint: 0x7d05f96d
+Variable types: 95316 continuous, 252105 integer (252105 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 2e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+06]
+Presolve removed 17494 rows and 52333 columns
+Presolve time: 4.22s
+Presolved: 11719 rows, 295088 columns, 1321183 nonzeros
+Variable types: 50586 continuous, 244502 integer (244490 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    6.2330694e+08   1.495536e+06   2.655400e+15      6s
+  109738    7.7581635e+08   2.455256e+02   6.337514e+10     10s
+  170852    4.3742184e+09   1.206095e+05   0.000000e+00     15s
+  191444    8.4600606e+08   3.887049e+05   0.000000e+00     20s
+  201844    8.3491566e+08   1.353754e+05   0.000000e+00     25s
+  208916    8.3179754e+08   6.861683e+05   0.000000e+00     30s
+  213224    8.3076868e+08   2.140843e+05   0.000000e+00     35s
+  216802    8.3022343e+08   3.610667e+05   0.000000e+00     40s
+  220884    8.2998714e+08   3.431323e+05   0.000000e+00     45s
+  223368    8.2988997e+08   8.322841e+04   0.000000e+00     50s
+  227200    8.2974818e+08   3.907691e+05   0.000000e+00     55s
+  229246    8.2968795e+08   5.123194e+04   0.000000e+00     60s
+  231768    8.2958534e+08   9.748020e+04   0.000000e+00     65s
+  234342    8.2947854e+08   1.836096e+05   0.000000e+00     70s
+  236500    8.2941200e+08   1.573037e+05   0.000000e+00     75s
+  238544    8.2935662e+08   1.293849e+05   0.000000e+00     80s
+  240718    8.2926814e+08   6.396934e+04   0.000000e+00     85s
+  242894    8.2920650e+08   4.740717e+05   0.000000e+00     90s
+  244496    8.2918059e+08   5.313290e+05   0.000000e+00     96s
+  246044    8.2915360e+08   5.870465e+04   0.000000e+00    100s
+  247384    8.2913097e+08   1.975094e+04   0.000000e+00    105s
+  249168    8.2911314e+08   2.492577e+05   0.000000e+00    110s
+  250622    8.2910056e+08   1.100366e+04   0.000000e+00    115s
+  251892    8.2908991e+08   1.026508e+05   0.000000e+00    120s
+  252962    8.2908099e+08   5.126480e+04   0.000000e+00    125s
+  253942    8.2906943e+08   1.770841e+05   0.000000e+00    130s
+  255012    8.2906092e+08   2.389073e+04   0.000000e+00    136s
+  255902    8.2905172e+08   2.368610e+04   0.000000e+00    140s
+  256792    8.2904734e+08   2.129790e+04   0.000000e+00    145s
+  257692    8.2904434e+08   1.490473e+03   0.000000e+00    151s
+  257922    8.2904421e+08   0.000000e+00   0.000000e+00    153s
+  257922    8.2904421e+08   0.000000e+00   0.000000e+00    153s
+Concurrent spin time: 0.00s
+
+Solved with primal simplex
+
+Root relaxation: objective 8.290442e+08, 257922 iterations, 148.20 seconds (110.61 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 8.2904e+08    0  346          - 8.2904e+08      -     -  153s
+H    0     0                    8.125583e+08 8.2904e+08  2.03%     -  160s
+H    0     0                    8.136422e+08 8.2904e+08  1.89%     -  171s
+     0     0 8.2896e+08    0  325 8.1364e+08 8.2896e+08  1.88%     -  193s
+H    0     0                    8.230997e+08 8.2896e+08  0.71%     -  316s
+
+Cutting planes:
+  Cover: 5
+  Implied bound: 11
+  Clique: 1
+  MIR: 10
+  Flow cover: 10
+  GUB cover: 2
+  RLT: 42
+  Relax-and-lift: 2
+
+Explored 1 nodes (265718 simplex iterations) in 316.84 seconds (399.43 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 3: 8.231e+08 8.13642e+08 8.12558e+08 
+
+Optimal solution found (tolerance 1.00e-02)
+Best objective 8.230997495001e+08, best bound 8.289596943182e+08, gap 0.7119%

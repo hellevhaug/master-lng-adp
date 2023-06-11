@@ -1,0 +1,61 @@
+
+Gurobi 10.0.1 (win64) logging started Tue May  2 05:34:29 2023
+
+Set parameter LogFile to value "logFiles/N-1L-C/N-1L-14U-34F-23V-365D-basic.log"
+Gurobi Optimizer version 10.0.1 build v10.0.1rc0 (win64)
+
+CPU model: Intel(R) Core(TM) i7-10700 CPU @ 2.90GHz, instruction set [SSE2|AVX|AVX2]
+Thread count: 8 physical cores, 16 logical processors, using up to 16 threads
+
+Optimize a model with 289538 rows, 3416929 columns and 21435095 nonzeros
+Model fingerprint: 0xe135a3eb
+Variable types: 9882 continuous, 3407047 integer (3407047 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+05]
+  Objective range  [4e+01, 3e+07]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 5e+06]
+Presolve removed 140968 rows and 58442 columns (presolve time = 5s) ...
+Presolve removed 151838 rows and 64444 columns (presolve time = 10s) ...
+Presolve removed 151838 rows and 64444 columns (presolve time = 15s) ...
+Presolve removed 156146 rows and 64483 columns (presolve time = 20s) ...
+Presolve removed 156237 rows and 64548 columns (presolve time = 25s) ...
+Presolve removed 156237 rows and 64548 columns (presolve time = 30s) ...
+Presolve removed 156237 rows and 64548 columns (presolve time = 35s) ...
+Presolve removed 158963 rows and 67202 columns
+Presolve time: 39.62s
+Presolved: 130575 rows, 3349727 columns, 19407258 nonzeros
+Variable types: 5522 continuous, 3344205 integer (3344205 binary)
+
+Root relaxation: time limit, 0 iterations, 8.14 seconds (12.79 work units)
+
+Explored 1 nodes (0 simplex iterations) in 61.70 seconds (112.60 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 0
+
+Time limit reached
+Best objective -, best bound 2.462348342301e+13, gap -
+IIS computation: initial model status unknown, solving to determine model status
+Presolve removed 140968 rows and 58442 columns (presolve time = 5s) ...
+Presolve removed 151920 rows and 67234 columns (presolve time = 10s) ...
+Presolve removed 151920 rows and 67234 columns (presolve time = 15s) ...
+Presolve removed 158995 rows and 67234 columns (presolve time = 20s) ...
+Presolve removed 158995 rows and 67234 columns (presolve time = 26s) ...
+Presolve removed 158995 rows and 67234 columns (presolve time = 30s) ...
+Presolve removed 158995 rows and 67234 columns (presolve time = 35s) ...
+Presolve removed 158963 rows and 67202 columns
+Presolve time: 38.30s
+Presolved: 130575 rows, 3349727 columns, 19407258 nonzeros
+Variable types: 5522 continuous, 3344205 integer (3344205 binary)
+
+Root relaxation: time limit, 0 iterations, 7.24 seconds (10.06 work units)
+
+Explored 1 nodes (0 simplex iterations) in 60.60 seconds (106.91 work units)
+Thread count was 16 (of 16 available processors)
+
+Solution count 0
+
+Time limit reached
+Best objective -, best bound -0.000000000000e+00, gap -
+IIS runtime: 60.87 seconds (106.91 work units)
